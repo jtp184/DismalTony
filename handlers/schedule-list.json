@@ -1,0 +1,25 @@
+{
+  "handler_name": "schedule-list",
+  "verbs": [
+    "list",
+    "doing"
+  ],
+  "patterns": [
+    "list\\s((people)|(\\swho\\sis))\\son\\s(?<day>\\w+)\\s(?<event_key>\\w+\\??)",
+    "who\\sis\\sdoing\\s(?<day>\\w+)\\s(?<event_key>.+)\\?"
+  ],
+  "pattern_examples": [
+    "List people on Tuesday Group 3 Activities",
+    "Who is doing Wednesday check-out?"
+  ],
+  "data": [
+    {
+      "key": "day",
+      "type": "string"
+    },
+    {
+      "key": "event_key",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "handler_name": "",
+  "verbs": [],
+  "patterns": [],
+  "pattern_examples": [],
+  "data": [
+    {
+      "key": "",
+      "type": ""
+    }
+  ],
+  "success": [
+    ""
+  ],
+  "fail": [
+    ""
+  ],
+  "do": [
+    ""
+  ]
+}
