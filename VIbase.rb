@@ -1,4 +1,4 @@
-class AIBase
+class VIBase
 	attr_accessor :name
 	attr_accessor :interface
 	attr_accessor :emotes
