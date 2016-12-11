@@ -1,3 +1,5 @@
+require 'ConversationState'
+
 class VIBase
 	attr_accessor :name
 	attr_accessor :interface
@@ -7,6 +9,9 @@ class VIBase
 	def initialize()
 		@emotes = {'smile' => '🙂','frown' => '🙁','angry' => '😡','cheeky' => '😜','worried' => '🤕','think' => '🤔','sly' => '😏','cool' => '😎','wink' => '😉'}
 		@handlers = []
+	end
+
+	def identify_user
 	end
 
 	def list_handlers
