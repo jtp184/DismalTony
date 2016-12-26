@@ -5,3 +5,5 @@ class DoWord
 		raise "Should be extended!"
 	end
 end
+
+class 

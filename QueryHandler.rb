@@ -4,12 +4,24 @@ class QueryHandler
 	attr_accessor :patterns
 	attr_accessor :data
 
-	def export
-		hash = {}
-		self.instance_variables.each do |var|
-			hash["#{var[1,var.length-1]}"] = (self.instance_variable_get var).to_s
+	def initialize (my_name = "", my_verbs = [], my_patterns = [], my_data = [])
+		self.handler_name = my_name
+		self.verbs = my_verbs
+		# self.register_verbs
+		self.patterns = my_patterns
+		self.patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+		self.data = {}
+		my_data.each do |key|
+			self.data[key] = ""
 		end
-		return hash
+
+	end
+
+	def create (my_name = "", my_verbs = [], my_patterns = [], my_data = [])
+		return QueryHandler.new(my_name, my_verbs, my_patterns, my_data)
+	end
+
+	def activate_handler!
 	end
 
 	def check_understanding query
@@ -52,37 +64,6 @@ class QueryHandler
 		self.verbs.each do |verb|
 			# Register Verb
 		end
-	end
-
-	def from_json(json_string)
-
-		new_object = QueryHandler.new()
-
-		hashed = JSON.parse(json_string)
-		new_object.handler_name = hashed["handler_name"]
-		new_object.verbs = hashed["verbs"]
-		# new_object.register_verbs
-		new_object.patterns = hashed["patterns"]
-		new_object.patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
-
-		new_object.data = unpack_data hashed["data"]
-
-		return new_object
-	end
-
-	def unpack_data(data)
-		resolved = Hash.new()
-		data.each do |member|
-			k = member["key"]
-			case member["type"]
-			when "string"
-				resolved[k] = ""
-			when "number"
-				resolved[k] = 0
-			else
-			end
-		end
-		return resolved
 	end
 
 	def from_json!(json_string)
