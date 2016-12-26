@@ -24,6 +24,9 @@ class QueryHandler
 	def activate_handler!
 	end
 
+	def activate_handler
+	end
+
 	def check_understanding query
 		parse query
 		response = "Okay, I got:\n\n"
