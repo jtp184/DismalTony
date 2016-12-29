@@ -1,4 +1,5 @@
 require 'twilio-ruby'
+
 require_relative 'dialoginterface'
 
 class SMSInterface < DialogInterface
@@ -17,5 +18,9 @@ class SMSInterface < DialogInterface
 			to: self.destination,
 			body: msg
 			)
+	end
+
+	def recieve query
+		
 	end
 end

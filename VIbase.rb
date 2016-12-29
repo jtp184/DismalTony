@@ -1,4 +1,4 @@
-require 'ConversationState'
+require_relative 'ConversationState'
 
 class VIBase
 	attr_accessor :name
@@ -6,9 +6,12 @@ class VIBase
 	attr_accessor :emotes
 	attr_accessor :handlers
 
-	def initialize()
+	def initialize(the_name = "Tony", the_interface = ConsoleInterface.new(self))
+		@name = the_name
+		@interface = the_interface
 		@emotes = {'smile' => '🙂','frown' => '🙁','angry' => '😡','cheeky' => '😜','worried' => '🤕','think' => '🤔','sly' => '😏','cool' => '😎','wink' => '😉'}
 		@handlers = []
+		self.load_handlers
 	end
 
 	def identify_user
@@ -16,25 +19,38 @@ class VIBase
 
 	def list_handlers
 		response_string = "Okay, I can do:\n"
-		self.handlers.each do |handler|
-			the_name = handler.handler_name
+		@handlers.each do |handler|
+			the_name = handler.new().handler_name
 			response_string += "	#{the_name}\n"
 		end
 		say response_string
 	end
 
 	def load_handlers
-		q = QueryHandler.new()
-		found_files = (Dir.entries "#{Dir.pwd}/handlers/").reject { |e|  !(e =~ /.+\.json/)}
+		found_files = (Dir.entries "#{Dir.pwd}/handlers/").reject { |e|  !(e =~ /.+\.rb/)}
 		found_files.each do |file|
-			self.handlers << q.from_json(File.readlines("#{Dir.pwd}/handlers/" + file).join("\n"))
+			load "#{Dir.pwd}/handlers/#{(File.basename(file))}"
+		end
+		QueryHandler.list.each do |handler|
+			@handlers << handler
+		end
+	end
+
+	def query!
+		self.handlers.each do |handler_class|
+			handler = handler_class.new()
+			if handler.responds? str
+				handler.activate_handler! str
+			else
+			end
 		end
 	end
 
 	def query str
-		self.handlers.each do |handler|
+		self.handlers.each do |handler_class|
+			handler = handler_class.new()
 			if handler.responds? str
-				self.say handler.check_understanding str
+				self.say handler.activate_handler str
 			else
 			end
 		end
