@@ -6,7 +6,7 @@ class VIBase
 	attr_accessor :emotes
 	attr_accessor :handlers
 
-	def initialize(the_name = "Tony", the_interface = ConsoleInterface.new(self))
+	def initialize(the_name = "Tony", the_interface = ConsoleInterface.new)
 		@name = the_name
 		@interface = the_interface
 		@emotes = {'smile' => '🙂','frown' => '🙁','angry' => '😡','cheeky' => '😜','worried' => '🤕','think' => '🤔','sly' => '😏','cool' => '😎','wink' => '😉'}

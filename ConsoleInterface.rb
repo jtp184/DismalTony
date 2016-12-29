@@ -27,11 +27,49 @@ class String
 end
 
 class ConsoleInterface < DialogInterface
+	attr_accessor :color_on
 	def send msg
-		puts msg
+		str = msg
+		if(@color_on)
+			pt = /(\[).+(\])(:) (.+)/
+			md = (pt.match msg)
+
+			str = str.gsub(md[1], colorize(md[1], @colors["l_bracket"]))
+			str = str.gsub(md[2], colorize(md[2], @colors["r_bracket"]))
+			# str = str.gsub(md[3], colorize(md[3], @colors["colon"]))
+			str = str.gsub(md[4], colorize(md[4], @colors["message"]))
+		end
+		puts str
+	end
+
+	def initialize()
+		@color_on = false
+		@colors = {
+			"l_bracket" => "cyan",
+			"r_bracket" => "cyan",
+			"colon" => "yellow",
+			"message" => "red",
+		}
+	end
+
+	def colorize str, col
+		colors = {
+			"red" => str.red,
+			"green" => str.green,
+			"brown" => str.brown,
+			"blue" => str.blue,
+			"magenta" => str.magenta,
+			"cyan"  => str.cyan,
+			"gray"  => str.gray
+		}
+		return colors[col]
 	end
 
 	def recieve 
 		return gets
+	end
+
+	def color toggle
+		@color_on = toggle
 	end
 end

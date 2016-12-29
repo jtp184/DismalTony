@@ -12,3 +12,5 @@ require_relative 'queryhandler'
 #                            yyyyy  
 
 tony = VIBase.new()
+tony.interface.color_on = true
+tony.say "Hello!"
