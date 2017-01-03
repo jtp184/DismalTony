@@ -20,6 +20,10 @@ class QueryHandler
 		@list << klass
 	end
 
+	def error_out
+		return nil
+	end
+
 	def activate_handler!
 	end
 

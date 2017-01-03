@@ -9,6 +9,7 @@ auth_token = '7b56edc33f1e667929607257056b37eb'
 
 @client.account.messages.create(
   from: '+13476258669',
-  to: '+18186208290',
-  body: 'Twilio Test'
+  to: '+16176592911',
+  body: 'Hello!'
 )
+

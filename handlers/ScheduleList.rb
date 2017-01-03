@@ -6,11 +6,11 @@ class ScheduleList < QueryHandler
 		@data = {"day" => "", "event_key" => ""}
 	end
 
-	def activate_handler! query
+	def activate_handler! query, vi
 		parse query
 	end
 
-	def activate_handler query
+	def activate_handler query, vi
 		parse query
 		return "I will return people doing #{@data["event_key"]} on #{@data["day"].capitalize}."
 	end

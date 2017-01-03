@@ -15,4 +15,5 @@ tony = VIBase.new()
 # tony.interface = SMSInterface.new
 # tony.interface.destination = '+18186208290'
 tony.say "Hello!"
-tony.query "text dad saying hello"
+tony.list_handlers
+tony.query! "text 8186208290 saying hello"

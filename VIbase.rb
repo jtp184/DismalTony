@@ -36,11 +36,11 @@ class VIBase
 		end
 	end
 
-	def query!
+	def query! str
 		self.handlers.each do |handler_class|
 			handler = handler_class.new()
 			if handler.responds? str
-				handler.activate_handler! str
+				handler.activate_handler! str, self
 			else
 			end
 		end
@@ -50,7 +50,7 @@ class VIBase
 		self.handlers.each do |handler_class|
 			handler = handler_class.new()
 			if handler.responds? str
-				self.say handler.activate_handler str
+				self.say handler.activate_handler str, self
 			else
 			end
 		end
