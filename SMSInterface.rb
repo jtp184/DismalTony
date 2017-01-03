@@ -19,8 +19,4 @@ class SMSInterface < DialogInterface
 			body: msg
 			)
 	end
-
-	def recieve query
-		
-	end
 end

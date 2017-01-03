@@ -12,5 +12,7 @@ require_relative 'queryhandler'
 #                            yyyyy  
 
 tony = VIBase.new()
-tony.interface.color_on = true
+# tony.interface = SMSInterface.new
+# tony.interface.destination = '+18186208290'
 tony.say "Hello!"
+tony.query "text dad saying hello"
