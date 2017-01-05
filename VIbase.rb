@@ -1,15 +1,16 @@
 require_relative 'ConversationState'
+require 'json'
 
 class VIBase
 	attr_accessor :name
-	attr_accessor :interface
+	attr_accessor :return_interface
 	attr_accessor :emotes
 	attr_accessor :handlers
 
 	def initialize(the_name = "Tony", the_interface = ConsoleInterface.new)
 		@name = the_name
-		@interface = the_interface
-		@emotes = {'smile' => '🙂','frown' => '🙁','angry' => '😡','cheeky' => '😜','worried' => '🤕','think' => '🤔','sly' => '😏','cool' => '😎','wink' => '😉'}
+		@return_interface = the_interface
+		@emotes = JSON.load File.readlines("emojidictionary.json").join("\n")
 		@handlers = []
 		self.load_handlers
 	end
@@ -37,10 +38,25 @@ class VIBase
 	end
 
 	def query! str
+		resp = nil
 		self.handlers.each do |handler_class|
 			handler = handler_class.new()
 			if handler.responds? str
-				handler.activate_handler! str, self
+				resp = handler.activate_handler! str, self
+			else
+			end
+		end
+		if resp.nil?
+		else
+			self.say(resp.return_message)
+		end
+	end
+
+	def info_query str
+		self.handlers.each do |handler_class|
+			handler = handler_class.new()
+			if handler.responds? str and handler.responds_to? "info_handler"
+				return handler.info_handler str, self
 			else
 			end
 		end
@@ -56,12 +72,28 @@ class VIBase
 		end
 	end
 
-	def say_emote str, emo
-		interface.send(response(str, emo))		
+	def say_through interface, str
+		pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/
+		md = pat.match str
+		if str =~ pat
+			if md["emote"].nil?
+				interface.send(response(md["message"], 'smile'))
+			else
+				interface.send(response(md["message"], md["emote"]))
+			end
+		end	
 	end
 
 	def say str
-		interface.send(response(str, 'smile'))
+		pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/
+		md = pat.match str
+		if str =~ pat
+			if md["emote"].nil?
+				@return_interface.send(response(md["message"], 'smile'))
+			else
+				@return_interface.send(response(md["message"], md["emote"]))
+			end
+		end
 	end
 
 	def response str, emo

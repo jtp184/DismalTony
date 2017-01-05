@@ -1,12 +1,13 @@
+require_relative 'ConversationState'
+require_relative 'HandledResponse'
+
 class QueryHandler
 	attr_accessor :handler_name
-	attr_accessor :verbs
 	attr_accessor :patterns
 	attr_accessor :data
 
 	def initialize()
 		@handler_name = ""
-		@verbs = []
 		@patterns = []
 		@data = {}
 	end
@@ -46,11 +47,10 @@ class QueryHandler
 	def parse query
 		match_data = nil
 
-		@verbs.each_with_index do |verb, pattern_index|
+		@patterns.each do |pattern|
 			next if query.eql? ""
-			if query.downcase.include? verb
-				match_data = @patterns[pattern_index].match(query)
-			else
+			if (match_data.nil?)
+				match_data = pattern.match(query)
 			end
 		end
 		if match_data.nil?
@@ -62,13 +62,6 @@ class QueryHandler
 		end
 
 		return !(match_data.nil?)
-	end
-
-	def register_verbs
-		# TODO: Add all verbs to a registry to prevent collisions
-		self.verbs.each do |verb|
-			# Register Verb
-		end
 	end
 
 	# def from_json!(json_string)
