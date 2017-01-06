@@ -1,7 +1,7 @@
 class SayHello < QueryHandler
 	def initialize()
 		@handler_name = "say-hello"
-		@patterns = ["(?:say )?hello(?:,?(?: to (?<destination>\\d{10}|.+)))?(?:,?\\s?tony[!.]?)?"].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+		@patterns = ["\\b(?:say )?hello (?:,?(?:to (?<destination>\\d{10}|.+)))?(?:,?\\s?tony[!.]?)?"].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
 		@data = {"destination" => ""}
 		@vi_name = ""
 	end

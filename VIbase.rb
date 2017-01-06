@@ -38,17 +38,26 @@ class VIBase
 	end
 
 	def query! str
-		resp = nil
+		responded = []
+		response = nil
 		self.handlers.each do |handler_class|
 			handler = handler_class.new()
 			if handler.responds? str
-				resp = handler.activate_handler! str, self
+				responded << handler
 			else
 			end
 		end
-		if resp.nil?
-		else
+		if responded.length == 0
+			self.say("~e:frown I'm sorry, I didn't understand that!")
+		elsif responded.length == 1
+			responded.first.activate_handler! str, self
 			self.say(resp.return_message)
+		else
+			if (responded.keep_if {|e| e.handler_name.eql? "explain-handler"}).length > 0
+				ExplainHandler.new.activate_handler! str, self
+			else
+				responded.first.activate_handler! str, self
+			end
 		end
 	end
 

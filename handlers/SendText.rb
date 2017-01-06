@@ -1,7 +1,7 @@
 class SendText < QueryHandler
 	def initialize()
 		@handler_name = "send-text"
-		@patterns = ["(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)"].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+		@patterns = ["\\b(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)"].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
 		@data = {"destination" => "", "message" => ""}
 	end
 
@@ -23,6 +23,9 @@ class SendText < QueryHandler
 		end
 
 		return HandledResponse.new("Okay! I sent your message.", nil)
+	end
+
+	def explain
 	end
 
 	def activate_handler query, vi
