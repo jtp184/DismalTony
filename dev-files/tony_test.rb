@@ -12,10 +12,10 @@ require_relative 'queryhandler'
 #                            yyyyy  
 
 tony = VIBase.new()
-tony.query! "message 8185156628 saying ~e:wave Hello, Dylan! I'm Tony."
-tony.query! "message 8185156628 saying ~e:phone Currently, I am set up to send a text message to a recipient specified by phone number."
-tony.query! "message 8185156628 saying Try it out! You can say something like \"Send a message to 8186208290 saying Hello!\""
-
+# tony.query! "message 8185156628 saying ~e:wave Hello, Dylan! I'm Tony."
+# tony.query! "message 8185156628 saying ~e:phone Currently, I am set up to send a text message to a recipient specified by phone number."
+# tony.query! "message 8185156628 saying Try it out! You can say something like \"Send a message to 8186208290 saying Hello!\""
+tony.query! "hello"
 # tony.interface = SMSInterface.new
 # tony.interface.destination = '+18186208290'
 # tony.list_handlers

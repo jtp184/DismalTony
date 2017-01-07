@@ -1,3 +1,4 @@
+module Tony
 class ConversationState
 	attr_accessor :depth
 	attr_accessor :queries
@@ -9,4 +10,6 @@ class ConversationState
 	end
 
 	
+end
+
 end

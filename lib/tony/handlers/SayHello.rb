@@ -1,7 +1,7 @@
-class SayHello < QueryHandler
+class SayHello < Tony::QueryHandler
 	def initialize()
 		@handler_name = "say-hello"
-		@patterns = ["\\b(?:say )?hello (?:,?(?:to (?<destination>\\d{10}|.+)))?(?:,?\\s?tony[!.]?)?"].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+		@patterns = ["^(?:say )?hello ?(?:,?(?:to (?<destination>\\d{10}|.+)))?(?:,?\\s?tony[!.]?)?"].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
 		@data = {"destination" => ""}
 		@vi_name = ""
 	end
@@ -12,7 +12,7 @@ class SayHello < QueryHandler
 
 	def direct_message vi
 		if /\d+/.match(@data["destination"])
-			vi.say_through(SMSInterface.new(@data["destination"]), "~e:wave "+message)
+			vi.say_through(Tony::SMSInterface.new(@data["destination"]), "~e:wave "+message)
 		else
 			error_out
 		end
@@ -32,10 +32,10 @@ class SayHello < QueryHandler
 		@vi_name = vi.name
 		parse query
 		if(@data["destination"].nil?)
-			return HandledResponse.new("~e:wave "+message, nil)
+			return Tony::HandledResponse.new("~e:wave "+message, nil)
 		else
 			direct_message vi
-			return HandledResponse.new("Okay! I greeted #{@data['destination']}", nil)
+			return Tony::HandledResponse.new("Okay! I greeted #{@data['destination']}", nil)
 		end
 	end
 end

@@ -1,5 +1,5 @@
 require_relative 'dialoginterface'
-
+module Tony
 class String
 	def black;          "\e[30m#{self}\e[0m" end
 	def red;            "\e[31m#{self}\e[0m" end
@@ -72,4 +72,5 @@ class ConsoleInterface < DialogInterface
 	def color toggle
 		@color_on = toggle
 	end
+end
 end

@@ -1,4 +1,4 @@
-class ExplainSelf < QueryHandler
+class ExplainSelf < Tony::QueryHandler
 	def initialize()
 		@handler_name = "explain-self"
 		@patterns = [].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }

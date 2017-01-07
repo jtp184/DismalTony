@@ -1,7 +1,7 @@
-class SendText < QueryHandler
+class SendText < Tony::QueryHandler
 	def initialize()
 		@handler_name = "send-text"
-		@patterns = ["\\b(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)"].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+		@patterns = ["^(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)"].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
 		@data = {"destination" => "", "message" => ""}
 	end
 
@@ -17,12 +17,12 @@ class SendText < QueryHandler
 		parse query
 
 		if /\d+/.match(@data["destination"])
-			vi.say_through(SMSInterface.new(@data["destination"]), @data["message"])
+			vi.say_through(Tony::SMSInterface.new(@data["destination"]), @data["message"])
 		else
 			error_out
 		end
 
-		return HandledResponse.new("Okay! I sent your message.", nil)
+		return Tony::HandledResponse.new("Okay! I sent your message.", nil)
 	end
 
 	def explain

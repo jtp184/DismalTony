@@ -1,6 +1,7 @@
 require_relative 'ConversationState'
 require_relative 'HandledResponse'
 
+module Tony
 class QueryHandler
 	attr_accessor :handler_name
 	attr_accessor :patterns
@@ -74,4 +75,5 @@ class QueryHandler
 	# 	self.data = (unpack_data hashed["data"])
 	# 	return self
 	# end
+end
 end
