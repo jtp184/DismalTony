@@ -1,11 +1,13 @@
-class DialogInterface
-  attr_accessor :VI
+module Tony
+  class DialogInterface
+    attr_accessor :vi
 
-  def initialize(vi = nil)
-    @vi = vi
-  end
+    def initialize(vi = nil)
+      @vi = vi
+    end
 
-  def send
-    raise 'Should be overriden by child classes'
+    def send
+      raise 'Should be overriden by child classes'
+    end
   end
 end

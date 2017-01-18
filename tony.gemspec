@@ -35,6 +35,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.5'
 
   # Runtime Dependencies
-  spec.add_runtime_dependency 'json', '~> 1.8.3'
-  spec.add_runtime_dependency 'twilio-ruby', '~> 4.13.0'
+  spec.add_runtime_dependency 'json'
+  spec.add_runtime_dependency 'twilio-ruby'
 end

@@ -1,6 +1,4 @@
 require 'twilio-ruby'
-require 'tony/dialoginterface'
-
 module Tony
   class SMSInterface < DialogInterface
     attr_accessor :client

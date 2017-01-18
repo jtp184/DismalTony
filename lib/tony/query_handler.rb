@@ -1,16 +1,13 @@
-require_relative 'ConversationState'
-require_relative 'HandledResponse'
-
 module Tony
   class QueryHandler
     attr_accessor :handler_name
     attr_accessor :patterns
     attr_accessor :data
+    attr_accessor :vi
 
-    def initialize
-      @handler_name = ''
-      @patterns = []
-      @data = {}
+    def initialize(virtual)
+      @vi = virtual
+      self.handler_start
     end
 
     class << self
@@ -25,6 +22,8 @@ module Tony
     def error_out
       nil
     end
+
+    def handler_start; end
 
     def activate_handler!; end
 
@@ -44,24 +43,14 @@ module Tony
     end
 
     def parse(query)
-      match_data = nil
-
+      did = false
       @patterns.each do |pattern|
-        match_data = pattern.match(query) if match_data.nil?
+        match_data = pattern.match query
+        next if match_data.nil?
+        did = true
+        @data.merge!(match_data.named_captures) { |_k, _o, n| n}
       end
-
-      @data.merge!(match_data.named_captures) { |_k, _o, n| n }
+      return did
     end
-
-    # def from_json!(json_string)
-    #   hashed = JSON.parse(json_string)
-    #   self.handler_name = hashed['handler_name']
-    #   self.verbs = hashed['verbs']
-    #   # self.register_verbs
-    #   self.patterns = hashed['patterns']
-    #   self.patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
-    #   self.data = (unpack_data hashed['data'])
-    #   return self
-    # end
   end
 end

@@ -1,5 +1,5 @@
 class SendText < Tony::QueryHandler
-  def initialize
+  def handler_start
     @handler_name = 'send-text'
     @patterns = ['^(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)'].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
     @data = { 'destination' => '', 'message' => '' }
@@ -13,11 +13,11 @@ class SendText < Tony::QueryHandler
     '+1' + str
   end
 
-  def activate_handler!(query, vi)
+  def activate_handler!(query)
     parse query
 
     if /\d+/ =~ (@data['destination'])
-      vi.say_through(Tony::SMSInterface.new(@data['destination']), @data['message'])
+      @vi.say_through(Tony::SMSInterface.new(@data['destination']), @data['message'])
     else
       error_out
     end
@@ -27,7 +27,7 @@ class SendText < Tony::QueryHandler
 
   def explain; end
 
-  def activate_handler(query, _vi)
+  def activate_handler(query)
     parse query
     "I will message #{@data['destination']} and say \'#{@data['message']}\'"
   end
