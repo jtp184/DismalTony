@@ -6,9 +6,9 @@ module Tony
     attr_accessor :is_finished
 
     def initialize
-      @memory = Hash.new
+      @memory = {}
       @depth = 0
-      @queries = Array.new
+      @queries = []
       @is_finished = false
     end
 

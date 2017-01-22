@@ -11,6 +11,6 @@ Bundler.require(:development, :default)
 #                            yyyyy
 
 tony = Tony::VIBase.new
-tony.handler_directory = "#{Dir.pwd}/lib/tony/handlers"
-tony.load_handlers
-tony.query! 'send a text to 8186208290 saying hmm'
+tony.load_handlers! "#{Dir.pwd}/lib/tony/handlers"
+puts print tony.list_handlers
+tony.query! 'hello'

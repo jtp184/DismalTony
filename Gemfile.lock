@@ -36,7 +36,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.13)
+  bundler
   rake (~> 10.0)
   rspec (~> 3.5)
   tony!

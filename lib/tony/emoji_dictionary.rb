@@ -87,6 +87,11 @@ module Tony
       }
     end
 
+    def e_sub(str)
+        pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/
+        
+    end
+
     def to_h
       @moji
     end

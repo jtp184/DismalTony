@@ -17,7 +17,7 @@ module Tony
     def identify_user; end
 
     def list_handlers
-      @handlers.map { |e| e.new.handler_name.to_s }
+      @handlers.map { |e| e.new(self).handler_name.to_s }
     end
 
     def load_handlers_from(directory)
@@ -32,6 +32,11 @@ module Tony
 
     def load_handlers
       load_handlers_from @handler_directory
+    end
+
+    def load_handlers!(str)
+      @handler_directory = str
+      load_handlers
     end
 
     def query!(str)
@@ -75,7 +80,7 @@ module Tony
         responded << handler if handler.responds? str
       end
       if responded.length == 1
-        resp = responded.first.activate_handler str, self
+        resp = responded.first.activate_handler str
         say(resp.to_s)
       elsif responded.empty?
         say("~e:frown I'm sorry, I didn't understand that!")
