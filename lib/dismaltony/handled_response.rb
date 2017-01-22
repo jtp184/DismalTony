@@ -1,4 +1,4 @@
-module Tony
+module DismalTony
   class HandledResponse
     attr_accessor :return_message
     attr_accessor :conversation_state

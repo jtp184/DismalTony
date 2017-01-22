@@ -1,4 +1,4 @@
-class SayHello < Tony::QueryHandler
+class SayHello < DismalTony::QueryHandler
 
   def handler_start
     @handler_name = 'say-hello'
@@ -13,7 +13,7 @@ class SayHello < Tony::QueryHandler
 
   def direct_message()
     if /\d+/ =~ (@data['destination'])
-      @vi.say_through(Tony::SMSInterface.new(@data['destination']), '~e:wave ' + message)
+      @vi.say_through(DismalTony::SMSInterface.new(@data['destination']), '~e:wave ' + message)
     else
       error_out
     end
@@ -31,10 +31,10 @@ class SayHello < Tony::QueryHandler
   def activate_handler!(query)
     parse query
     if @data['destination'].nil?
-      Tony::HandledResponse.new('~e:wave ' + message, nil)
+      DismalTony::HandledResponse.new('~e:wave ' + message, nil)
     else
       direct_message
-      Tony::HandledResponse.new("Okay! I greeted #{@data['destination']}", nil)
+      DismalTony::HandledResponse.new("Okay! I greeted #{@data['destination']}", nil)
     end
   end
 end

@@ -10,7 +10,7 @@ Bundler.require(:development, :default)
 #    tttt [[[[ ]]]] nn   nn      yy
 #                            yyyyy
 
-tony = Tony::VIBase.new
-tony.load_handlers! "#{Dir.pwd}/lib/tony/handlers"
-puts print tony.list_handlers
+tony = DismalTony::VIBase.new
+tony.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
+# puts print tony.list_handlers
 tony.query! 'hello'

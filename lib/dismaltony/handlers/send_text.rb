@@ -1,4 +1,4 @@
-class SendText < Tony::QueryHandler
+class SendText < DismalTony::QueryHandler
   def handler_start
     @handler_name = 'send-text'
     @patterns = ['^(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)'].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
@@ -17,12 +17,12 @@ class SendText < Tony::QueryHandler
     parse query
 
     if /\d+/ =~ (@data['destination'])
-      @vi.say_through(Tony::SMSInterface.new(@data['destination']), @data['message'])
+      @vi.say_through(DismalTony::SMSInterface.new(@data['destination']), @data['message'])
     else
       error_out
     end
 
-    Tony::HandledResponse.new('Okay! I sent your message.', nil)
+    DismalTony::HandledResponse.new('Okay! I sent your message.', nil)
   end
 
   def explain; end

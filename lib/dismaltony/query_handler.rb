@@ -1,4 +1,4 @@
-module Tony
+module DismalTony
   class QueryHandler
     attr_accessor :handler_name
     attr_accessor :patterns

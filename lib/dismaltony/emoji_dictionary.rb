@@ -1,4 +1,4 @@
-module Tony
+module DismalTony
   class EmojiDictionary
     def initialize
       @moji = {

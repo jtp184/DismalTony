@@ -1,4 +1,4 @@
-module Tony
+module DismalTony
   class ConversationState
     attr_accessor :depth
     attr_accessor :queries

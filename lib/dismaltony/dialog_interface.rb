@@ -1,4 +1,4 @@
-module Tony
+module DismalTony
   class DialogInterface
     attr_accessor :vi
 

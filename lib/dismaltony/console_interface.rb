@@ -1,4 +1,4 @@
-module Tony
+module DismalTony
   class ConsoleInterface < DialogInterface
     attr_accessor :color_on
     def send(msg)

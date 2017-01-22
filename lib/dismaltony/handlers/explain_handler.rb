@@ -1,4 +1,4 @@
-class ExplainHandler < Tony::QueryHandler
+class ExplainHandler < DismalTony::QueryHandler
   def handler_start
     @handler_name = 'explain-handler'
     @patterns = ['^what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)'].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
@@ -8,7 +8,7 @@ class ExplainHandler < Tony::QueryHandler
   def activate_handler!(query)
     parse query
     message = vi.query(@data['second_query']).to_s
-    Tony::HandledResponse.new(message, nil)
+    DismalTony::HandledResponse.new(message, nil)
   end
 
   def activate_handler(query)

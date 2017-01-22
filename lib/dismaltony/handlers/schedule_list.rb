@@ -1,4 +1,4 @@
-class ScheduleList < Tony::QueryHandler
+class ScheduleList < DismalTony::QueryHandler
   def handler_start
     @handler_name = 'schedule-list'
     @patterns = ['^list\\s((people)|(who\\sis))\\son\\s(?<day>\\w+)\\s(?<event_key>\\w+\\??)', 'who\\sis\\sdoing\\s(?<day>\\w+)\\s(?<event_key>.+)\\?'].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
@@ -7,7 +7,7 @@ class ScheduleList < Tony::QueryHandler
 
   def activate_handler!(query)
     parse query
-    Tony::HandledResponse.new('', nil)
+    DismalTony::HandledResponse.new('', nil)
   end
 
   def activate_handler(query)

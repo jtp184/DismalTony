@@ -1,4 +1,4 @@
-module Tony
+module DismalTony
   class VIBase
     attr_accessor :name
     attr_accessor :return_interface
@@ -6,10 +6,10 @@ module Tony
     attr_accessor :handlers
     attr_accessor :handler_directory
 
-    def initialize(the_name = 'Tony', the_interface = Tony::ConsoleInterface.new)
+    def initialize(the_name = 'Tony', the_interface = DismalTony::ConsoleInterface.new)
       @name = the_name
       @return_interface = the_interface
-      @emotes = Tony::EmojiDictionary.new.to_h
+      @emotes = DismalTony::EmojiDictionary.new.to_h
       @handler_directory = '/'
       @handlers = []
     end
@@ -25,7 +25,7 @@ module Tony
       found_files.each do |file|
         load "#{directory}/#{File.basename(file)}"
       end
-      Tony::QueryHandler.list.each do |handler|
+      DismalTony::QueryHandler.list.each do |handler|
         @handlers << handler
       end
     end
@@ -97,7 +97,7 @@ module Tony
         handle = use_handler.new
         handle.data = args
       else
-        Tony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil)
+        DismalTony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil)
       end
     end
 

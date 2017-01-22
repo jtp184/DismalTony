@@ -1,5 +1,5 @@
 require 'twilio-ruby'
-module Tony
+module DismalTony
   class SMSInterface < DialogInterface
     attr_accessor :client
     attr_accessor :destination
