@@ -1,7 +1,7 @@
 class ExplainHandler < DismalTony::QueryHandler
   def handler_start
     @handler_name = 'explain-handler'
-    @patterns = ['^what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)'].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+    @patterns = ['^what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)']
     @data = { 'second_query' => '' }
   end
 

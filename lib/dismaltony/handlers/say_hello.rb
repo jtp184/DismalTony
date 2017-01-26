@@ -2,7 +2,7 @@ class SayHello < DismalTony::QueryHandler
 
   def handler_start
     @handler_name = 'say-hello'
-    @patterns = ['^(?:say )?hello ?(?:,?(?:to (?<destination>\\d{10}|.+)))?(?:,?\\s?#{@vi.name}[!.]?)?'].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+    @patterns = ['^(?:say )?hello ?(?:,?(?:to (?<destination>\\d{10}|.+)))?(?:,?\\s?#{@vi.name}[!.]?)?']
     @data = { 'destination' => '' }
   end
 

@@ -1,7 +1,7 @@
 class SendText < DismalTony::QueryHandler
   def handler_start
     @handler_name = 'send-text'
-    @patterns = ['^(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)'].map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+    @patterns = ['^(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)']
     @data = { 'destination' => '', 'message' => '' }
   end
 

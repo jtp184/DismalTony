@@ -1,3 +1,5 @@
+require 'json'
+
 module DismalTony
   class QueryHandler
     attr_accessor :handler_name
@@ -5,9 +7,16 @@ module DismalTony
     attr_accessor :data
     attr_accessor :vi
 
-    def initialize(virtual)
+    def initialize(virtual = DismalTony::VIBase.new)
       @vi = virtual
+      @patterns = []
+      @data = {}
       self.handler_start
+      @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+    end
+
+    def data_json
+      @data.to_json
     end
 
     class << self
@@ -43,14 +52,13 @@ module DismalTony
     end
 
     def parse(query)
-      did = false
+      match_data = nil
       @patterns.each do |pattern|
-        match_data = pattern.match query
+        match_data ||= pattern.match query
         next if match_data.nil?
-        did = true
-        @data.merge!(match_data.named_captures) { |_k, _o, n| n}
+        @data.merge!(match_data.named_captures) { |_k, _o, n| n} unless match_data.nil?
       end
-      return did
+      return match_data
     end
   end
 end

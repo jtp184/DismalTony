@@ -9,8 +9,8 @@ Bundler.require(:development, :default)
 #   tt    [[     ]] nn   nn  yyyyyy
 #    tttt [[[[ ]]]] nn   nn      yy
 #                            yyyyy
-
+puts
 tony = DismalTony::VIBase.new
 tony.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
 # puts print tony.list_handlers
-tony.query! 'hello'
+tony.query! 'say hello'
