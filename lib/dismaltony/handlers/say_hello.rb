@@ -19,7 +19,7 @@ class SayHello < DismalTony::QueryHandler
     end
   end
 
-  def activate_handler(query)
+  def activate_handler(query, user)
     parse query
     if @data['destination'].nil?
       "I'll greet you!"
@@ -28,7 +28,7 @@ class SayHello < DismalTony::QueryHandler
     end
   end
 
-  def activate_handler!(query)
+  def activate_handler!(query, user)
     parse query
     if @data['destination'].nil?
       DismalTony::HandledResponse.new('~e:wave ' + message, nil)

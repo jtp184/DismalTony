@@ -5,7 +5,7 @@ class ExplainSelf < DismalTony::QueryHandler
     @data = {}
   end
 
-  def activate_handler(query); end
+  def activate_handler(query, user); end
 
-  def activate_handler!(query); end
+  def activate_handler!(query, user); end
 end

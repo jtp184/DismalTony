@@ -39,7 +39,7 @@ module DismalTony
       load_handlers
     end
 
-    def query!(str)
+    def query!(str = '', the_user = DismalTony::UserIdentity.default_user)
       responded = []
 
       @handlers.each do |handler_class|
@@ -50,17 +50,21 @@ module DismalTony
         end
       end
 
+      post_handled = DismalTony::HandledResponse.new
+
       if responded.empty?
-        say("~e:frown I'm sorry, I didn't understand that!")
+        post_handled = DismalTony::HandledResponse.new "~e:frown I'm sorry, I didn't understand that!"
       elsif responded.length == 1
-        resp = responded.first.activate_handler! str
-        say(resp.to_s)
+        post_handled = responded.first.activate_handler! str, the_user
       elsif (responded.count { |e| e.handler_name.eql? 'explain-handler' }) > 0
-        ExplainHandler.new(self).activate_handler! str
+        post_handled = ExplainHandler.new(self).activate_handler! str, the_user
       else
-        puts print responded
-        responded.first.activate_handler! str
+        # puts print responded
+        post_handled = responded.first.activate_handler! str, the_user
       end
+
+      say post_handled.to_s
+      the_user.modify_state(post_handled.conversation_state)
     end
 
     def info_query(str)

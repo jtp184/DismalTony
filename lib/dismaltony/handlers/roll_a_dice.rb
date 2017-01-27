@@ -5,7 +5,7 @@ class RollADice < DismalTony::QueryHandler
     @subhandlers = {'get_sides' => /\d+/}
   end
 
-  def activate_handler(query)
+  def activate_handler(query, user)
   	md = parse query
   	if md['sides'].nil?
   		"I'll figure out how many sides you want, then roll a dice!"
@@ -23,10 +23,10 @@ class RollADice < DismalTony::QueryHandler
     end
   end
 
-  def activate_handler!(query)
+  def activate_handler!(query, user)
   	md = parse query
   	if md['sides'].nil?
-  		DismalTony::HandledResponse.then_do('get_sides', '~e:think Okay! Just tell me how many sides you want on it.')
+  		DismalTony::HandledResponse.then_do(self, 'get_sides', '~e:think Okay! Just tell me how many sides you want on it.')
   	else
       result = 0
       case @data['count']

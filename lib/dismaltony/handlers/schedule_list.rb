@@ -5,12 +5,12 @@ class ScheduleList < DismalTony::QueryHandler
     @data = { 'day' => '', 'event_key' => '' }
   end
 
-  def activate_handler!(query)
+  def activate_handler!(query, user)
     parse query
     DismalTony::HandledResponse.new('', nil)
   end
 
-  def activate_handler(query)
+  def activate_handler(query, user)
     parse query
     "I will return people doing #{@data['event_key']} on #{@data['day'].capitalize}."
   end

@@ -5,13 +5,13 @@ class ExplainHandler < DismalTony::QueryHandler
     @data = { 'second_query' => '' }
   end
 
-  def activate_handler!(query)
+  def activate_handler!(query, user)
     parse query
     message = vi.query(@data['second_query']).to_s
     DismalTony::HandledResponse.new(message, nil)
   end
 
-  def activate_handler(query)
+  def activate_handler(query, user)
     parse query
     "I will explain what I'd do if you asked me \'#{@data['second_query']}\'"
   end

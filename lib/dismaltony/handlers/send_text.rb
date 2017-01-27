@@ -13,7 +13,7 @@ class SendText < DismalTony::QueryHandler
     '+1' + str
   end
 
-  def activate_handler!(query)
+  def activate_handler!(query, user)
     parse query
 
     if /\d+/ =~ (@data['destination'])
@@ -27,7 +27,7 @@ class SendText < DismalTony::QueryHandler
 
   def explain; end
 
-  def activate_handler(query)
+  def activate_handler(query, user)
     parse query
     "I will message #{@data['destination']} and say \'#{@data['message']}\'"
   end
