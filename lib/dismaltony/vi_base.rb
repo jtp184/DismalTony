@@ -41,30 +41,38 @@ module DismalTony
 
     def query!(str = '', the_user = DismalTony::UserIdentity.default_user)
       responded = []
+      post_handled = DismalTony::HandledResponse.new
 
-      @handlers.each do |handler_class|
-        handler = handler_class.new(self)
-        if handler.responds? str
-          responded << handler
+      if the_user.conversation_state.return_to_handler
+        handle = (@handlers.select { |h| h.new.handler_name == "#{the_user.conversation_state.return_to_handler}"}).first.new(self)
+        handle.data = the_user.conversation_state.data_packet
+        post_handled = handle.method(the_user.conversation_state.return_to_method.to_sym).call(str, the_user)
+      elsif the_user.conversation_state.use_next
+
+      else
+        @handlers.each do |handler_class|
+          handler = handler_class.new(self)
+          if handler.responds? str
+            responded << handler
           # puts 'handled by #{handler.handler_name}'
         end
       end
 
-      post_handled = DismalTony::HandledResponse.new
-
       if responded.empty?
-        post_handled = DismalTony::HandledResponse.new "~e:frown I'm sorry, I didn't understand that!"
+        post_handled = DismalTony::HandledResponse.finish "~e:frown I'm sorry, I didn't understand that!"
       elsif responded.length == 1
         post_handled = responded.first.activate_handler! str, the_user
       elsif (responded.count { |e| e.handler_name.eql? 'explain-handler' }) > 0
         post_handled = ExplainHandler.new(self).activate_handler! str, the_user
       else
-        # puts print responded
-        post_handled = responded.first.activate_handler! str, the_user
+          # puts print responded
+          post_handled = responded.first.activate_handler! str, the_user
+        end
       end
-
       say post_handled.to_s
+      post_handled.conversation_state.from_h! ({:the_user => the_user, :last_recieved_time => Time.now})
       the_user.modify_state(post_handled.conversation_state)
+      post_handled
     end
 
     def info_query(str)
@@ -75,22 +83,25 @@ module DismalTony
         end
       end
     end
-
-    def query(str)
+    
+    def query(str, the_user)
       responded = []
-      response = nil
+      post_handled = DismalTony::HandledResponse.new
+
       handlers.each do |handler_class|
         handler = handler_class.new(self)
         responded << handler if handler.responds? str
       end
+
       if responded.length == 1
-        resp = responded.first.activate_handler str
-        say(resp.to_s)
+        post_handled = DismalTony::HandledResponse.finish(responded.first.activate_handler( str, the_user))
       elsif responded.empty?
-        say("~e:frown I'm sorry, I didn't understand that!")
+        post_handled = DismalTony::HandledResponse.finish("~e:frown I'm sorry, I didn't understand that!")
       else
-        responded.first.activate_handler str
+        post_handled = DismalTony::HandledResponse.finish(responded.first.activate_handler( str, the_user))
       end
+      
+      return post_handled
     end
 
     def quick_handle(qry = '', args = {})
@@ -98,7 +109,7 @@ module DismalTony
 
       case use_handler.nil?
       when false
-        handle = use_handler.new
+        handle = use_handler.new(self)
         handle.data = args
       else
         DismalTony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil)

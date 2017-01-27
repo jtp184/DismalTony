@@ -9,13 +9,31 @@ Bundler.require(:development, :default)
 #   tt    [[     ]] nn   nn  yyyyyy
 #    tttt [[[[ ]]]] nn   nn      yy
 #                            yyyyy
-ident = DismalTony::UserIdentity.new
-ident['first_name'] = 'Justin'
-ident['last_name'] = 'Piotroski'
-ident['nickname'] = 'Justin'
+@laptop_emoji = DismalTony::EmojiDictionary.new.to_h['laptop']
+@ident = DismalTony::UserIdentity.new
+@ident['first_name'] = 'Justin'
+@ident['last_name'] = 'Piotroski'
+@ident['nickname'] = 'Justin'
 
+@tony = DismalTony::VIBase.new
+@tony.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
+# @tony.load_handlers! "/Users/justinpiotroski/Documents/Work/Code/Ruby/dismaltony/dev-files/MultiTest/handlers"
 
-tony = DismalTony::VIBase.new
-tony.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
-# puts print tony.list_handlers
-tony.query! 'say hello', ident
+def qp(str, debug = false)
+  puts "[#{@laptop_emoji}]: #{str}"
+  puts " #{@ident.conversation_state.inspect}" if debug
+  @tony.query! str, @ident
+  print " #{@ident.conversation_state.inspect}" if debug
+  puts
+end
+
+# 10.times{
+#   # print "[#{@laptop_emoji}]: "
+#   # qp gets
+# }
+# qp 'Hello'
+# qp 'Send a text'
+# qp '8454890371'
+# qp 'Hello!'
+
+qp 'roll a d20'

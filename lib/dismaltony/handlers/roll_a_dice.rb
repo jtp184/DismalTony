@@ -1,24 +1,28 @@
 class RollADice < DismalTony::QueryHandler
   def handler_start
     @handler_name = 'roll-dice'
-    @patterns = [/roll (?:a|(?<count>\d+) )(?:(?<sides>\d+) sided)?(?: dice)?(?:D(?<sides>\d))?/]
+    @patterns = [/roll (?:a|(?<count>\d+)) ?(?:(?<sides>\d+) sided)?(?: dice)?(?:d(?<sides>\d+))?/i]
     @subhandlers = {'get_sides' => /\d+/}
   end
 
   def activate_handler(query, user)
   	md = parse query
-  	if md['sides'].nil?
+    if md['count'].nil? && md['sides'].nil?
+      "I'll figure out how many sides you want, then roll a dice!"
+    elsif md['sides'].nil?
   		"I'll figure out how many sides you want, then roll a dice!"
-  	else
+  	elsif md['count']
+      "I'll roll #{@data['count']} #{@data['sides']} sided dice!"
+    else
   		"I'll roll a #{@data['sides']} sided dice!"
   	end
   	
   end
 
-  def get_sides(query)
-    if query =~ @subhandlers['sides']
-      @data['sides'] = query
-      result = (0..sides).to_a.sample
+  def get_sides(query, user)
+    if query =~ @subhandlers['get_sides']
+      @data['sides'] = query.to_i
+      result = (1..@data['sides']).to_a.sample
       DismalTony::HandledResponse.finish "~e:dice Okay! The result is: #{result}!"
     end
   end
@@ -31,11 +35,11 @@ class RollADice < DismalTony::QueryHandler
       result = 0
       case @data['count']
       when nil
-        result = (0..@data['sides']).to_a.sample
+        result = (1..(@data['sides'].to_i)).to_a.sample
         DismalTony::HandledResponse.finish "~e:dice Okay! The result is: #{result}!"
       else
-        @data['count'].times {
-          result += (0..@data['sides']).to_a.sample
+        @data['count'].to_i.times {
+          result += (1..@data['sides'].to_i).to_a.sample
         }
         DismalTony::HandledResponse.finish "~e:dice Okay! The result is: #{result}!"
       end

@@ -6,14 +6,14 @@ class SayHello < DismalTony::QueryHandler
     @data = { 'destination' => '' }
   end
 
-  def message
-    "Hello! I'm #{@vi.name}. I'm a virtual intelligence " \
+  def message(user)
+    "Hello, #{user['nickname']}! I'm #{@vi.name}. I'm a virtual intelligence " \
     'designed for easy execution and automation of tasks.'
   end
 
-  def direct_message()
+  def direct_message(user)
     if /\d+/ =~ (@data['destination'])
-      @vi.say_through(DismalTony::SMSInterface.new(@data['destination']), '~e:wave ' + message)
+      @vi.say_through(DismalTony::SMSInterface.new(@data['destination']), '~e:wave ' + message(user))
     else
       error_out
     end
@@ -31,10 +31,10 @@ class SayHello < DismalTony::QueryHandler
   def activate_handler!(query, user)
     parse query
     if @data['destination'].nil?
-      DismalTony::HandledResponse.new('~e:wave ' + message, nil)
+      DismalTony::HandledResponse.finish('~e:wave ' + message(user))
     else
-      direct_message
-      DismalTony::HandledResponse.new("Okay! I greeted #{@data['destination']}", nil)
+      direct_message(user)
+      DismalTony::HandledResponse.finish("Okay! I greeted #{@data['destination']}")
     end
   end
 end

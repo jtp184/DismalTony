@@ -15,6 +15,7 @@ module DismalTony
       @return_to_handler = args[:return_to_handler]
       @return_to_method = args[:return_to_method]
       @the_user = args[:the_user]
+      @data_packet = args[:data_packet]
     end
 
     def idle?
@@ -34,7 +35,7 @@ module DismalTony
     def to_h
       the_hash = {}
       self.instance_variables.each do |var|
-        next if var == :@the_user
+        # next if var == :@the_user
         var = ((var.to_s).gsub(/\@(.+)/) { |match| $1 }).to_sym
         the_hash[var] = self.method(var).call
       end
@@ -51,13 +52,13 @@ module DismalTony
       handle.method(@return_to_method.to_sym).call(query)
     end
 
-    def +(other)
-      raise ArgumentError, "Can only modify with another ConversationState (not a #{other.class})" unless other.is_a? DismalTony::ConversationState
-      current_state = self.to_h
-      new_state = other.to_h
-      combine = current_state.merge(new_state) { |key, old_value, new_value| new_value }
-      self
-    end
+    # def +(other)
+    #   raise ArgumentError, "Can only modify with another ConversationState (not a #{other.class})" unless other.is_a? DismalTony::ConversationState
+    #   current_state = self.to_h
+    #   new_state = other.to_h
+    #   combine = current_state.merge(new_state) { |key, old_value, new_value| new_value }
+    #   self.from_h! combine
+    # end
 
   end
 end

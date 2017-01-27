@@ -1,6 +1,7 @@
 module DismalTony
 	class UserIdentity
 		attr_accessor :user_data
+		attr_accessor :conversation_state
 
 		def self.default_user
 			ident = DismalTony::UserIdentity.new
@@ -16,7 +17,7 @@ module DismalTony
 
 		def initialize()
 			@user_data = {}
-			@conversation_state = DismalTony::ConversationState.new
+			@conversation_state = DismalTony::ConversationState.new(:is_idle => true, :the_user => self)
 		end
 
 		def[]=(left, right)
@@ -28,7 +29,7 @@ module DismalTony
 		end
 
 		def modify_state(new_state)
-			@conversation_state += new_state
+			@conversation_state.from_h! new_state.to_h
 		end
 	end
 end

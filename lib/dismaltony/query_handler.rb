@@ -12,7 +12,7 @@ module DismalTony
       @patterns = []
       @data = {}
       self.handler_start
-      @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) }
+      @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
     end
 
     def data_json
