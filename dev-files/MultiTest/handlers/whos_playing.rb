@@ -18,6 +18,4 @@ class WhosPlaying < DismalTony::QueryHandler
       resp_string += "\n"
     end
   end
-
-
 end
