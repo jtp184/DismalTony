@@ -1,4 +1,4 @@
-Dir.chdir("..")
+# Dir.chdir("..")
 
 require 'bundler'
 Bundler.require(:development, :default)
@@ -20,20 +20,20 @@ Bundler.require(:development, :default)
 # @tony.load_handlers! "/Users/justinpiotroski/Documents/Work/Code/Ruby/dismaltony/dev-files/MultiTest/handlers"
 
 def qp(str, debug = false)
-  puts "[#{@laptop_emoji}]: #{str}"
+  # puts "[  #{@laptop_emoji}  ]: #{str}"
   puts " #{@ident.conversation_state.inspect}" if debug
   @tony.query! str, @ident
   print " #{@ident.conversation_state.inspect}" if debug
   puts
 end
 
-# 10.times{
-#   # print "[#{@laptop_emoji}]: "
-#   # qp gets
-# }
+10.times{
+  print "[ #{@laptop_emoji}  ]: "
+  qp gets
+}
 # qp 'Hello'
 # qp 'Send a text'
 # qp '8454890371'
 # qp 'Hello!'
 
-qp 'roll a d20'
+# qp 'roll a d20' 

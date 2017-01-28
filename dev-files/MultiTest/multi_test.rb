@@ -6,11 +6,6 @@ Bundler.require(:development, :default)
 # get '/start' do
 $database = SimpleDatabase.new
 $database.add_table(:users)
-# justin = DismalTony::UserIdentity.new
-# justin['first_name'] = 'Justin'
-# justin['phone_number'] = '+18186208290'
-
-# $database.insert(:users, justin)
 
 $tony = DismalTony::VIBase.new
 $tony.load_handlers! "/Users/justinpiotroski/Documents/Work/Code/Ruby/dismaltony/dev-files/MultiTest/handlers"

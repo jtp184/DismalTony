@@ -38,10 +38,11 @@ class RollADice < DismalTony::QueryHandler
         result = (1..(@data['sides'].to_i)).to_a.sample
         DismalTony::HandledResponse.finish "~e:dice Okay! The result is: #{result}!"
       else
+        rolls = []
         @data['count'].to_i.times {
-          result += (1..@data['sides'].to_i).to_a.sample
+          rolls << (1..@data['sides'].to_i).to_a.sample
         }
-        DismalTony::HandledResponse.finish "~e:dice Okay! The result is: #{result}!"
+        DismalTony::HandledResponse.finish "~e:dice Okay! The result is: #{rolls.join(', ')}!"
       end
     end
   end
