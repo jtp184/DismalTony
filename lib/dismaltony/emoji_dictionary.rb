@@ -1,5 +1,6 @@
 module DismalTony
   class EmojiDictionary
+    attr_accessor :moji
     def initialize
       @moji = {
         '0' => '0️⃣',
@@ -89,8 +90,11 @@ module DismalTony
     end
 
     def e_sub(str)
-        pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/
-        
+        pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/  
+    end
+
+    def[](search)
+        @moji[search]
     end
 
     def to_h

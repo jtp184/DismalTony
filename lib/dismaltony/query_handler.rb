@@ -51,6 +51,18 @@ module DismalTony
       parse(query)
     end
 
+    def set_value(index, value)
+      @data[index] = value
+    end
+
+    def []=(left, right)
+      @data[left] = right
+    end
+
+    def [](value)
+      @data[value]
+    end
+
     def parse(query)
       match_data = nil
       @patterns.each do |pattern|

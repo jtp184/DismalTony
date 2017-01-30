@@ -17,7 +17,7 @@ module DismalTony
 
 		def initialize()
 			@user_data = {}
-			@conversation_state = DismalTony::ConversationState.new(:is_idle => true, :the_user => self)
+			@conversation_state = DismalTony::ConversationState.new(:is_idle => true, :user_identity => self)
 		end
 
 		def[]=(left, right)

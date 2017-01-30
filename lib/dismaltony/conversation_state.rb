@@ -1,20 +1,22 @@
 module DismalTony
   class ConversationState
-    attr_accessor :the_user
+    attr_accessor :user_identity
     attr_accessor :last_recieved_time
     attr_accessor :is_idle
     attr_accessor :use_next
     attr_accessor :return_to_handler
     attr_accessor :return_to_method
+    attr_accessor :return_to_args
     attr_accessor :data_packet
 
     def initialize(**args)
       @last_recieved_time = args[:last_recieved_time]
       @is_idle = args[:is_idle]
       @use_next = args[:use_next]
+      @return_to_args = args[:return_to_args]
       @return_to_handler = args[:return_to_handler]
       @return_to_method = args[:return_to_method]
-      @the_user = args[:the_user]
+      @user_identity = args[:user_identity]
       @data_packet = args[:data_packet]
     end
 
@@ -35,7 +37,7 @@ module DismalTony
     def to_h
       the_hash = {}
       self.instance_variables.each do |var|
-        # next if var == :@the_user
+        # next if var == :@user_identity
         var = ((var.to_s).gsub(/\@(.+)/) { |match| $1 }).to_sym
         the_hash[var] = self.method(var).call
       end
