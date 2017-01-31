@@ -90,7 +90,9 @@ module DismalTony
     end
 
     def e_sub(str)
-        pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/  
+        pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/ 
+        md = pat.match str
+        "[#{md['emote']}]: #{md['message']}" 
     end
 
     def[](search)
