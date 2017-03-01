@@ -73,7 +73,7 @@ module DismalTony
           caps = match_data.named_captures
           @data.merge!(caps) { |_k, _o, n| n} unless match_data.nil?
         rescue Exception => e #on the off chance named captures doesn't work? (Found on Heroku)
-          caps = = {}
+          caps = {}
           match_data.names.each do |name|
             caps[name] = match_data[name]
           end
