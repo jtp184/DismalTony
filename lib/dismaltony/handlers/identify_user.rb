@@ -1,7 +1,7 @@
 class IdentifyUser < DismalTony::QueryHandler
 	def handler_start
 		@handler_name = 'identify-user'
-		@patterns = ["(?<whoami>who am i\??)|(?<name>what(?: [i\'])?s my name\??)"]
+		@patterns = [/(?<whoami>who am i\??)|(?<name>what(?: [i\'])?s my name\??)/]
 	end
 
 	def activate_handler!(query, user)
