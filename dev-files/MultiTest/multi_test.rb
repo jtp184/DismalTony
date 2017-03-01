@@ -8,7 +8,7 @@ $database = SimpleDatabase.new
 $database.add_table(:users)
 
 $tony = DismalTony::VIBase.new
-$tony.load_handlers! "/Users/justinpiotroski/Documents/Work/Code/Ruby/dismaltony/dev-files/MultiTest/handlers"
+$tony.load_handlers! "/.code/Ruby/dismaltony/dev-files/MultiTest/handlers"
 
 # end
 

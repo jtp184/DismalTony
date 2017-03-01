@@ -9,7 +9,7 @@ Bundler.require(:development, :default)
 #   tt    [[     ]] nn   nn  yyyyyy
 #    tttt [[[[ ]]]] nn   nn      yy
 #                            yyyyy
-@laptop_emoji = DismalTony::EmojiDictionary.new['laptop']
+@laptop_emoji = DismalTony::EmojiDictionary['laptop']
 @ident = DismalTony::UserIdentity.new
 @ident['first_name'] = 'Justin'
 @ident['last_name'] = 'Piotroski'

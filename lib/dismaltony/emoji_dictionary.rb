@@ -1,8 +1,6 @@
 module DismalTony
   class EmojiDictionary
-    attr_accessor :moji
-    def initialize
-      @moji = {
+    @@emoji_array = {
         '0' => '0️⃣',
         '1' => '1️⃣',
         '10' => '🔟',
@@ -85,22 +83,28 @@ module DismalTony
         'wave' => '👋',
         'wink' => '😉',
         'worried' => '🤕',
-        'zzz' => '💤'
+        'zzz' => '💤'   
       }
+    
+    def self.[](search)
+        @@emoji_array[search]
+    end
+
+    def self.to_h
+        @@emoji_array
+    end
+  end
+  class EmojiDictionary
+    attr_accessor :moji
+
+    def initialize
+        @moji = @@emoji_array  
     end
 
     def e_sub(str)
         pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/ 
         md = pat.match str
         "[#{md['emote']}]: #{md['message']}" 
-    end
-
-    def[](search)
-        @moji[search]
-    end
-
-    def to_h
-      @moji
     end
   end
 end

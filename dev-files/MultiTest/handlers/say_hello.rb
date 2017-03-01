@@ -7,8 +7,8 @@ class SayHello < DismalTony::QueryHandler
   def get_name(query, user)
     @data['name'] = query
     user['first_name'] = query
-    # @vi.say("~e:thumbsup Awesome! Okay, here's what you can do")
-    # @vi.say("~e:ticket You can say something like \"Give Beth 10 points\" and it will give them to her")
+    @vi.say("~e:thumbsup Awesome! Okay, here's what you can do")
+    @vi.say("~e:ticket You can say something like \"Give Beth 10 points\" and it will give them to her")
     DismalTony::HandledResponse.finish("~e:think You can say something like \"How many points does Beth have?\" and I'll tell you!")
   end
 

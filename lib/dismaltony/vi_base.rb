@@ -9,7 +9,6 @@ module DismalTony
     def initialize(the_name = 'Tony', the_interface = DismalTony::ConsoleInterface.new)
       @name = the_name
       @return_interface = the_interface
-      @emotes = DismalTony::EmojiDictionary.new.to_h
       @handler_directory = '/'
       @handlers = []
     end
@@ -142,7 +141,7 @@ module DismalTony
     end
 
     def response(str, emo)
-      "[#{@emotes[emo]}]" + ": #{str}"
+      "[#{DismalTony::EmojiDictionary[emo]}]" + ": #{str}"
     end
   end
 end

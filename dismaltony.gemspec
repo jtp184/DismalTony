@@ -33,8 +33,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.5'
-  # spec.add_development_dependency 'puma'
-  # spec.add_development_dependency 'sinatra'
+  spec.add_development_dependency 'puma'
+  spec.add_development_dependency 'sinatra'
 
   # Runtime Dependencies
   spec.add_runtime_dependency 'json'
