@@ -68,7 +68,18 @@ module DismalTony
       @patterns.each do |pattern|
         match_data ||= pattern.match query
         next if match_data.nil?
-        @data.merge!(match_data.named_captures) { |_k, _o, n| n} unless match_data.nil?
+
+        begin
+          caps = match_data.named_captures
+          @data.merge!(caps) { |_k, _o, n| n} unless match_data.nil?
+        rescue Exception => e #on the off chance named captures doesn't work? (Found on Heroku)
+          caps = = {}
+          match_data.names.each do |name|
+            caps[name] = match_data[name]
+          end
+          @data.merge!(caps) { |_k, _o, n| n} unless match_data.nil?
+        end
+
       end
       return match_data
     end
