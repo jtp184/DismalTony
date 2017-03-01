@@ -31,7 +31,6 @@ end
 #   print "[ #{@laptop_emoji}  ]: "
 #   qp gets
 # }
-qp 'list who is on Friday Lunch'
 # qp 'Send a text'
 # qp '8454890371'
 # qp 'Hello!'
