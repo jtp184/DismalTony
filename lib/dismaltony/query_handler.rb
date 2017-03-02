@@ -87,26 +87,24 @@ module DismalTony
     end
   end
 
-  class QueryHandler
-    def self.quick_response(rxp = Regexp.new('[^.]'), str = '')
-      klass = Class.new(DismalTony::QueryHandler) do
-        def handler_start
-        end
+  class QuickHandler < QueryHandler
+    def self.make(rxp = Regexp.new('[^.]'), str = '')
+      @patterns = [rxp]
+      @handler_name = rxp.to_s
+      @response = str
+    end
 
-        def activate_handler(query, user)
-          "I'll reply \"#{@response}\""
-        end
+    def initialize(virtual)
+      super.initialize(virtual)
+    end
 
-        def activate_handler!(query, user)
-          DismalTony::HandledResponse.finish(response)
-        end
-      end
+    def activate_handler(query, user)
+      "I'll reply \"#{@response}\""
+    end
 
-      # klass.handler_name = rxp.to_s
-      # klass.patterns = [rxp]
-      # klass.response = str
-
-      return klass
+    def activate_handler!(query, user)
+      DismalTony::HandledResponse.finish(response)
     end
   end
+
 end
