@@ -31,7 +31,7 @@ module DismalTony
     end
 
     def from_h!(the_hash)
-      the_hash.each_pair { |key, value| self.method("#{key}=").call(value) }
+      the_hash.each_pair { |key, value| self.method("#{key}=".freeze).call(value) }
     end
 
     def to_h
