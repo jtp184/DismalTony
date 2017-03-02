@@ -1,4 +1,5 @@
 require 'dismaltony/version'
+require 'dismaltony/formatter/formatter'
 require 'dismaltony/dialog_interface'
 require 'dismaltony/console_interface'
 require 'dismaltony/sms_interface'

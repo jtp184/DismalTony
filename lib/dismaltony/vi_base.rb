@@ -6,10 +6,10 @@ module DismalTony
     attr_accessor :handlers
     attr_accessor :handler_directory
 
-    def initialize(the_name = 'Tony', the_interface = DismalTony::ConsoleInterface.new)
-      @name = the_name
-      @return_interface = the_interface
-      @handler_directory = '/'
+    def initialize(**opts)
+      @name = (opts[:name] || "Tony".freeze)
+      @return_interface = (opts[:the_interface].new(self) || DismalTony::ConsoleInterface.new(self))
+      @handler_directory = (opts[:handler_directory] || '/')
       @handlers = []
     end
 
@@ -74,7 +74,7 @@ module DismalTony
           post_handled = responded.first.activate_handler! str, user_identity
         end
       end
-      say post_handled.to_s
+      say_opts @return_interface, post_handled.to_s, post_handled.format
       post_handled.conversation_state.from_h! ({:user_identity => user_identity, :last_recieved_time => Time.now})
       user_identity.modify_state(post_handled.conversation_state)
       post_handled
@@ -122,26 +122,17 @@ module DismalTony
     end
 
     def say_through(interface, str)
-      pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/
-      md = pat.match str
-      return interface.send(response(md['message'], md['emote'])) unless md.named_captures['emote'].nil?
-      interface.send(response(md['message'], 'smile'))
+      interface.send(Formatter::Printer.format(str))
+    end
+
+    def say_opts(interface, str, opts)
+      interface.send(Formatter::Printer.format(str, opts))
     end
 
     def say(str)
-      pat = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/
-      md = pat.match str
-      if str =~ pat
-        if md['emote'].nil?
-          @return_interface.send(response(md['message'], 'smile'))
-        else
-          @return_interface.send(response(md['message'], md['emote']))
-        end
-      end
+      @return_interface.send(Formatter::Printer.format(str))
     end
 
-    def response(str, emo)
-      "[#{DismalTony::EmojiDictionary[emo]}]" + ": #{str}"
-    end
+    alias_method :say_back, :say
   end
 end
