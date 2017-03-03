@@ -41,7 +41,7 @@ module DismalTony
           "\e[31m#{txt}\e[0m"
         when :green
           "\e[32m#{txt}\e[0m"
-        when :brown
+        when :yellow
           "\e[33m#{txt}\e[0m"
         when :blue
           "\e[34m#{txt}\e[0m"
@@ -57,7 +57,7 @@ module DismalTony
           "\e[41m#{txt}\e[0m"
         when :bg_green
           "\e[42m#{txt}\e[0m"
-        when :bg_brown
+        when :bg_yellow
           "\e[43m#{txt}\e[0m"
         when :bg_blue
           "\e[44m#{txt}\e[0m"

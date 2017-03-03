@@ -27,8 +27,22 @@ def qp(str, debug = false)
 	puts
 end
 
-qp "setup", true
-qp "Justin", true
+
+boot = <<-DOC
+  tt    [[[[ ]]]]
+  tt    [[     ]] nn nnn  yy   yy
+  tttt  [[     ]] nnn  nn yy   yy
+  tt    [[     ]] nn   nn  yyyyyy
+   tttt [[[[ ]]]] nn   nn      yy
+                           yyyyy
+DOC
+
+boot.split("\n").each do |line|
+	puts DismalTony::Formatter::Printer.format(line, {:color => :gray, :icon => false})
+end
+
+# qp "setup", true
+# qp "Justin", true
 # qp "hello", true
 
 # 10.times{
