@@ -15,8 +15,8 @@ Bundler.require(:development, :default)
 # @ident['last_name'] = 'Piotroski'
 # @ident['nickname'] = 'Justin'
 
-puts @tony = DismalTony::VIBase.new
-puts @tony.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
+@tony = DismalTony::VIBase.new
+@tony.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
 # @tony.load_handlers! "/Users/justinpiotroski/Documents/Work/Code/Ruby/dismaltony/dev-files/MultiTest/handlers"
 
 def qp(str, debug = false)
