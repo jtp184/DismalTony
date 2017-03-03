@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dismaltony (0.2.4)
+    dismaltony (0.3.0)
       duration
       json
       twilio-ruby

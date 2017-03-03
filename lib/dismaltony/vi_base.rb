@@ -8,9 +8,14 @@ module DismalTony
 
     def initialize(**opts)
       @name = (opts[:name] || "Tony".freeze)
-      @return_interface = (opts[:the_interface].new(self) || DismalTony::ConsoleInterface.new(self))
+      if opts[:return_interface]
+        @return_interface = opts[:return_interface].new
+      else
+        @return_interface = (DismalTony::ConsoleInterface.new(self))
+      end
       @handler_directory = (opts[:handler_directory] || '/')
       @handlers = []
+      
     end
 
     def identify_user; end
