@@ -1,4 +1,4 @@
-class ScheduleList < DismalTony::QueryHandler
+DismalTony.create_handler do
   def handler_start
     @handler_name = 'schedule-list'
     @patterns = [/list\s(?:people)? ?(?:who)? ?(?:is|are) on (?<day>\w+) (?<event_key>\w+)/, /who\\sis\\sdoing\\s(?<day>\\w+)\\s(?<event_key>.+)\\?/]

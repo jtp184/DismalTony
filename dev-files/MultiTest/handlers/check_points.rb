@@ -1,4 +1,4 @@
-class CheckPoints < DismalTony::QueryHandler
+DismalTony.create_handler do
 	 def handler_start
       @handler_name = 'check-points'
       @patterns = [/how many points does (?<person>\w+) have\??/]

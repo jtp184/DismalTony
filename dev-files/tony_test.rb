@@ -27,10 +27,9 @@ def qp(str, debug = false)
 	puts
 end
 
-qp "setup", true
-qp "Justin", true
 
-@patterns = [/(begin|setup|start)/i]
+puts print @tony.handlers
+
 # qp "hello", true
 
 # 10.times{

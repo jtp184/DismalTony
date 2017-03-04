@@ -1,4 +1,4 @@
-class SayHello < DismalTony::QueryHandler
+DismalTony.create_handler do
   def handler_start
     @handler_name = 'say-hello'
     @patterns = ["hello"]

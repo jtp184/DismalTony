@@ -2,17 +2,6 @@ require 'json'
 
 module DismalTony
   class QueryHandler
-    class << self
-      attr_reader :list
-    end
-    @list = []
-
-    def self.inherited(klass)
-      @list << klass
-    end
-  end
-
-  class QueryHandler
     attr_accessor :handler_name
     attr_accessor :patterns
     attr_accessor :data
@@ -86,25 +75,4 @@ module DismalTony
       return match_data
     end
   end
-
-  class QuickHandler < QueryHandler
-    def self.make(rxp = Regexp.new('[^.]'), str = '')
-      @patterns = [rxp]
-      @handler_name = rxp.to_s
-      @response = str
-    end
-
-    def initialize(virtual)
-      super.initialize(virtual)
-    end
-
-    def activate_handler(query, user)
-      "I'll reply \"#{@response}\""
-    end
-
-    def activate_handler!(query, user)
-      DismalTony::HandledResponse.finish(response)
-    end
-  end
-
 end

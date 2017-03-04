@@ -1,4 +1,4 @@
-class WhosPlaying < DismalTony::QueryHandler
+DismalTony.create_handler do
   def handler_start
     @handler_name = 'whos-playing'
     @patterns = [/(?:who's|who is|whos) playing\??/]

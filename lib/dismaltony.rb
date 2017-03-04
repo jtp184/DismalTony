@@ -8,9 +8,13 @@ require 'dismaltony/conversation_state'
 require 'dismaltony/user_identity'
 require 'dismaltony/handled_response'
 require 'dismaltony/query_handler'
+require 'dismaltony/handler_registry'
 require 'dismaltony/vi_base'
 
 module DismalTony
-  # Your code goes here...
+  def self.create_handler(sc = DismalTony::QueryHandler, &block)
+  	c = Class.new(sc, &block)
+  	DismalTony::HandlerRegistry.register(c)  	
+  end
 end
 #

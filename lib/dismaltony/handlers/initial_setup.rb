@@ -1,4 +1,4 @@
-class InitialSetup < DismalTony::QueryHandler
+DismalTony.create_handler do
   def handler_start
     @handler_name = 'initial-setup'
     @patterns = [/(begin|setup|start)/i]

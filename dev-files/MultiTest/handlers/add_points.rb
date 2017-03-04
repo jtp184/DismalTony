@@ -1,4 +1,4 @@
-class AddPoints < DismalTony::QueryHandler
+DismalTony.create_handler do
     def handler_start
       @handler_name = 'add-points'
       # @patterns = ["(?:(?:give)|(?:add)) (?<who>\w+)? ?(?<points>\d+) points(?: to (?<who>\w+))?"]
