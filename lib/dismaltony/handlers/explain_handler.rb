@@ -1,4 +1,4 @@
-class ExplainHandler < DismalTony::QueryHandler
+DismalTony.create_handler do
   def handler_start
     @handler_name = 'explain-handler'
     @patterns = ['^what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)']

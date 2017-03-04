@@ -19,15 +19,6 @@ module DismalTony
       @data.to_json
     end
 
-    class << self
-      attr_reader :list
-    end
-    @list = []
-
-    def self.inherited(klass)
-      @list << klass
-    end
-
     def error_out
       nil
     end

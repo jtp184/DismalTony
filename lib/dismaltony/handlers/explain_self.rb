@@ -1,4 +1,4 @@
-class ExplainSelf < DismalTony::QueryHandler
+DismalTony.create_handler do
   def handler_start
     @handler_name = 'explain-self'
     @patterns = []

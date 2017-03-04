@@ -1,4 +1,4 @@
-class RollADice < DismalTony::QueryHandler
+DismalTony.create_handler do
   def handler_start
     @handler_name = 'roll-dice'
     @patterns = [/roll (?:a|(?<count>\d+)) ?(?:(?<sides>\d+) sided)?(?: dice)?(?:d(?<sides>\d+))?/i]

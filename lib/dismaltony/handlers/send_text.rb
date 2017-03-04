@@ -1,4 +1,4 @@
-class SendText < DismalTony::QueryHandler
+DismalTony.create_handler do
   def handler_start
     @handler_name = 'send-text'
     @patterns = ['(?<directiveless>send a text)','^(?:(?:send a? ?(?:message|text))|(?:message|text))\\s?(?:to)?\\s?(?<destination>\d{10}|(?:\\w| )+) (?:saying|that says) (?<message>.+)']

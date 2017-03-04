@@ -27,9 +27,10 @@ def qp(str, debug = false)
 	puts
 end
 
-# qp "setup", true
-# qp "Justin", true
-qp "hello", true
+
+puts print @tony.handlers
+
+# qp "hello", true
 
 # 10.times{
 #   print "[ #{@laptop_emoji}  ]: "

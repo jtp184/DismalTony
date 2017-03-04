@@ -4,7 +4,6 @@ module DismalTony
     attr_accessor :return_interface
     attr_accessor :emotes
     attr_accessor :handlers
-    attr_accessor :handler_directory
 
     def initialize(**opts)
       @name = (opts[:name] || "Tony".freeze)
@@ -13,8 +12,7 @@ module DismalTony
       else
         @return_interface = (DismalTony::ConsoleInterface.new(self))
       end
-      @handler_directory = (opts[:handler_directory] || '/')
-      @handlers = []
+      @handlers = (opts[:handlers] || DismalTony::HandlerRegistry.handlers)
       
     end
 
@@ -24,25 +22,7 @@ module DismalTony
       @handlers.map { |e| e.new(self).handler_name.to_s }
     end
 
-    def load_handlers_from(directory)
-      found_files = (Dir.entries directory).reject { |e| !(e =~ /.+\.rb/) }
-      found_files.each do |file|
-        load "#{directory}/#{File.basename(file)}"
-      end
-      DismalTony::QueryHandler.list.each do |handler|
-        @handlers << handler
-      end
-    end
-
-    def load_handlers
-      load_handlers_from @handler_directory
-    end
-
-    def load_handlers!(str)
-      @handler_directory = str
-      load_handlers
-    end
-
+    
     def query!(str = '', user_identity = DismalTony::UserIdentity.default_user)
       responded = []
       post_handled = DismalTony::HandledResponse.new
@@ -85,11 +65,13 @@ module DismalTony
       post_handled
     end
 
-    def info_query(str)
-      handlers.each do |handler_class|
+    def query_result!(str, user_identity)
+      @handlers.each do |handler_class|
         handler = handler_class.new
-        if handler.responds?(str) && handler.responds_to?('info_handler')
-          return handler.info_handler str
+        if handler.responds?(str) && handler.responds_to?('query_result')
+          return handler.query_result str
+        else
+          return nil
         end
       end
     end
