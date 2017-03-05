@@ -38,6 +38,7 @@ Gem::Specification.new do |spec|
 
   # Runtime Dependencies
   spec.add_runtime_dependency 'json'
+  spec.add_runtime_dependency 'psych'
   spec.add_runtime_dependency 'twilio-ruby'
   spec.add_runtime_dependency 'duration'
 end
