@@ -1,3 +1,5 @@
+require 'psych'
+
 module DismalTony
 	class DataStorage
 		attr_accessor :opts
@@ -30,42 +32,28 @@ module DismalTony
 		end
 
 		def initialize(**args)
-			args.keys.each do |key|
-				self.instance_variable_set("@#{key.to_s}", args[key])
+			if @opts.nil?
+				@opts = args
+			else
+				@opts.merge! args
 			end
 			@users = []
 		end
 
 		def load
 			begin
-				enchilada = Psych.load File.open(@@global_opts[:database_filepath])
-				enchilada['envs'].each_pair { |key, val| ENV[key] = val}
-				enchilada['users'].each do |payload|
-					ud = payload['user_data']
-					cs = payload['conversation_state']
-
-					uid = DismalTony::UserIdentity.new(:user_data => ud)
-
-					cs_1 = {}
-					cs.keys.each do |key|
-						cs_1[key.to_sym] = cs[key]
-					end
-
-					state = DismalTony::ConversationState.new.from_h!(cs_1)
-					uid.conversation_state = state
-					@users << uid
-				end			
+				enchilada = Psych.load File.open(@opts[:filepath])
+				enchilada['globals']['env_vars'].each_pair { |key, val| ENV[key] = val}
+				@users += (enchilada['users'])
+				@opts[:config] = enchilada['config']
 			rescue Exception => e
-				ud = {'nickname' => 'User', 'Icon' => 'laptop'}
-				uid = DismalTony::UserIdentity.new(:user_data => ud) 
-				state = DismalTony::ConversationState.new(:user_identity => uid)
-				uid.conversation_state = state
+				puts e.inspect
 			end
 		end
 
 		def save
-			output = {'users' => @users, 'globals' => {'env_vars' => ENV, 'config' => @config}}
-			File.open('store.yml','w') do |f|
+			output = {'users' => @users, 'globals' => {'env_vars' => ENV.to_h, 'config' => @config}}
+			File.open(@opts[:filepath],'w+') do |f|
 				f << Psych.dump(output)
 			end
 			return true

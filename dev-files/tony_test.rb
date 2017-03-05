@@ -10,34 +10,30 @@ Bundler.require(:development, :default)
 #    tttt [[[[ ]]]] nn   nn      yy
 #                            yyyyy
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
-@ident = DismalTony::UserIdentity.new
-# @ident['first_name'] = 'Justin'
-# @ident['last_name'] = 'Piotroski'
-# @ident['nickname'] = 'Justin'
+@db = DismalTony::LocalStore.new(
+	:filepath => '/.code/Ruby/dismaltony/store.yml'
+	)
+@db.load
+# @db.users << DismalTony::UserIdentity.new(
+# 	:user_data => {"nickname" => 'Justin'}
+# 	)
+puts print @db.users
 
 @tony = DismalTony::VIBase.new
-@tony.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
+DismalTony::HandlerRegistry.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
 # @tony.load_handlers! "/Users/justinpiotroski/Documents/Work/Code/Ruby/dismaltony/dev-files/MultiTest/handlers"
 
 def qp(str, debug = false)
 	puts "[#{@laptop_emoji}]: #{str}"
-	puts " #{@ident.conversation_state.inspect}" if debug
-	@tony.query! str, @ident
-	print " #{@ident.conversation_state.inspect}" if debug
+	puts " #{@db.users.first.conversation_state.inspect}" if debug
+	@tony.query! str, @db.users.first
+	print " #{@db.users.first.conversation_state.inspect}" if debug
 	puts
 end
 
+puts print @db.inspect
 
-puts print @tony.handlers
+# qp "Roll a dice", true
+qp "10", true
 
-# qp "hello", true
-
-# 10.times{
-#   print "[ #{@laptop_emoji}  ]: "
-#   qp gets
-# }
-# qp 'Send a text'
-# qp '8454890371'
-# qp 'Hello!'
-
-# qp 'roll a d20' 
+@db.save
