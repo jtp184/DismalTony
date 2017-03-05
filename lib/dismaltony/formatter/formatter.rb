@@ -77,6 +77,8 @@ module DismalTony
           "\e[5m#{txt}\e[25m"
         when :reverse_color
           "\e[7m#{txt}\e[27m"
+        else
+          txt
         end
 
         return "#{md['avatar']}#{msg_color}" if parse

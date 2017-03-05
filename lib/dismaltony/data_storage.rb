@@ -5,30 +5,52 @@ module DismalTony
 		attr_accessor :opts
 		attr_accessor :users
 
-		def initialize(**opts); end
+		def initialize(**args)
+			if @opts.nil?
+				@opts = args
+			else
+				@opts.merge! args
+			end
+			@users = []
+		end
 
-		def self.load; end
+		def new_user(opts = {})
+			noob = DismalTony::UserIdentity.new(:user_data => opts)
+			@users << noob
+			return noob
+		end
 
-		def new_user; end
+		def on_query(_handled); end
 
-		def find; end
+		def find(&block)
+			@users.select(&block)
+		end
 
-		def save_user(_user); end
-
-		def delete_user(_user); end
-
-		def self.configure(new_opts)
+		def delete_user(user)
+			@users.reject! {|u| u == user}
 		end
 	end
 	class LocalStore < DataStorage
-		@@global_opts = {}
-
-		def self.define(**args)
-			@@global_opts.merge! args
+		def self.load_from(fp = '/')
+			the_store = LocalStore.new(:filepath => fp)
+			the_store.load
+			return the_store
 		end
 
-		def self.global
-			LocalStore.new(@@global_opts)
+		def self.create(fp = '/')
+			the_store = LocalStore.new(:filepath => fp)
+			the_store.save
+			return the_store
+		end
+
+		def new_user(opts = {})
+			noob = DismalTony::UserIdentity.new(:user_data => opts)
+			@users << noob
+			return noob
+		end
+
+		def on_query(handled)
+			save
 		end
 
 		def initialize(**args)
@@ -45,19 +67,29 @@ module DismalTony
 				enchilada = Psych.load File.open(@opts[:filepath])
 				enchilada['globals']['env_vars'].each_pair { |key, val| ENV[key] = val}
 				@users += (enchilada['users'])
-				@opts[:config] = enchilada['config']
+				@opts.merge!(enchilada['config']) do |k, o, n|
+					if k == :filepath
+						o
+					else
+						n
+					end
+				end
+				return true
 			rescue Exception => e
-				puts e.inspect
+				return false
 			end
 		end
 
 		def save
-			output = {'users' => @users, 'globals' => {'env_vars' => ENV.to_h, 'config' => @config}}
-			File.open(@opts[:filepath],'w+') do |f|
-				f << Psych.dump(output)
+			output = {'users' => @users, 'globals' => {'env_vars' => ENV.to_h, 'config' => @opts}}
+			begin
+				File.open(@opts[:filepath],'w+') do |f|
+					f << Psych.dump(output)
+				end
+				return true
+			rescue Exception => e
+				return false
 			end
-			return true
 		end
 	end
-
 end

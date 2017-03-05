@@ -4,6 +4,7 @@ module DismalTony
     attr_accessor :return_interface
     attr_accessor :emotes
     attr_accessor :handlers
+    attr_accessor :data_store
 
     def initialize(**opts)
       @name = (opts[:name] || "Tony".freeze)
@@ -13,7 +14,7 @@ module DismalTony
         @return_interface = (DismalTony::ConsoleInterface.new(self))
       end
       @handlers = (opts[:handlers] || DismalTony::HandlerRegistry.handlers)
-      
+      @data_store = (opts[:data_store] || DismalTony::DataStorage.new)
     end
 
     def identify_user; end
@@ -37,14 +38,10 @@ module DismalTony
         else
           post_handled = handle.method(user_identity.conversation_state.return_to_method.to_sym).call(str, user_identity)
         end
-      elsif user_identity.conversation_state.use_next
-
       else
         @handlers.each do |handler_class|
           handler = handler_class.new(self)
-          if handler.responds? str
-            responded << handler
-          # puts 'handled by #{handler.handler_name}'
+          responded << handler if handler.responds? str
         end
       end
 
@@ -52,17 +49,17 @@ module DismalTony
         post_handled = DismalTony::HandledResponse.finish "~e:frown I'm sorry, I didn't understand that!"
       elsif responded.length == 1
         post_handled = responded.first.activate_handler! str, user_identity
-      elsif (responded.count { |e| e.handler_name.eql? 'explain-handler' }) > 0
-        post_handled = ExplainHandler.new(self).activate_handler! str, user_identity
+      elsif responded.any? { |h| h.handler_name = 'explain-handler'}
+        post_handled = (responded.select { |h| h.handler_name = 'explain-handler'}).first.new(self).activate_handler! str, user_identity
       else
-          # puts print responded
-          post_handled = responded.first.activate_handler! str, user_identity
-        end
+        post_handled = responded.first.activate_handler! str, user_identity
       end
+
       say_opts @return_interface, post_handled.to_s, post_handled.format
       post_handled.conversation_state.from_h! ({:user_identity => user_identity, :last_recieved_time => Time.now})
-      user_identity.modify_state(post_handled.conversation_state)
-      post_handled
+      user_identity.conversation_state = post_handled.conversation_state
+      @data_store.on_query(post_handled)
+      return post_handled
     end
 
     def query_result!(str, user_identity)
@@ -75,7 +72,7 @@ module DismalTony
         end
       end
     end
-    
+
     def query(str, user_identity)
       responded = []
       post_handled = DismalTony::HandledResponse.new
@@ -92,7 +89,7 @@ module DismalTony
       else
         post_handled = DismalTony::HandledResponse.finish(responded.first.activate_handler( str, user_identity))
       end
-      
+
       return post_handled
     end
 
