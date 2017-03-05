@@ -43,16 +43,15 @@ module DismalTony
           handler = handler_class.new(self)
           responded << handler if handler.responds? str
         end
-      end
-
-      if responded.empty?
-        post_handled = DismalTony::HandledResponse.finish "~e:frown I'm sorry, I didn't understand that!"
-      elsif responded.length == 1
-        post_handled = responded.first.activate_handler! str, user_identity
-      elsif responded.any? { |h| h.handler_name = 'explain-handler'}
-        post_handled = (responded.select { |h| h.handler_name = 'explain-handler'}).first.new(self).activate_handler! str, user_identity
-      else
-        post_handled = responded.first.activate_handler! str, user_identity
+        if responded.empty?
+          post_handled = DismalTony::HandledResponse.finish "~e:frown I'm sorry, I didn't understand that!"
+        elsif responded.length == 1
+          post_handled = responded.first.activate_handler! str, user_identity
+        elsif responded.any? { |h| h.handler_name = 'explain-handler'}
+          post_handled = (responded.select { |h| h.handler_name = 'explain-handler'}).first.new(self).activate_handler! str, user_identity
+        else
+          post_handled = responded.first.activate_handler! str, user_identity
+        end
       end
 
       say_opts @return_interface, post_handled.to_s, post_handled.format

@@ -10,17 +10,20 @@ Bundler.require(:development, :default)
 #    tttt [[[[ ]]]] nn   nn      yy
 #                            yyyyy
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
+
+# @db = DismalTony::LocalStore.create('/.code/Ruby/dismaltony/store.yml')
+# @db.users << DismalTony::UserIdentity.new(
+# 	:user_data => {"nickname" => 'Justin'}
+# 	)
 @db = DismalTony::LocalStore.new(
 	:filepath => '/.code/Ruby/dismaltony/store.yml'
 	)
 @db.load
-# @db.users << DismalTony::UserIdentity.new(
-# 	:user_data => {"nickname" => 'Justin'}
-# 	)
 puts print @db.users
 
-@tony = DismalTony::VIBase.new
 DismalTony::HandlerRegistry.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
+@tony = DismalTony::VIBase.new(:data_store => @db)
+puts print @db.inspect
 # @tony.load_handlers! "/Users/justinpiotroski/Documents/Work/Code/Ruby/dismaltony/dev-files/MultiTest/handlers"
 
 def qp(str, debug = false)
@@ -31,9 +34,8 @@ def qp(str, debug = false)
 	puts
 end
 
-puts print @db.inspect
 
-# qp "Roll a dice", true
+qp "Roll a dice", true
 qp "10", true
 
 @db.save
