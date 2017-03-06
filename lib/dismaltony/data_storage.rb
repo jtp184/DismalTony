@@ -65,7 +65,8 @@ module DismalTony
 		def load
 			begin
 				enchilada = Psych.load File.open(@opts[:filepath])
-				enchilada['globals']['env_vars'].each_pair { |key, val| ENV[key] = val}
+				new_env = enchilada['globals']['env_vars'].merge!(ENV.to_h)
+				new_env.each_pair { |k, v| ENV[k] = v}
 				@users += (enchilada['users'])
 				@opts.merge!(enchilada['config']) do |k, o, n|
 					if k == :filepath

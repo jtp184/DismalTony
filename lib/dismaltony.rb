@@ -1,6 +1,7 @@
 require 'dismaltony/version'
 require 'dismaltony/formatter/formatter'
 require 'dismaltony/dialog_interface'
+require 'dismaltony/mac_speech_interface'
 require 'dismaltony/console_interface'
 require 'dismaltony/sms_interface'
 require 'dismaltony/emoji_dictionary'

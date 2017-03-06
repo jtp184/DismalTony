@@ -19,23 +19,23 @@ Bundler.require(:development, :default)
 	:filepath => '/.code/Ruby/dismaltony/store.yml'
 	)
 @db.load
-puts print @db.users
-
+# puts "[#{DismalTony::EmojiDictionary['exclamationmark']}]: WARNING not idle (#{@db.users.first.conversation_state.return_to_handler} => #{@db.users.first.conversation_state.return_to_method} #{@db.users.first.conversation_state.data_packet})" unless @db.users.first.conversation_state.is_idle
 DismalTony::HandlerRegistry.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
 @tony = DismalTony::VIBase.new(:data_store => @db)
-puts print @db.inspect
 # @tony.load_handlers! "/Users/justinpiotroski/Documents/Work/Code/Ruby/dismaltony/dev-files/MultiTest/handlers"
 
 def qp(str, debug = false)
 	puts "[#{@laptop_emoji}]: #{str}"
 	puts " #{@db.users.first.conversation_state.inspect}" if debug
-	@tony.query! str, @db.users.first
-	print " #{@db.users.first.conversation_state.inspect}" if debug
+	puts
+	if debug
+		puts (@tony.query! str, @db.users.first).inspect
+	else
+		@tony.query!(str, @db.users.first)
+	end
+	puts " #{@db.users.first.conversation_state.inspect}" if debug
 	puts
 end
 
-
-qp "Roll a dice", true
-qp "10", true
-
-@db.save
+qp "roll a dice"
+qp "10"

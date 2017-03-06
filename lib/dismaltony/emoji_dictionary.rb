@@ -93,5 +93,9 @@ module DismalTony
     def self.to_h
         emoji_array
     end
+
+    def self.name(moj)
+        @emoji_array.key(moj) || "emoji"
+    end
   end
 end

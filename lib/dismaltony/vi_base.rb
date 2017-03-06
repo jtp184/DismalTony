@@ -9,7 +9,7 @@ module DismalTony
     def initialize(**opts)
       @name = (opts[:name] || "Tony".freeze)
       if opts[:return_interface]
-        @return_interface = opts[:return_interface].new
+        @return_interface = opts[:return_interface]
       else
         @return_interface = (DismalTony::ConsoleInterface.new(self))
       end
@@ -17,13 +17,10 @@ module DismalTony
       @data_store = (opts[:data_store] || DismalTony::DataStorage.new)
     end
 
-    def identify_user; end
-
     def list_handlers
       @handlers.map { |e| e.new(self).handler_name.to_s }
     end
 
-    
     def query!(str = '', user_identity = DismalTony::UserIdentity.default_user)
       responded = []
       post_handled = DismalTony::HandledResponse.new
@@ -44,7 +41,7 @@ module DismalTony
           responded << handler if handler.responds? str
         end
         if responded.empty?
-          post_handled = DismalTony::HandledResponse.finish "~e:frown I'm sorry, I didn't understand that!"
+          post_handled = DismalTony::HandledResponse.error
         elsif responded.length == 1
           post_handled = responded.first.activate_handler! str, user_identity
         elsif responded.any? { |h| h.handler_name = 'explain-handler'}
@@ -54,7 +51,7 @@ module DismalTony
         end
       end
 
-      say_opts @return_interface, post_handled.to_s, post_handled.format
+      say_opts @return_interface, post_handled.to_s, post_handled.format unless post_handled.format[:quiet]
       post_handled.conversation_state.from_h! ({:user_identity => user_identity, :last_recieved_time => Time.now})
       user_identity.conversation_state = post_handled.conversation_state
       @data_store.on_query(post_handled)
@@ -84,7 +81,7 @@ module DismalTony
       if responded.length == 1
         post_handled = DismalTony::HandledResponse.finish(responded.first.activate_handler( str, user_identity))
       elsif responded.empty?
-        post_handled = DismalTony::HandledResponse.finish("~e:frown I'm sorry, I didn't understand that!")
+        post_handled = DismalTony::HandledResponse.error
       else
         post_handled = DismalTony::HandledResponse.finish(responded.first.activate_handler( str, user_identity))
       end
@@ -92,20 +89,20 @@ module DismalTony
       return post_handled
     end
 
-    def quick_handle(qry = '', args = {})
+    def quick_handle(qry = '', usr = DismalTony::UserIdentity.default_user, args = {})
       use_handler = @handlers.select { |handler|  handler.name.eql? qry}
-
-      case use_handler.nil?
+      case use_handler.first.nil
       when false
-        handle = use_handler.new(self)
+        handle = use_handler.first.new(self)
         handle.data = args
+        handle.activate_handler! qry, usr
       else
         DismalTony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil)
       end
     end
 
     def say_through(interface, str)
-      interface.send(Formatter::Printer.format(str))
+      interface.send(Formatter::Printer.format(str, {}))
     end
 
     def say_opts(interface, str, opts)
@@ -115,7 +112,5 @@ module DismalTony
     def say(str)
       @return_interface.send(Formatter::Printer.format(str))
     end
-
-    alias_method :say_back, :say
   end
 end
