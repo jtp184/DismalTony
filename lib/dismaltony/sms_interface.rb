@@ -12,11 +12,13 @@ module DismalTony
     end
 
     def send(msg)
+      unless msg =~ /^\s+$/
       @client.account.messages.create(
         from: '+13476258669',
         to: destination,
         body: msg
       )
+      end
     end
   end
 end

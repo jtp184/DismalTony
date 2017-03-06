@@ -26,7 +26,7 @@ module DismalTony
       post_handled = DismalTony::HandledResponse.new
 
       if user_identity.conversation_state.return_to_handler
-        handle = (@handlers.select { |h| h.new.handler_name == "#{user_identity.conversation_state.return_to_handler}"}).first.new(self)
+        handle = (@handlers.select { |h| h.new(self).handler_name == "#{user_identity.conversation_state.return_to_handler}"}).first.new(self)
         handle.data = user_identity.conversation_state.data_packet
         if user_identity.conversation_state.return_to_method == 'index'
           post_handled = handle.activate_handler! str, user_identity
@@ -45,7 +45,7 @@ module DismalTony
         elsif responded.length == 1
           post_handled = responded.first.activate_handler! str, user_identity
         elsif responded.any? { |h| h.handler_name = 'explain-handler'}
-          post_handled = (responded.select { |h| h.handler_name = 'explain-handler'}).first.new(self).activate_handler! str, user_identity
+          post_handled = (responded.select { |h| h.handler_name = 'explain-handler'}).first.activate_handler! str, user_identity
         else
           post_handled = responded.first.activate_handler! str, user_identity
         end
@@ -58,15 +58,15 @@ module DismalTony
       return post_handled
     end
 
-    def query_result!(str, user_identity)
+    def query_result!(str, user_identity = DismalTony::UserIdentity.default_user)
       @handlers.each do |handler_class|
-        handler = handler_class.new
-        if handler.responds?(str) && handler.responds_to?('query_result')
-          return handler.query_result str
+        handler = handler_class.new(self)
+        if handler.responds?(str) && handler.respond_to?('query_result')
+          return handler.query_result str, user_identity
         else
-          return nil
         end
       end
+      return nil
     end
 
     def query(str, user_identity)

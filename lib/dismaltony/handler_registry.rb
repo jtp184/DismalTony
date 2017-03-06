@@ -1,7 +1,7 @@
 module DismalTony
 	class HandlerRegistry
 		include Enumerable
-		@@handlers = []
+		@@handlers = [DismalTony::ExplainHandler]
 
 		def self.load_handlers_from(directory)
 			found_files = (Dir.entries directory).reject { |e| !(e =~ /.+\.rb/) }

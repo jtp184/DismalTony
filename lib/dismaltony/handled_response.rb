@@ -35,6 +35,7 @@ module DismalTony
 
     def with_format(**form)
       @format = form
+      return self
     end
   end
 end

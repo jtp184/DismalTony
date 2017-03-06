@@ -1,5 +1,3 @@
-require 'json'
-
 module DismalTony
   class QueryHandler
     attr_accessor :handler_name
@@ -13,10 +11,6 @@ module DismalTony
       @data = {}
       self.handler_start
       @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
-    end
-
-    def data_json
-      @data.to_json
     end
 
     def error_out
@@ -73,6 +67,97 @@ module DismalTony
 
       end
       return match_data
+    end
+  end
+  
+  class ExplainHandler < QueryHandler
+    def initialize(virtual)
+      super(virtual)
+    end
+
+    def handler_start
+      @handler_name = 'explain-handler'
+      @patterns = ['^what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)']
+      @data = { 'second_query' => '' }
+    end
+
+    def activate_handler!(query, user)
+      parse query
+      message = @vi.query(@data['second_query'], user).to_s
+      DismalTony::HandledResponse.finish(message)
+    end
+
+    def activate_handler(query, user)
+      parse query
+      "I will explain what I'd do if you asked me \'#{@data['second_query']}\'"
+    end
+  end
+
+  class CannedResponses < QueryHandler
+    attr_accessor :responses
+
+    def initialize(virtual = DismalTony::VIBase.new)
+      @vi = virtual
+      @patterns = []
+      @data = {}
+      @responses = []
+      self.handler_start
+      @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
+    end
+
+    def activate_handler(query, user)
+      "I'll reply with one of #{@responses.length} responses!"
+    end
+
+    def activate_handler!(query, user)
+      DismalTony::HandledResponse.finish @responses.sample
+    end
+  end
+
+  class ResultQuery < QueryHandler
+    def apply_format; end
+    def query_result; end
+
+    def initialize(virtual)
+      super(virtual)
+    end
+
+    def activate_handler(_query, _user)
+      "I'll calculate the result, and then list it out for you!"
+    end
+
+    def activate_handler!(query, user)
+      DismalTony::HandledResponse.finish self.apply_format(self.query_result(query, user))
+    end
+  end
+
+  class QueryMenu < QueryHandler
+    attr_accessor :menu_choices
+
+    def add_option(opt_name, response)
+      @menu_choices[opt_name] = response
+    end
+
+    def initialize(virtual)
+      @menu_choices = {}
+      super(virtual)
+    end
+
+    def activate_handler!(query, user)
+      if @data['menu_choice']
+        @menu_choices[query.to_sym]
+      else
+        @data['menu_choice'] = true
+        self.menu(query, user)
+      end
+    end
+
+    def query_result(query, user)
+      self.menu_choices
+    end
+
+    def activate_handler(query, user)
+      "I'll bring you to the list of options for that function!"
     end
   end
 end

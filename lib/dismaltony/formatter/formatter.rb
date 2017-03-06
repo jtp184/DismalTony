@@ -3,8 +3,8 @@ require 'duration'
 module DismalTony
   module Formatter
     class Printer 
-      OUTGOING = /(?<label>\[(?<moji>.+)\]\: )(?<message>[^\n]+)/
-      INCOMING = /(?:~e:(?<emote>\w+\b) )?(?<message>.+)/
+      OUTGOING = /(?<label>\[(?<moji>.+)\]\: )(?<message>.+)/
+      INCOMING = /(?:~e:(?<emote>\w+\b) )?(?<message>(.|\s)+)/
 
       def initialize(**args)
         @opts = args

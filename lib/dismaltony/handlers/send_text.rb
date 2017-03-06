@@ -50,6 +50,10 @@ DismalTony.create_handler do
 
   def activate_handler(query, user)
     parse query
-    "I will message #{@data['destination']} and say \'#{@data['message']}\'"
+    if data['directiveless']
+      "I'll get the details, then send a text!"
+    else
+      "I will message #{@data['destination']} and say \'#{@data['message']}\'"
+    end
   end
 end
