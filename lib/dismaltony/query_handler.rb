@@ -72,13 +72,11 @@ module DismalTony
   
   class ExplainHandler < QueryHandler
     def initialize(virtual)
-      super(virtual)
-    end
-
-    def handler_start
+      @vi = virtual
       @handler_name = 'explain-handler'
       @patterns = ['^what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)']
       @data = { 'second_query' => '' }
+      @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
     end
 
     def activate_handler!(query, user)
