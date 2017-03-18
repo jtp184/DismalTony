@@ -11,12 +11,12 @@ Bundler.require(:development, :default)
 #                            yyyyy
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
 
-# @db = DismalTony::LocalStore.create('/.code/Ruby/dismaltony/store.yml')
+# @db = DismalTony::LocalStore.create('./store.yml')
 # @db.users << DismalTony::UserIdentity.new(
 # 	:user_data => {"nickname" => 'Justin'}
 # 	)
 @db = DismalTony::LocalStore.new(
-	:filepath => '/.code/Ruby/dismaltony/store.yml'
+	:filepath => './store.yml'
 	)
 @db.load
 # puts "[#{DismalTony::EmojiDictionary['exclamationmark']}]: WARNING not idle (#{@db.users.first.conversation_state.return_to_handler} => #{@db.users.first.conversation_state.return_to_method} #{@db.users.first.conversation_state.data_packet})" unless @db.users.first.conversation_state.is_idle
@@ -37,7 +37,7 @@ def qp(str, debug = false)
 	puts " #{@db.users.first.conversation_state.inspect}" if debug
 end
 
-qp 'what is my name'
+qp 'hello'
 # qp 'roll 2d6+4, 1d3, 2d6 & 1d10'
 # qp 'generate a call of cthulhu character', true
 # qp 'show me an animal emoji', true

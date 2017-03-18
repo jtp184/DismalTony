@@ -30,10 +30,16 @@ module DismalTony
         handle.data = user_identity.conversation_state.data_packet
         if user_identity.conversation_state.return_to_method == 'index'
           post_handled = handle.activate_handler! str, user_identity
-        elsif user_identity.conversation_state.return_to_args
-          post_handled = handle.method(user_identity.conversation_state.return_to_method.to_sym).call(user_identity.conversation_state.return_to_args.split(", ") + [str, user_identity])
         else
-          post_handled = handle.method(user_identity.conversation_state.return_to_method.to_sym).call(str, user_identity)
+          if handle.respond_to? "return_to_method"
+            if user_identity.conversation_state.return_to_args
+              post_handled = handle.method(user_identity.conversation_state.return_to_method.to_sym).call(user_identity.conversation_state.return_to_args.split(", ") + [str, user_identity])
+            else
+              post_handled = handle.method(user_identity.conversation_state.return_to_method.to_sym).call(str, user_identity)
+            end
+          else
+            post_handled = DismalTony::HandledResponse.error
+          end
         end
       else
         @handlers.each do |handler_class|
