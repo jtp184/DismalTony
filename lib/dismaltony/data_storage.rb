@@ -155,7 +155,7 @@ module DismalTony
 
 		def self.to_tony(record)
 			cstate = DismalTony::ConversationState.new
-			cs_vals = ["user_identity", "last_recieved_time", "is_idle", "use_next", "return_to_handler", "return_to_method", "return_to_args", "data_packet"]
+			skip_vals = ["user_identity", "last_recieved_time", "is_idle", "use_next", "return_to_handler", "return_to_method", "return_to_args", "data_packet", "created_at", "updated_at"]
 
 			cstate.last_recieved_time = record.last_recieved_time
 			cstate.is_idle = record.is_idle
@@ -165,12 +165,12 @@ module DismalTony
 			cstate.return_to_args = record.return_to_args
 			cstate.data_packet = record.data_packet
 
-			ud = record.class.columns.reject { |e| cs_vals.include? e}
+			ud = record.class.columns.reject { |e| skip_vals.include? e.name}
 
 			uid = DismalTony::UserIdentity.new
 
 			ud.each do |datum|
-				uid[datum] = record.datum
+				uid[datum] = record.method(datum.to_sym).call
 			end
 
 			uid.conversation_state = cstate
