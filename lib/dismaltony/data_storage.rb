@@ -102,7 +102,8 @@ module DismalTony
 	class DBStore < DataStorage
 		attr_accessor :model_class
 
-		def initialize(**args)
+		def initialize(mc, **args)
+			self.model_class = mc
 			if @opts.nil?
 				@opts = args
 			else
