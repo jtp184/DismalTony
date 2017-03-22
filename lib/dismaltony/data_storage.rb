@@ -165,7 +165,7 @@ module DismalTony
 			cstate.return_to_args = record.return_to_args
 			cstate.data_packet = record.data_packet
 
-			ud = record.class.columns.reject { |e| skip_vals.include? e.name}
+			ud = ((record.class.columns.map {|e| e.name}).reject { |e| skip_vals.include? e.name})
 
 			uid = DismalTony::UserIdentity.new
 
