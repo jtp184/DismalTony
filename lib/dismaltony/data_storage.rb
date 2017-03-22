@@ -116,7 +116,7 @@ module DismalTony
 
 		def new_user(opts = {})
 			the_user = DismalTony::UserIdentity.new
-			the_user.data = opts
+			the_user.user_data = opts
 
 			record = self.model_class.new
 			record.save
@@ -136,7 +136,12 @@ module DismalTony
 		end
 
 		def find(**params)
-			DBStore.to_tony (self.model_class.find_by(params))
+			record = self.model_class.find_by(params)
+			if record.nil?
+				return nil
+			else
+				return DBStore.to_tony record
+			end
 		end
 
 		def delete_user(user)
