@@ -108,7 +108,7 @@ module DismalTony
 		end
 
 		def load_users!
-			model_class.all.each do |rec|
+			self.model_class.all.each do |rec|
 				@users << DBstore.to_tony(rec)
 			end
 			@users.uniq!
@@ -147,7 +147,7 @@ module DismalTony
 		def delete_user(user)
 			if user.is_a? DismalTony::UserIdentity
 				the_usr = self.by_id(user['id'])
-				model_class.destroy(the_usr)
+				self.model_class.destroy(the_usr)
 			else
 				self.model_class.destroy(user)
 			end
@@ -182,7 +182,7 @@ module DismalTony
 			uid = tony_data
 			cstate = uid.conversation_state
 
-			the_mod = model_class.find(uid['id'])
+			the_mod = self.model_class.find(uid['id'])
 			
 			the_mod.last_recieved_time = record.last_recieved_time
 			the_mod.is_idle = record.is_idle
