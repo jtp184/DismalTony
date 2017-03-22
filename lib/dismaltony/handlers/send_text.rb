@@ -1,7 +1,7 @@
 DismalTony.create_handler do
   def handler_start
     @handler_name = 'send-text'
-    @patterns = [/^(?<directiveless>send a text)[ \.]?$/i, /(send a text to (?<destination>\d{10}|([a-z]+))?( (?:that says|saying) (?<message>.+)))/]
+    @patterns = [/^(?<directiveless>send a text)[ \.]?$/i, /((?:send a )?text (?:to )?(?<destination>\d{10}|([a-z]+))?( (?:that says|saying|and say|) (?<message>.+)))/i]
     @data = { 'destination' => '', 'message' => '' }
     @subhandlers = {'get_destination' => /\d+/}
   end

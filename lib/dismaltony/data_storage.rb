@@ -32,6 +32,8 @@ module DismalTony
 	end
 
 	class LocalStore < DataStorage
+		attr_accessor :env_vars
+
 		def self.load_from(fp = '/')
 			the_store = LocalStore.new(:filepath => fp)
 			the_store.load
@@ -66,8 +68,10 @@ module DismalTony
 		def load
 			begin
 				enchilada = Psych.load File.open(@opts[:filepath])
-				new_env = enchilada['globals']['env_vars'].merge!(ENV.to_h)
-				new_env.each_pair { |k, v| ENV[k] = v}
+				if enchilada['globals']['env_vars']
+					@env_vars = enchilada['globals']['env_vars']
+					@env_vars.each_pair { |k, v| ENV[k] = v }
+				end
 				@users += (enchilada['users'])
 				@opts.merge!(enchilada['config']) do |k, o, n|
 					if k == :filepath
@@ -83,7 +87,7 @@ module DismalTony
 		end
 
 		def save
-			output = {'users' => @users, 'globals' => {'env_vars' => ENV.to_h, 'config' => @opts}}
+			output = {'users' => @users, 'globals' => {'config' => @opts, 'env_vars' => @env_vars}}
 			begin
 				File.open(@opts[:filepath],'w+') do |f|
 					f << Psych.dump(output)
@@ -155,7 +159,7 @@ module DismalTony
 
 		def self.to_tony(record)
 			cstate = DismalTony::ConversationState.new
-			skip_vals = ["user_identity", "last_recieved_time", "is_idle", "use_next", "return_to_handler", "return_to_method", "return_to_args", "data_packet", "created_at", "updated_at"]
+			skip_vals = ["user_identity", "last_recieved_time", "is_idle", "use_next", "return_to_handler", "return_to_method", "return_to_args", "data_packet", "created_at", "updated_at", "user_data"]
 
 			cstate.last_recieved_time = record.last_recieved_time
 			cstate.is_idle = record.is_idle
@@ -172,6 +176,8 @@ module DismalTony
 			ud.each do |datum|
 				uid[datum] = record.method(datum.to_sym).call
 			end
+
+			Psych.load(record.user_data).each_pair { |k, v| uid[k] = v}
 
 			uid.conversation_state = cstate
 
