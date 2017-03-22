@@ -190,6 +190,8 @@ module DismalTony
 			end
 
 			the_mod.user_data = Psych.dump(remaining)
+			
+			the_mod.save
 		end
 	end
 end
