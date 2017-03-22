@@ -37,7 +37,8 @@ def qp(str, debug = false)
 	puts " #{@db.users.first.conversation_state.inspect}" if debug
 end
 
-qp 'hello'
+qp 'Begin', true
+qp 'Justin', true
 # qp 'roll 2d6+4, 1d3, 2d6 & 1d10'
 # qp 'generate a call of cthulhu character', true
 # qp 'show me an animal emoji', true

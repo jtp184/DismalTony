@@ -190,6 +190,7 @@ module DismalTony
 			the_mod.return_to_handler = cstate.return_to_handler
 			the_mod.return_to_method = cstate.return_to_method
 			the_mod.return_to_args = cstate.return_to_args
+			the_mod.data_packet = cstate.data_packet
 
 			remaining = {}
 

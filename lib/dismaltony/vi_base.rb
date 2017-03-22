@@ -31,14 +31,14 @@ module DismalTony
         if user_identity.conversation_state.return_to_method == 'index'
           post_handled = handle.activate_handler! str, user_identity
         else
-          if handle.respond_to? "return_to_method"
+          if handle.respond_to? user_identity.conversation_state.return_to_method
             if user_identity.conversation_state.return_to_args
               post_handled = handle.method(user_identity.conversation_state.return_to_method.to_sym).call(user_identity.conversation_state.return_to_args.split(", ") + [str, user_identity])
             else
               post_handled = handle.method(user_identity.conversation_state.return_to_method.to_sym).call(str, user_identity)
             end
           else
-            post_handled = DismalTony::HandledResponse.error
+            post_handled = DismalTony::HandledResponse.finish "~e:frown I'm sorry, there appears to be a problem with that program"
           end
         end
       else
