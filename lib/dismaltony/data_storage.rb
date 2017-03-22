@@ -189,7 +189,7 @@ module DismalTony
 			cstate = uid.conversation_state
 			skip_vals = ["user_identity", "last_recieved_time", "is_idle", "use_next", "return_to_handler", "return_to_method", "return_to_args", "data_packet", "created_at", "updated_at", "user_data"]
 
-			the_mod = self.model_class.find_by(uid['id'])
+			the_mod = self.model_class.find_by(id: uid['id'])
 			
 			the_mod.last_recieved_time = cstate.last_recieved_time
 			the_mod.is_idle = cstate.is_idle
