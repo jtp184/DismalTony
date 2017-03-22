@@ -130,8 +130,8 @@ module DismalTony
 			DBStore.to_tony (self.model_class.find(num))
 		end
 
-		def find(&block)
-			DBStore.to_tony (self.model_class.find_by(&block))
+		def find(**params)
+			DBStore.to_tony (self.model_class.find_by(params))
 		end
 
 		def delete_user(user)
@@ -190,7 +190,7 @@ module DismalTony
 			end
 
 			the_mod.user_data = Psych.dump(remaining)
-			
+
 			the_mod.save
 		end
 	end
