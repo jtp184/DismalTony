@@ -143,7 +143,12 @@ module DismalTony
 
     def activate_handler!(query, user)
       if @data['menu_choice']
-        @menu_choices[query.to_sym]
+        their_choice = @menu_choices[query.to_sym]
+        if their_choice.nil?
+          DismalTony::HandledResponse.finish "~e:frown I'm sorry, that isn't an option!"
+        else
+          their_choice
+        end
       else
         @data['menu_choice'] = true
         self.menu(query, user)
