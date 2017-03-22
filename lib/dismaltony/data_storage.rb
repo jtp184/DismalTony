@@ -195,7 +195,7 @@ module DismalTony
 			remaining = {}
 
 			uid.user_data.keys.each do |key|
-				next if the_mod.columns.include? key
+				next if (the_mod.class.columns.map { |e| e.name}).include? key
 				remaining[key] = uid[key]
 			end
 
