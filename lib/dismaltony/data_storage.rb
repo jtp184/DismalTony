@@ -118,7 +118,12 @@ module DismalTony
 			the_user = DismalTony::UserIdentity.new
 			the_user.data = opts
 
-			the_user.to_rec.save
+			record = self.model_class.new
+			record.save
+
+			the_user['id'] = record.id
+
+			DBStore.save(the_user)
 			return the_user
 		end
 
