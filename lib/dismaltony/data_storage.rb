@@ -123,7 +123,7 @@ module DismalTony
 
 			the_user['id'] = record.id
 
-			DBStore.save(the_user)
+			save the_user
 			return the_user
 		end
 
