@@ -187,8 +187,9 @@ module DismalTony
 		def save(tony_data)
 			uid = tony_data
 			cstate = uid.conversation_state
+			skip_vals = ["user_identity", "last_recieved_time", "is_idle", "use_next", "return_to_handler", "return_to_method", "return_to_args", "data_packet", "created_at", "updated_at", "user_data"]
 
-			the_mod = self.model_class.find(uid['id'])
+			the_mod = self.model_class.find_by(uid['id'])
 			
 			the_mod.last_recieved_time = cstate.last_recieved_time
 			the_mod.is_idle = cstate.is_idle
@@ -197,6 +198,11 @@ module DismalTony
 			the_mod.return_to_method = cstate.return_to_method
 			the_mod.return_to_args = cstate.return_to_args
 			the_mod.data_packet = cstate.data_packet
+
+			(the_mod.class.columns.map { |e| e.name}).each do |col|
+				next if skip_vals.include? col
+				the_mod[col.to_sym] = uid[col]
+			end
 
 			remaining = {}
 
