@@ -178,19 +178,19 @@ module DismalTony
 			return uid		
 		end
 
-		def self.save(tony_data)
+		def save(tony_data)
 			uid = tony_data
 			cstate = uid.conversation_state
 
 			the_mod = self.model_class.find(uid['id'])
 			
-			the_mod.last_recieved_time = record.last_recieved_time
-			the_mod.is_idle = record.is_idle
-			the_mod.use_next = record.use_next
-			the_mod.return_to_handler = record.return_to_handler
-			the_mod.return_to_method = record.return_to_method
-			the_mod.return_to_args = record.return_to_args
-			the_mod.data_packet = record.data_packet
+			the_mod.last_recieved_time = cstate.last_recieved_time
+			the_mod.is_idle = cstate.is_idle
+			the_mod.use_next = cstate.use_next
+			the_mod.return_to_handler = cstate.return_to_handler
+			the_mod.return_to_method = cstate.return_to_method
+			the_mod.return_to_args = cstate.return_to_args
+			the_mod.data_packet = cstate.data_packet
 
 			remaining = {}
 
