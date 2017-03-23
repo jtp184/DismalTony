@@ -70,9 +70,10 @@ DismalTony.create_handler do
   end
 end
 ```
-###Subclasses
+### Subclasses
 The subclass handlers let you write less code if you're following common patterns
-####Canned Responses
+
+#### Canned Responses
 Canned responses lets you quickly pick between any of a set of options in response to a handler. Simple 1-to-1 call and response.
 
 ```ruby
@@ -85,7 +86,7 @@ DismalTony.create_handler(DismalTony::CannedResponses) do
 end
 ```
 
-####Result Query
+#### Result Query
 Result Queries can be accessed in the code as well as via direct query, allowing you to stack queries together.
 ```ruby
 DismalTony.create_handler(DismalTony::ResultQuery) do
@@ -106,7 +107,7 @@ DismalTony.create_handler(DismalTony::ResultQuery) do
 end
 ```
 
-####Query Menu
+#### Query Menu
 Query Menus let you present users with a list of options and follow them, allowing near infinite branching since the menu results are simply HandledResponses keyed to short choice strings
 
 ```ruby
@@ -127,10 +128,10 @@ DismalTony.create_handler(DismalTony::QueryMenu) do
 end
 ```
 
-##Storing Data
+## Storing Data
 The DismalTony system allows you to store your users and user-data (necessary for multi-stage handlers) in different ways. Currently there are 3 implemented. 
 
-###DataStorage
+### DataStorage
 The base DataStorage class is a non-persistent Data Store that functions fine in IRB or for ephemeral instances, but doesn't save anything.
 ###LocalStore
 The LocalStore class exports the user space as a YAML document.
@@ -140,7 +141,7 @@ DismalTony::LocalStore.new(
   )
 ```
 
-###DBStore
+### DBStore
 DBStore is designed to let you use ActiveRecord Models (or appropriately duck-typed Model classes), so that you can use a VI in a rails project by creating a Model. Check out [TonyRails](https://github.com/jtp184/tonyrails) for more information, but the DBStore Class is part of the Gem itself.
 
 ```ruby
