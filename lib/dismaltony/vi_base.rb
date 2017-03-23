@@ -15,7 +15,7 @@ module DismalTony
       end
       @handlers = (opts[:handlers] || DismalTony::HandlerRegistry.handlers)
       @data_store = (opts[:data_store] || DismalTony::DataStorage.new)
-      @remotes = (opts[:remotes] || [])
+      @remotes = (opts[:remotes] || DismalTony::RemoteRegistry.remotes)
     end
 
     def list_handlers

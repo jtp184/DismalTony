@@ -22,8 +22,7 @@ Bundler.require(:development, :default)
 @db.load
 DismalTony::HandlerRegistry.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
 @tony = DismalTony::VIBase.new(:data_store => @db)
-load 'lib/dismaltony/remotes/github_project.rb'
-puts @tony.remotes << DismalTony::GitProject.new
+DismalTony::RemoteRegistry.load_remotes! "#{Dir.pwd}/lib/dismaltony/remotes"
 
 def qp(str, debug = false)
 	puts "[#{@laptop_emoji}]: #{str}"
@@ -38,7 +37,5 @@ def qp(str, debug = false)
 	puts " #{@db.users.first.conversation_state.inspect}" if debug
 end
 
-qp "push the dismaltony project"
-
-# qp 'turn the lights on', true
-# qp 'turn the lights off', true
+# puts @tony.inspect
+qp "Hello"

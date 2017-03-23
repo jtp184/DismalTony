@@ -16,21 +16,21 @@ module DismalTony
     def version_project(opts)
       old_dir = Dir.pwd
       Dir.chdir(self.get_projects(opts[:user])[opts[:nickname]])
-      puts `nano lib/#{opts[:nickname]}/version.rb`
+      `nano lib/#{opts[:nickname]}/version.rb`
     end
 
     def deploy_project(opts)
       old_dir = Dir.pwd
       Dir.chdir(self.get_projects(opts[:user])[opts[:nickname]])
-      puts `cap production deploy`
+      `cap production deploy`
     end
 
     def push_project(opts)
       old_dir = Dir.pwd
       Dir.chdir(self.get_projects(opts[:user])[opts[:nickname]])
-      puts `git add .`
-      puts `git commit -m "Automated push at #{Time.now.to_s}"`
-      puts `git push`
+      `git add .`
+      `git commit -m "Automated push at #{Time.now.to_s}"`
+      `git push`
       DismalTony::HandledResponse.finish "~e:smile Alright! We're all done."
     end
 
@@ -66,4 +66,6 @@ module DismalTony
 
     end
   end
+
+  DismalTony::RemoteRegistry.register(GitProject)
 end
