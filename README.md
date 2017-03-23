@@ -31,12 +31,27 @@ We could then attempt to query the VI
 ```ruby
 result = tony.query!("Hello")
 ```
-But we wouldn't have any success as yet.
+But we wouldn't have any success as yet. The Handler Registry has to first load in handlers, and a VI will load them in by default. Otherwise, we just get an error message printed to our console.
 ```
 [🙁]: I'm sorry, I didn't understand that!
-``` 
+```
 
-The Handler Registry has to first load in handlers, and a VI will load them in by default.
+We can also configure our VI more extensively
+
+```ruby
+cassie = DismalTony::VIBase.new(
+  :data_store => DismalTony::LocalStore.new(
+    :filepath => './store.yml'
+  ),
+  :name => "Cassie",
+  :handlers => DismalTony::HandlerRegistry.group('work'),
+  :return_interface => DismalTony::SMSInterface.new(
+    '8437427464'
+  )
+)
+```
+
+The VI consists of a name, a return_interface to reply across, its handlers, and a DataStore to retain its memories. All of these pieces are modular, and designed to be interchanged to fit your workflow. 
 
 ## Writing a Handler
 
@@ -129,21 +144,45 @@ end
 ```
 
 ## Storing Data
-The DismalTony system allows you to store your users and user-data (necessary for multi-stage handlers) in different ways. Currently there are 3 implemented. 
+The DismalTony system allows you to store your users and user-data (necessary for multi-stage handlers) in different ways. 
 
-### DataStorage
-The base DataStorage class is a non-persistent Data Store that functions fine in IRB or for ephemeral instances, but doesn't save anything.
-###LocalStore
+### Methods
+The DataStore classes follow basic CRUD concepts
+```
+store = DismalTony::DataStore.new
+
+usr = store.new_user
+# => <DismalTony::UserIdentity>
+
+ax = store.find { |u| u['first_name'] = "Aximilli"}
+# Same as running store.users.select
+
+store.delete_user(ax)
+# Same as running store.users.reject!
+```
+Additionally, most Data Stores provide a `.save` or `.save(user)` function 
+
+### Subclasses
+
+#### DataStorage
+The base DataStorage class is a non-persistent Data Store that functions fine in IRB or for ephemeral instances, but doesn't save anything. If you don't specify a data store to use, this is the default.
+
+#### LocalStore
 The LocalStore class exports the user space as a YAML document.
 ```ruby
 DismalTony::LocalStore.new(
   :filepath => './store.yml'
   )
 ```
+If provided with a filepath during initialization, it will assume you're resuming, and load that file. You can also call `.load` to load from the file specified with `local_store.opts[:filepath]`.
 
-### DBStore
+The LocalStore saves after every Query, but can be manually saved with `.save` which saves to its filepath variable.
+
+#### DBStore
 DBStore is designed to let you use ActiveRecord Models (or appropriately duck-typed Model classes), so that you can use a VI in a rails project by creating a Model. Check out [TonyRails](https://github.com/jtp184/tonyrails) for more information, but the DBStore Class is part of the Gem itself.
 
 ```ruby
 DismalTony::DBStore.new(TheModel)
 ```
+
+Saving is accomplished by passing an individual UserIdentity, not just calling `.save`. In general, the DBStore is geared around the idea that you'd be loading individual users using the Model class, but does have the ability to load all of the users by calling `.load_users!`.
