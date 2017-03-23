@@ -148,7 +148,7 @@ The DismalTony system allows you to store your users and user-data (necessary fo
 
 ### Methods
 The DataStore classes follow basic CRUD concepts
-```
+```ruby
 store = DismalTony::DataStore.new
 
 usr = store.new_user
