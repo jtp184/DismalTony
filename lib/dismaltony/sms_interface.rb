@@ -14,7 +14,7 @@ module DismalTony
     def send(msg)
       unless msg =~ /^\s+$/
       @client.account.messages.create(
-        from: '+13476258669',
+        from: ENV['twilio_phone_number'],
         to: destination,
         body: msg
       )
