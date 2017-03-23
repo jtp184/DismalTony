@@ -2,7 +2,7 @@ module DismalTony
   class VIBase
     attr_accessor :name
     attr_accessor :return_interface
-    attr_accessor :emotes
+    attr_accessor :remotes
     attr_accessor :handlers
     attr_accessor :data_store
 
@@ -15,6 +15,7 @@ module DismalTony
       end
       @handlers = (opts[:handlers] || DismalTony::HandlerRegistry.handlers)
       @data_store = (opts[:data_store] || DismalTony::DataStorage.new)
+      @remotes = (opts[:remotes] || [])
     end
 
     def list_handlers
@@ -117,6 +118,16 @@ module DismalTony
 
     def say(str)
       @return_interface.send(Formatter::Printer.format(str))
+    end
+
+    def control(subject, verb, params = {})
+      the_remote = (@remotes.select { |r| r.subject == subject}).first
+      the_method = the_remote.method(verb.to_sym)
+      if params == {}
+        the_method.call
+      else
+        the_method.call(params)
+      end
     end
   end
 end

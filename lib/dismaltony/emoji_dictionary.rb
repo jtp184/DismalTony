@@ -60,6 +60,7 @@ module DismalTony
         'key' => '🔑',
         'knifefork' => '🍴',
         'laptop' => '💻',
+        'lightbulb' => '💡',
         'lock' => '🔒',
         'magnifyingglass' => '🔎',
         'mailbox' => '📫',

@@ -15,14 +15,15 @@ Bundler.require(:development, :default)
 # @db.users << DismalTony::UserIdentity.new(
 # 	:user_data => {"nickname" => 'Justin'}
 # 	)
+# puts "[#{DismalTony::EmojiDictionary['exclamationmark']}]: WARNING not idle (#{@db.users.first.conversation_state.return_to_handler} => #{@db.users.first.conversation_state.return_to_method} #{@db.users.first.conversation_state.data_packet})" unless @db.users.first.conversation_state.is_idle
 @db = DismalTony::LocalStore.new(
 	:filepath => './store.yml'
 	)
 @db.load
-# puts "[#{DismalTony::EmojiDictionary['exclamationmark']}]: WARNING not idle (#{@db.users.first.conversation_state.return_to_handler} => #{@db.users.first.conversation_state.return_to_method} #{@db.users.first.conversation_state.data_packet})" unless @db.users.first.conversation_state.is_idle
 DismalTony::HandlerRegistry.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
 @tony = DismalTony::VIBase.new(:data_store => @db)
-# puts @tony.list_handlers
+load 'lib/dismaltony/remotes/github_project.rb'
+puts @tony.remotes << DismalTony::GitProject.new
 
 def qp(str, debug = false)
 	puts "[#{@laptop_emoji}]: #{str}"
@@ -37,8 +38,7 @@ def qp(str, debug = false)
 	puts " #{@db.users.first.conversation_state.inspect}" if debug
 end
 
-# qp 'Justin', true
-# qp 'roll 2d6+4, 1d3, 2d6 & 1d10'
-# qp 'generate a call of cthulhu character', true
-qp 'show me an animal emoji', true
-qp 'dog', true
+qp "push the dismaltony project"
+
+# qp 'turn the lights on', true
+# qp 'turn the lights off', true
