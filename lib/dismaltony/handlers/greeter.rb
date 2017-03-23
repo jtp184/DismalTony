@@ -1,4 +1,4 @@
-DismalTony.create_handler(DismalTony::CannedResponses) do
+DismalTony.create_handler(DismalTony::CannedResponse) do
 	def handler_start
 		@handler_name = 'greeter'
 		@patterns = ["hello", "hello, #{@vi.name}"]

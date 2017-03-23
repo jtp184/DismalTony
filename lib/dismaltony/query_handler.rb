@@ -91,7 +91,7 @@ module DismalTony
     end
   end
 
-  class CannedResponses < QueryHandler
+  class CannedResponse < QueryHandler
     attr_accessor :responses
 
     def initialize(virtual = DismalTony::VIBase.new)

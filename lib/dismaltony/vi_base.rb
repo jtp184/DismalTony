@@ -97,7 +97,7 @@ module DismalTony
     end
 
     def quick_handle(qry = '', usr = DismalTony::UserIdentity.default_user, args = {})
-      use_handler = @handlers.select { |handler|  handler.name.eql? qry}
+      use_handler = @handlers.select { |handler|  handler.new(self).handler_name == qry}
       case use_handler.first.nil
       when false
         handle = use_handler.first.new(self)

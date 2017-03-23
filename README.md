@@ -92,7 +92,7 @@ The subclass handlers let you write less code if you're following common pattern
 Canned responses lets you quickly pick between any of a set of options in response to a handler. Simple 1-to-1 call and response.
 
 ```ruby
-DismalTony.create_handler(DismalTony::CannedResponses) do
+DismalTony.create_handler(DismalTony::CannedResponse) do
   def handler_start
     @handler_name = 'greeter'
     @patterns = ["hello", "hello, #{@vi.name}"]

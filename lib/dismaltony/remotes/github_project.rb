@@ -63,9 +63,7 @@ module DismalTony
       new_hash = self.get_projects(opts[:user]).merge({opts[:nickname] => opts[:filepath]})
       opts[:user]['githubprojects'] = new_hash
       DismalTony::HandledResponse.finish "~e:checkbox Okay! I'll keep track of it."
-
     end
   end
-
   DismalTony::RemoteRegistry.register(GitProject)
 end
