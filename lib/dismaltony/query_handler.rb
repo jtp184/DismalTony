@@ -163,4 +163,21 @@ module DismalTony
       "I'll bring you to the list of options for that function!"
     end
   end
+
+  class RemoteControl < QueryHandler
+    attr_accessor :actions
+
+    def initialize(virtual)
+      @actions = []
+      super(virtual)
+    end
+
+    def activate_handler(query, user)
+      "I'll handle that with the #{@handler_name} handler."
+    end
+
+    def activate_handler!(query, user)
+      DismalTony::HandledResponse.finish.with_format(:quiet => true)
+    end
+  end
 end

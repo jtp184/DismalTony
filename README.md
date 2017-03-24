@@ -129,7 +129,7 @@ Query Menus let you present users with a list of options and follow them, allowi
 DismalTony.create_handler(DismalTony::QueryMenu) do
   def handler_start
     @handler_name = 'animal-moji-menu'
-    @patterns = [/show me an animal emoji/i]
+    @patterns = [/impersonate an animal/i]
 
     add_option(:dog, DismalTony::HandledResponse.finish("~e:dog Woof!"))
     add_option(:cat, DismalTony::HandledResponse.finish("~e:cat Meow!"))

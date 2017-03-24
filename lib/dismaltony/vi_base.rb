@@ -2,7 +2,6 @@ module DismalTony
   class VIBase
     attr_accessor :name
     attr_accessor :return_interface
-    attr_accessor :remotes
     attr_accessor :handlers
     attr_accessor :data_store
 
@@ -15,7 +14,6 @@ module DismalTony
       end
       @handlers = (opts[:handlers] || DismalTony::HandlerRegistry.handlers)
       @data_store = (opts[:data_store] || DismalTony::DataStorage.new)
-      @remotes = (opts[:remotes] || DismalTony::RemoteRegistry.remotes)
     end
 
     def list_handlers
@@ -58,7 +56,7 @@ module DismalTony
         end
       end
 
-      say_opts @return_interface, post_handled.to_s, post_handled.format unless post_handled.format[:quiet]
+      say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet]
       post_handled.conversation_state.from_h! ({:user_identity => user_identity, :last_recieved_time => Time.now})
       user_identity.conversation_state = post_handled.conversation_state
       @data_store.on_query(post_handled)
@@ -98,7 +96,7 @@ module DismalTony
 
     def quick_handle(qry = '', usr = DismalTony::UserIdentity.default_user, args = {})
       use_handler = @handlers.select { |handler|  handler.new(self).handler_name == qry}
-      case use_handler.first.nil
+      case use_handler.first.nil?
       when false
         handle = use_handler.first.new(self)
         handle.data = args
@@ -121,12 +119,16 @@ module DismalTony
     end
 
     def control(subject, verb, params = {})
-      the_remote = (@remotes.select { |r| r.subject == subject}).first
-      the_method = the_remote.method(verb.to_sym)
-      if params == {}
-        the_method.call
+      the_remote = (@handlers.select { |r| r.new(self).handler_name == subject}).first.new(self)
+      if the_remote.actions.include? verb
+        the_method = the_remote.method(verb.to_sym)
+        if params == {}
+          the_method.call
+        else
+          the_method.call(params)
+        end
       else
-        the_method.call(params)
+        DismalTony::HandledResponse.finish("Sorry, that didn't work!")
       end
     end
   end

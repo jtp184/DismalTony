@@ -28,18 +28,18 @@ module DismalTony
 
 		def self.[](par)
 			par = Regexp.new(par, Regexp::IGNORECASE) if par.is_a? String
-			@@handlers.select { |h| h.handler_name =~ par}
+			@@handlers.select { |h| h.new(DismalTony::VIBase.new).handler_name =~ par}
 		end
 
 		def self.group(par)
-			@@handlers.select do |h| 
+			(@@handlers.map { |e| e.new(DismalTony::VIBase.new)}).select do |h| 
 				next unless h.responds_to?('group')
 				h.group == par
 			end
 		end
 
 		def self.groups
-			(@@handlers.map { |h| (h.group if h.responds_to('group')) || ("none")}).uniq
+			((@@handlers.map { |e| e.new(DismalTony::VIBase.new)}).map { |h| (h.group if h.responds_to('group')) || ("none")}).uniq
 		end
 
 	end
