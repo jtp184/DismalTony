@@ -219,7 +219,7 @@ store = DismalTony::DataStore.new
 usr = store.new_user
 # => <DismalTony::UserIdentity>
 
-ax = store.find { |u| u['first_name'] = "Aximilli"}
+ax = store.find { |u| u['first_name'] = "Aximili"}
 # Same as running store.users.select
 
 store.delete_user(ax)
