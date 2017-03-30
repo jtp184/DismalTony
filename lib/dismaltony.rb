@@ -16,7 +16,7 @@ require 'dismaltony/vi_base'
 module DismalTony
   def self.create_handler(sc = DismalTony::QueryHandler, &block)
     c = Class.new(sc, &block)
-    DismalTony::HandlerRegistry.register(c)   
+    DismalTony::HandlerRegistry.register(c)
   end
 end
 #

@@ -12,13 +12,12 @@ module DismalTony
     end
 
     def send(msg)
-      unless msg =~ /^\s+$/
+      return nil if msg =~ /^ *$/
       @client.account.messages.create(
         from: ENV['twilio_phone_number'],
         to: destination,
         body: msg
       )
-      end
     end
   end
 end

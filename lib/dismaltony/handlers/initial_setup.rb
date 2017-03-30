@@ -17,12 +17,11 @@ DismalTony.create_handler do
     "Let's start simple: What should I call you?"
   end
 
-  def activate_handler(query, user)
+  def activate_handler(_query, _user)
     "I'll do initial setup"
   end
-  
-  def activate_handler!(query, user)
+
+  def activate_handler!(_query, _user)
     DismalTony::HandledResponse.then_do(self, 'get_name', message)
   end
-
 end

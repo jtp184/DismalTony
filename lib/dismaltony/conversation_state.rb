@@ -25,30 +25,30 @@ module DismalTony
     end
 
     def from_h(the_hash)
-      state = self.clone
+      state = clone
       state.from_h!(the_hash)
-      return state
+      state
     end
 
     def from_h!(the_hash)
-      the_hash.each_pair { |key, value| self.method("#{key}=".freeze).call(value) }
+      the_hash.each_pair { |key, value| method("#{key}=".freeze).call(value) }
     end
 
     def to_h
       the_hash = {}
-      self.instance_variables.each do |var|
+      instance_variables.each do |var|
         # next if var == :@user_identity
-        var = ((var.to_s).gsub(/\@(.+)/) { |match| $1 }).to_sym
-        the_hash[var] = self.method(var).call
+        var = (var.to_s.gsub(/\@(.+)/) { |_match| Regexp.last_match(1) }).to_sym
+        the_hash[var] = method(var).call
       end
-      return the_hash
+      the_hash
     end
 
     def steer?
       @is_idle || @use_next
     end
 
-    def resume(virtual = DismalTony::VIBase.new, query)
+    def resume(virtual, query)
       handle = @return_to_handler.new(virtual)
       handle.data = @data_packet
       handle.method(@return_to_method.to_sym).call(query)
@@ -61,6 +61,5 @@ module DismalTony
     #   combine = current_state.merge(new_state) { |key, old_value, new_value| new_value }
     #   self.from_h! combine
     # end
-
   end
 end

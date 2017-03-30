@@ -1,4 +1,4 @@
-Dir.chdir("..")
+Dir.chdir('..')
 
 require 'bundler'
 Bundler.require(:development, :default)
@@ -17,24 +17,24 @@ Bundler.require(:development, :default)
 # 	)
 # puts "[#{DismalTony::EmojiDictionary['exclamationmark']}]: WARNING not idle (#{@db.users.first.conversation_state.return_to_handler} => #{@db.users.first.conversation_state.return_to_method} #{@db.users.first.conversation_state.data_packet})" unless @db.users.first.conversation_state.is_idle
 @db = DismalTony::LocalStore.new(
-	:filepath => './store.yml'
-	)
+  filepath: './store.yml'
+)
 @db.load
 DismalTony::HandlerRegistry.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
-@tony = DismalTony::VIBase.new(:data_store => @db)
+@tony = DismalTony::VIBase.new(data_store: @db)
 
 def qp(str, debug = false)
-	puts "[#{@laptop_emoji}]: #{str}"
-	puts " #{@db.users.first.conversation_state.inspect}" if debug
-	puts
-	if debug
-		puts
-		puts (@tony.query! str, @db.users.first).inspect
-	else
-		@tony.query!(str, @db.users.first)
-	end
-	puts " #{@db.users.first.conversation_state.inspect}" if debug
+  puts "[#{@laptop_emoji}]: #{str}"
+  puts " #{@db.users.first.conversation_state.inspect}" if debug
+  puts
+  if debug
+    puts
+    puts (@tony.query! str, @db.users.first).inspect
+  else
+    @tony.query!(str, @db.users.first)
+  end
+  puts " #{@db.users.first.conversation_state.inspect}" if debug
 end
 
-puts resp.inspect
-# qp "Hello"
+# puts resp.inspect
+qp "Hello"

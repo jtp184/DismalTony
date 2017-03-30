@@ -9,7 +9,7 @@ module DismalTony
       @vi = virtual
       @patterns = []
       @data = {}
-      self.handler_start
+      handler_start
       @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
     end
 
@@ -56,20 +56,19 @@ module DismalTony
 
         begin
           caps = match_data.named_captures
-          @data.merge!(caps) { |_k, _o, n| n} unless match_data.nil?
-        rescue Exception => e #on the off chance named captures doesn't work? (Found on Heroku)
+          @data.merge!(caps) { |_k, _o, n| n } unless match_data.nil?
+        rescue Exception # on the off chance named captures doesn't work? (Found on Heroku)
           caps = {}
           match_data.names.each do |name|
             caps[name] = match_data[name]
           end
-          @data.merge!(caps) { |_k, _o, n| n} unless match_data.nil?
+          @data.merge!(caps) { |_k, _o, n| n } unless match_data.nil?
         end
-
       end
-      return match_data
+      match_data
     end
   end
-  
+
   class ExplainHandler < QueryHandler
     def initialize(virtual)
       @vi = virtual
@@ -85,7 +84,7 @@ module DismalTony
       DismalTony::HandledResponse.finish(message)
     end
 
-    def activate_handler(query, user)
+    def activate_handler(query, _user)
       parse query
       "I will explain what I'd do if you asked me \'#{@data['second_query']}\'"
     end
@@ -99,21 +98,22 @@ module DismalTony
       @patterns = []
       @data = {}
       @responses = []
-      self.handler_start
+      handler_start
       @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
     end
 
-    def activate_handler(query, user)
+    def activate_handler(_query, _user)
       "I'll reply with one of #{@responses.length} responses!"
     end
 
-    def activate_handler!(query, user)
+    def activate_handler!(_query, _user)
       DismalTony::HandledResponse.finish @responses.sample
     end
   end
 
   class ResultQuery < QueryHandler
     def apply_format; end
+
     def query_result; end
 
     def initialize(virtual)
@@ -125,7 +125,7 @@ module DismalTony
     end
 
     def activate_handler!(query, user)
-      DismalTony::HandledResponse.finish self.apply_format(self.query_result(query, user))
+      DismalTony::HandledResponse.finish apply_format(query_result(query, user))
     end
   end
 
@@ -151,15 +151,15 @@ module DismalTony
         end
       else
         @data['menu_choice'] = true
-        self.menu(query, user)
+        menu(query, user)
       end
     end
 
-    def query_result(query, user)
-      self.menu_choices
+    def query_result(_query, _user)
+      menu_choices
     end
 
-    def activate_handler(query, user)
+    def activate_handler(_query, _user)
       "I'll bring you to the list of options for that function!"
     end
   end
@@ -172,12 +172,12 @@ module DismalTony
       super(virtual)
     end
 
-    def activate_handler(query, user)
+    def activate_handler(_query, _user)
       "I'll handle that with the #{@handler_name} handler."
     end
 
-    def activate_handler!(query, user)
-      DismalTony::HandledResponse.finish.with_format(:quiet => true)
+    def activate_handler!(_query, _user)
+      DismalTony::HandledResponse.finish.with_format(quiet: true)
     end
   end
 end

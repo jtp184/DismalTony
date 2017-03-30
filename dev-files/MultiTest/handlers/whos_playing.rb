@@ -5,15 +5,15 @@ DismalTony.create_handler do
     @data = {}
   end
 
-  def activate_handler(query, user)
+  def activate_handler(_query, _user)
     "I'll tell you who's playing!"
   end
 
-  def activate_handler!(query, user)
+  def activate_handler!(_query, _user)
     everybody = $database.get_table(:users)
     resp_string = "Okay, here's who's playing: \n"
     everybody.each_with_index do |peep, index|
-      resp_string += "#{index+1}. "
+      resp_string += "#{index + 1}. "
       resp_string += peep['first_name']
       resp_string += "\n"
     end

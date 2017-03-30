@@ -2,3 +2,5 @@ ngrok
 *.DS_Store
 .idea
 store.yml
+.rubocop.yml
+cop.txt
