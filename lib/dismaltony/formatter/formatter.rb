@@ -1,15 +1,20 @@
 require 'duration'
 
-module DismalTony
-  module Formatter
-    class Printer
+module DismalTony # :nodoc:
+  module Formatter # :nodoc:
+
+    # Responsible for taking strings and formatting them according to project guidelines
+    class Printer 
+      # a Regexp which matches a message sent with the standard DismalTony format
       OUTGOING = /(?<label>\[(?<moji>.+)\]\: )(?<message>.+)/
+      # a Regexp which matches a message string, and includes support for extracting the emoji signifier
       INCOMING = /(?:~e:(?<emote>\w+\b) )?(?<message>(.|\s)+)/
 
-      def initialize(**args)
+      def initialize(**args) # :nodoc:
         @opts = args
       end
 
+      # The main function of the class. Parses +opts+ to determine what transformations to apply to +str+ before returning it
       def self.format(str, opts)
         md = Printer::INCOMING.match(str)
         em = (md['emote'] || 'smile')
@@ -22,13 +27,22 @@ module DismalTony
         result
       end
 
+      # Takes +str+ and an emoji +emo+ and creates a standard formatted string
       def self.add_icon(str, emo)
         "[#{DismalTony::EmojiDictionary[emo]}]: #{str}"
       end
 
+      # Method for colorizing text in the command output
+      # 
+      # * +input+ - the message to colorize
+      # * +color+ - a Symbol corresponding to the color to use.
+      # Valid values are: <tt>:black, :red, :green, :yellow, :blue, :magenta, :cyan, :gray,</tt>
+      # <tt>:bg_black, :bg_red, :bg_green, :bg_yellow, :bg_blue, :bg_magenta, :bg_cyan, :bg_gray,</tt>
+      # :bold, :italic, :underline, :blink, :reverse_color</tt>
+      # * +parse+ - whether or not to extract the message from the icon using Printer::OUTGOING
       def self.colorize(input, color, parse = false)
         if parse
-          md = ConsoleInterface::MSG_RGX.match(input)
+          md = Printer::OUTGOING.match(input)
           txt = md['message']
         else
           txt = input
@@ -81,16 +95,17 @@ module DismalTony
                       txt
                     end
 
-        return "#{md['avatar']}#{msg_color}" if parse
+        return "#{md['moji']}#{msg_color}" if parse
         msg_color
       end
 
+      # Instance method for accessing Colorizing. Passes on values for +input+, +color+, and +parse+
       def colorize(input, color, parse = false)
         Printer.colorize(input, color, parse)
       end
     end
 
-    class ProgressBar
+    class ProgressBar # :nodoc:
       attr_accessor :current, :total, :opts
 
       def initialize(total, opts = { color: 'gray', width: 80 }, &block)

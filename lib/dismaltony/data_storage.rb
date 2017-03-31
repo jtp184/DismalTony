@@ -1,10 +1,17 @@
-require 'psych'
+require 'psych' # :nodoc:
 
-module DismalTony
+module DismalTony # :nodoc:
+  # Represents the collection of options and users that comprise the VI's memory. 
+  # The base DataStorage class is a non-persistent Data Store that functions fine in IRB 
+  # or for ephemeral instances, but doesn't save anything.
+  # If you don't specify a data store to use, this is the default.
   class DataStorage
+    # A Hash that stores any configuration options
     attr_accessor :opts
+    # an Array of UserIdentity objects that make up the userspace.
     attr_accessor :users
 
+    # Initializes an empty store, and merges +args+ with #opts
     def initialize(**args)
       if @opts.nil?
         @opts = args
@@ -14,49 +21,60 @@ module DismalTony
       @users = []
     end
 
+    # Creates a new UserIdentity object with UserIdentity.user_data set to +opts+
+    # and then stores it in the #users array before returning it
     def new_user(opts = {})
       noob = DismalTony::UserIdentity.new(user_data: opts)
       @users << noob
       noob
     end
 
+    # A kickback method. This method is called on VIBase#data_store at the end of VIBase#query!
+    # to perform cleanup tasks like updating users or saving data, and is passed the HandledResponse via +_handled+
     def on_query(_handled); end
 
+    # Syntactic sugar. Selects users for whom +block+ returns true
     def find(&block)
       @users.select(&block)
     end
 
+    # Calls <tt>#reject!</tt> on +user+
     def delete_user(user)
       @users.reject! { |u| u == user }
     end
   end
 
+  # Represents storing the data to disk as a YAML file
   class LocalStore < DataStorage
+    # Allows setting env_vars via manually editing the store file. Any values included in this hash will be merged with ENV
     attr_accessor :env_vars
 
+    # Calls #load on the file +fp+
     def self.load_from(fp = '/')
       the_store = LocalStore.new(filepath: fp)
       the_store.load
       the_store
     end
 
+    # Creates a new store at +fp+ and calls #save on the file
     def self.create(fp = '/')
       the_store = LocalStore.new(filepath: fp)
       the_store.save
       the_store
     end
 
-    def new_user(opts = {})
+    def new_user(opts = {}) # :nodoc:
       noob = DismalTony::UserIdentity.new(user_data: opts)
       @users << noob
       noob
     end
 
+    # Every time a query is +_handled+, saves the YAML file
     def on_query(_handled)
       save
     end
 
-    def initialize(**args)
+    def initialize(**args) # :nodoc:
       if @opts.nil?
         @opts = args
       else
@@ -65,6 +83,7 @@ module DismalTony
       @users = []
     end
 
+    # Loads in an existing LocalStore using the file specified by <tt>opts[:filepath]</tt>
     def load
       enchilada = Psych.load File.open(@opts[:filepath])
       if enchilada['globals']['env_vars']
@@ -84,6 +103,7 @@ module DismalTony
       return false
     end
 
+    # Exports the LocalStore to the file specified by <tt>opts[:filepath]</tt>
     def save
       output = { 'users' => @users, 'globals' => { 'config' => @opts, 'env_vars' => @env_vars } }
       begin
@@ -97,9 +117,14 @@ module DismalTony
     end
   end
 
+
+  # Designed to let you use ActiveRecord Models (or appropriately duck-typed Model classes),
+  # so that you can use a VI in a rails project by creating a Model.
   class DBStore < DataStorage
+    # The class to use for this model. It must implement all of the attributes of ConversationState as well as have a user_data column
     attr_accessor :model_class
 
+    # Instanciates this store using +mc+ as the #model_class and taking in normal +args+ options
     def initialize(mc, **args)
       self.model_class = mc
       if @opts.nil?
@@ -110,6 +135,7 @@ module DismalTony
       @users = []
     end
 
+    # Calls <tt>model_class.all</tt> and loads each user into the array.
     def load_users!
       model_class.all.each do |rec|
         @users << DBstore.to_tony(rec)
@@ -117,7 +143,7 @@ module DismalTony
       @users.uniq!
     end
 
-    def new_user(opts = {})
+    def new_user(opts = {}) # :nodoc:
       the_user = DismalTony::UserIdentity.new
       the_user.user_data = opts
 
@@ -130,20 +156,23 @@ module DismalTony
       the_user
     end
 
-    def on_query(handled)
+    def on_query(handled) # :nodoc:
       handled.conversation_state.user_identity
     end
 
-    def self.by_id(num)
+    # Syntactic sugar for <tt>DBStore.model_class.find</tt> with argument +num+
+    def self.by_id(num) 
       DBStore.to_tony model_class.find(num)
     end
 
+    # Syntactic sugar for <tt>DBStore.model_class.find_by</tt> with argument +params+
     def find(**params)
       record = model_class.find_by(params)
       return nil if record.nil?
       DBStore.to_tony record
     end
 
+    # Calls <tt>#destroy</tt> on the record corresponding to the +user+
     def delete_user(user)
       if user.is_a? DismalTony::UserIdentity
         the_usr = by_id(user['id'])
@@ -153,6 +182,8 @@ module DismalTony
       end
     end
 
+    # Transforms a +record+ into a UserIdentity object.
+    # Extra columns in the model are neatly turned into UserIdentity#user_data entries
     def self.to_tony(record)
       cstate = DismalTony::ConversationState.new
       skip_vals = %w(user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data)
@@ -180,6 +211,9 @@ module DismalTony
       uid
     end
 
+    # Takes a UserIdentity +tony_data+ and updates the database with the changes from its previous state.
+    # Information in UserIdentity#user_data is unpacked into any matching columns on the Model class,
+    # and any remaining data is converted to YAML format before being written to the Model's <tt>user_data</tt> column
     def save(tony_data)
       uid = tony_data
       cstate = uid.conversation_state

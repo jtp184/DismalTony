@@ -20,7 +20,7 @@ Bundler.require(:development, :default)
   filepath: './store.yml'
 )
 @db.load
-DismalTony::HandlerRegistry.load_handlers! "#{Dir.pwd}/lib/dismaltony/handlers"
+DismalTony::HandlerRegistry.load_handlers! "handlers"
 @tony = DismalTony::VIBase.new(data_store: @db)
 
 def qp(str, debug = false)

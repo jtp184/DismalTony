@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dismaltony (0.5.0)
+    dismaltony (0.5.2)
       duration
       json
       psych
@@ -46,4 +46,4 @@ DEPENDENCIES
   rspec (~> 3.5)
 
 BUNDLED WITH
-   1.13.7
+   1.14.6
