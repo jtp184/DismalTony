@@ -126,7 +126,7 @@ module DismalTony # :nodoc:
 
     # Instanciates this store using +mc+ as the #model_class and taking in normal +args+ options
     def initialize(mc, **args)
-      self.model_class = mc
+      @model_class = mc
       if @opts.nil?
         @opts = args
       else
@@ -137,7 +137,7 @@ module DismalTony # :nodoc:
 
     # Calls <tt>model_class.all</tt> and loads each user into the array.
     def load_users!
-      model_class.all.each do |rec|
+      @model_class.all.each do |rec|
         @users << DBstore.to_tony(rec)
       end
       @users.uniq!
@@ -147,7 +147,7 @@ module DismalTony # :nodoc:
       the_user = DismalTony::UserIdentity.new
       the_user.user_data = opts
 
-      record = model_class.new
+      record = @model_class.new
       record.save
 
       the_user['id'] = record.id
@@ -161,13 +161,13 @@ module DismalTony # :nodoc:
     end
 
     # Syntactic sugar for <tt>DBStore.model_class.find</tt> with argument +num+
-    def self.by_id(num) 
-      DBStore.to_tony model_class.find(num)
+    def by_id(num) 
+      DBStore.to_tony @model_class.find(num)
     end
 
     # Syntactic sugar for <tt>DBStore.model_class.find_by</tt> with argument +params+
     def find(**params)
-      record = model_class.find_by(params)
+      record = @model_class.find_by(params)
       return nil if record.nil?
       DBStore.to_tony record
     end
@@ -176,9 +176,9 @@ module DismalTony # :nodoc:
     def delete_user(user)
       if user.is_a? DismalTony::UserIdentity
         the_usr = by_id(user['id'])
-        model_class.destroy(the_usr)
+        @model_class.destroy(the_usr)
       else
-        model_class.destroy(user)
+        @model_class.destroy(user)
       end
     end
 

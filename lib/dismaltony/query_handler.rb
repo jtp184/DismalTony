@@ -221,7 +221,7 @@ module DismalTony # :nodoc:
     # If this handler responds to the +_query+, but doesn't have match data for <tt>menu_choice</tt>, then this method is called.
     def menu(_query, _user); end
 
-    # Special method to make all QueryMenu handlers compatible with QueryResult handlers.
+    # Special method to make all QueryMenu handlers compatible with ResultQuery handlers.
     # Returns #menu_choices regardless of the values of +_query+ and +_user+
     def query_result(_query, _user)
       @menu_choices

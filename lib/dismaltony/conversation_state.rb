@@ -19,7 +19,7 @@ module DismalTony # :nodoc:
     attr_accessor :data_packet
 
     # +args+ Options have no defaults by design, allowing values to be nil when necessary.
-    # Specify values by using the attribute names as strings
+    # Specify values by using the attribute names as Symbols
     def initialize(**args)
       @last_recieved_time = args[:last_recieved_time]
       @is_idle = args[:is_idle]

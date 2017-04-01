@@ -15,3 +15,4 @@ store.yml
 .rubocop.yml
 cop.txt
 ngrok
+Guardfile
