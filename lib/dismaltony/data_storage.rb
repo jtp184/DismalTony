@@ -176,16 +176,17 @@ module DismalTony # :nodoc:
     # Transforms a +record+ into a UserIdentity object.
     # Extra columns in the model are neatly turned into UserIdentity#user_data entries
     def self.to_tony(record)
-      cstate = DismalTony::ConversationState.new
       skip_vals = %w(user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data)
 
-      cstate.last_recieved_time = record.last_recieved_time
-      cstate.is_idle = record.is_idle
-      cstate.use_next = record.use_next
-      cstate.return_to_handler = record.return_to_handler
-      cstate.return_to_method = record.return_to_method
-      cstate.return_to_args = record.return_to_args
-      cstate.data_packet = record.data_packet
+      cstate = DismalTony::ConversationState.new(
+            :last_recieved_time => record.last_recieved_time,
+            :is_idle => record.is_idle,
+            :use_next => record.use_next,
+            :return_to_handler => record.return_to_handler,
+            :return_to_method => record.return_to_method,
+            :return_to_args => record.return_to_args,
+            :data_packet => record.data_packet
+      )
 
       ud = (record.class.columns.map(&:name).reject { |e| skip_vals.include? e })
 
@@ -197,7 +198,7 @@ module DismalTony # :nodoc:
 
       Psych.load(record.user_data).each_pair { |k, v| uid[k] = v }
 
-      uid.conversation_state = cstate
+      uid.modify_state!(cstate)
 
       uid
     end
