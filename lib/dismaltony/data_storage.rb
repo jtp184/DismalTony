@@ -1,23 +1,20 @@
 require 'psych' # :nodoc:
 
 module DismalTony # :nodoc:
-  # Represents the collection of options and users that comprise the VI's memory. 
-  # The base DataStorage class is a non-persistent Data Store that functions fine in IRB 
+  # Represents the collection of options and users that comprise the VI's memory.
+  # The base DataStorage class is a non-persistent Data Store that functions fine in IRB
   # or for ephemeral instances, but doesn't save anything.
   # If you don't specify a data store to use, this is the default.
   class DataStorage
     # A Hash that stores any configuration options
     attr_accessor :opts
     # an Array of UserIdentity objects that make up the userspace.
-    attr_accessor :users
+    attr_reader :users
 
     # Initializes an empty store, and merges +args+ with #opts
     def initialize(**args)
-      if @opts.nil?
-        @opts = args
-      else
-        @opts.merge! args
-      end
+      @opts = {}
+      @opts.merge!(args) unless args.nil?
       @users = []
     end
 
@@ -40,7 +37,7 @@ module DismalTony # :nodoc:
 
     # Calls <tt>#reject!</tt> on +user+
     def delete_user(user)
-      @users.reject! { |u| u == user }
+      @users.reject! { |usr| usr == user }
     end
   end
 
@@ -75,20 +72,14 @@ module DismalTony # :nodoc:
     end
 
     def initialize(**args) # :nodoc:
-      if @opts.nil?
-        @opts = args
-      else
-        @opts.merge! args
-      end
-      @users = []
+      super(args)
     end
 
     # Loads in an existing LocalStore using the file specified by <tt>opts[:filepath]</tt>
     def load
       enchilada = Psych.load File.open(@opts[:filepath])
-      if enchilada['globals']['env_vars']
-        @env_vars = enchilada['globals']['env_vars']
-        @env_vars.each_pair { |k, v| ENV[k] = v }
+      if @env_vars = enchilada['globals']['env_vars']
+        @env_vars.each_pair { |key, val| ENV[key] = val }
       end
       @users += (enchilada['users'])
       @opts.merge!(enchilada['config']) do |k, o, n|
@@ -107,8 +98,8 @@ module DismalTony # :nodoc:
     def save
       output = { 'users' => @users, 'globals' => { 'config' => @opts, 'env_vars' => @env_vars } }
       begin
-        File.open(@opts[:filepath], 'w+') do |f|
-          f << Psych.dump(output)
+        File.open(@opts[:filepath], 'w+') do |fil|
+          fil << Psych.dump(output)
         end
         return true
       rescue StandardError
@@ -117,12 +108,11 @@ module DismalTony # :nodoc:
     end
   end
 
-
   # Designed to let you use ActiveRecord Models (or appropriately duck-typed Model classes),
   # so that you can use a VI in a rails project by creating a Model.
   class DBStore < DataStorage
     # The class to use for this model. It must implement all of the attributes of ConversationState as well as have a user_data column
-    attr_accessor :model_class
+    attr_reader :model_class
 
     # Instanciates this store using +mc+ as the #model_class and taking in normal +args+ options
     def initialize(mc, **args)
@@ -136,7 +126,7 @@ module DismalTony # :nodoc:
     end
 
     # Calls <tt>model_class.all</tt> and loads each user into the array.
-    def load_users!
+    def load_users
       @model_class.all.each do |rec|
         @users << DBstore.to_tony(rec)
       end
@@ -145,7 +135,8 @@ module DismalTony # :nodoc:
 
     def new_user(opts = {}) # :nodoc:
       the_user = DismalTony::UserIdentity.new
-      the_user.user_data = opts
+
+      opts.each_pair { |key, value| the_user[key] = value }
 
       record = @model_class.new
       record.save
@@ -161,7 +152,7 @@ module DismalTony # :nodoc:
     end
 
     # Syntactic sugar for <tt>DBStore.model_class.find</tt> with argument +num+
-    def by_id(num) 
+    def by_id(num)
       DBStore.to_tony @model_class.find(num)
     end
 
@@ -216,7 +207,7 @@ module DismalTony # :nodoc:
     # and any remaining data is converted to YAML format before being written to the Model's <tt>user_data</tt> column
     def save(tony_data)
       uid = tony_data
-      cstate = uid.conversation_state
+      cstate = uid.state
       skip_vals = %w(user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data)
 
       the_mod = model_class.find_by(id: uid['id'])

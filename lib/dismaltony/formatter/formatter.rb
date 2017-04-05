@@ -2,9 +2,8 @@ require 'duration'
 
 module DismalTony # :nodoc:
   module Formatter # :nodoc:
-
     # Responsible for taking strings and formatting them according to project guidelines
-    class Printer 
+    class Printer
       # a Regexp which matches a message sent with the standard DismalTony format
       OUTGOING = /(?<label>\[(?<moji>.+)\]\: )(?<message>.+)/
       # a Regexp which matches a message string, and includes support for extracting the emoji signifier
@@ -33,7 +32,7 @@ module DismalTony # :nodoc:
       end
 
       # Method for colorizing text in the command output
-      # 
+      #
       # * +input+ - the message to colorize
       # * +color+ - a Symbol corresponding to the color to use.
       # Valid values are: <tt>:black, :red, :green, :yellow, :blue, :magenta, :cyan, :gray,</tt>

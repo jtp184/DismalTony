@@ -1,5 +1,5 @@
 module DismalTony # :nodoc:
-  # Central registry for handlers. Calling DismalTony.create_handler adds the handler you create to this registry.
+  # Central registry for query handlers. Calling DismalTony.create_handler adds the handler you create to this registry.
   class HandlerRegistry
     include Enumerable
     # The array of QueryHandler objects
@@ -7,7 +7,7 @@ module DismalTony # :nodoc:
 
     # Calls <tt>load</tt> on all *.rb files in +directory+
     def self.load_handlers_from(directory)
-      found_files = (Dir.entries directory).select { |e| e =~ /.+\.rb/ }
+      found_files = (Dir.entries directory).select { |filname| filname =~ /.+\.rb/ }
       found_files.each do |file|
         load "#{directory}/#{File.basename(file)}"
       end
@@ -19,8 +19,8 @@ module DismalTony # :nodoc:
     end
 
     # Attribute reader for the handlers class variable.
-    def self.handlers
-      @handlers
+    class << self
+      attr_reader :handlers
     end
 
     # Adds the QueryHandler +handler+ to HandlerRegistry.handlers
@@ -36,7 +36,7 @@ module DismalTony # :nodoc:
     # Returns an array of QueryHandler objects whose name matches +par+
     def self.[](par)
       par = Regexp.new(par, Regexp::IGNORECASE) if par.is_a? String
-      @handlers.select { |h| h.new(DismalTony::VIBase.new).handler_name =~ par }
+      @handlers.select { |hand| hand.new(DismalTony::VIBase.new).handler_name =~ par }
     end
 
     # Returns an array of QueryHandler objects whose group (if one exists) matches +par+
@@ -49,7 +49,7 @@ module DismalTony # :nodoc:
 
     # Returns an Array of the names of distinct groups Handlers are in. If a handler doesn't have a group, it is filed with 'none'
     def self.groups
-      ((@handlers.map { |e| e.new(DismalTony::VIBase.new) }).map { |h| (h.group if h.responds_to('group')) || 'none' }).uniq
+      ((@handlers.map { |e| e.new(DismalTony::VIBase.new) }).map { |h| (h.group || 'none') }).uniq
     end
   end
 end

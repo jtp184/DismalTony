@@ -1,10 +1,8 @@
 module DismalTony # :nodoc:
-
   # Used to assist with use of emojis. Mostly just a wrapper for a Hash table
   class EmojiDictionary
-
     # The crux of the class, this function returns the Hash of emojis
-    def self.emoji_table 
+    def self.emoji_table
       {
         '0' => '0️⃣',
         '1' => '1️⃣',
@@ -126,16 +124,16 @@ module DismalTony # :nodoc:
 
     # Allows hash syntax on the class itself for finding Emoji with the key +search+
     def self.[](search)
-      self.emoji_table[search]
+      emoji_table[search]
     end
 
     def self.to_h # :nodoc:
-      self.emoji_table
+      emoji_table
     end
 
     # Inverse lookup of Emoji. Finds the name given to the emoji +moj+
     def self.name(moj)
-      self.emoji_table.key(moj) || 'emoji'
+      emoji_table.key(moj) || 'emoji'
     end
   end
 end

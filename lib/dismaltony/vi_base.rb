@@ -1,5 +1,5 @@
 module DismalTony # :nodoc:
-  # The essential class. A VI, or Virtual Intelligence, 
+  # The essential class. A VI, or Virtual Intelligence,
   # forms the basis for the DismalTony gem, and is your conversational agents for handling queries
   class VIBase
     # The name of the Intelligence
@@ -30,15 +30,15 @@ module DismalTony # :nodoc:
 
     # * +str+ - the Query to resolve.
     # * +user_identity+ - a UserIdentity object corresponding to the user making the query. Defaults to UserIdentity::DEFAULT
-    # 
-    # 
-    # The primary method. Uses any available handler to handle a query, calls QueryHandler.activate_handler! and returns a HandledResponse object. 
-    # 
-    # * First, it checks if the ConversationState indicates that we're resuming. 
-    # * * If so, it uses the information in that to handle the query by calling ConversationState.return_to_handler and passing the query. 
-    # * If we aren't resuming, it checks to see if any known handler matches the query via the QueryHandler.responds? method. 
+    #
+    #
+    # The primary method. Uses any available handler to handle a query, calls QueryHandler.activate_handler! and returns a HandledResponse object.
+    #
+    # * First, it checks if the ConversationState indicates that we're resuming.
+    # * * If so, it uses the information in that to handle the query by calling ConversationState.return_to_handler and passing the query.
+    # * If we aren't resuming, it checks to see if any known handler matches the query via the QueryHandler.responds? method.
     # * * If so, it uses that one, passing along the executing to the handler.
-    # * * Otherwise, it will return a HandledResponse.error object. 
+    # * * Otherwise, it will return a HandledResponse.error object.
     # * * Unless the HandledResponse.format has <tt>:quiet => true</tt>, VIBase.say will be called on the HandledResponse.return_message attribute.
     def query!(str = '', user_identity = DismalTony::UserIdentity::DEFAULT)
       responded = []
@@ -49,39 +49,39 @@ module DismalTony # :nodoc:
         handle = (@handlers.select { |hand| hand.new(self).handler_name == ret.to_s }).first.new(self)
         handle.data = user_cs.data_packet
         post_handled = if ret == 'index'
-          handle.activate_handler! str, user_identity
-        else
-          ret_method = user_cs.return_to_method
-          post_handled = if handle.respond_to? ret_method
-            if user_cs.return_to_args
-              handle.method(ret_method.to_sym).call(user_cs.return_to_args.split(', ') + [str, user_identity])
-            else
-              handle.method(ret_method.to_sym).call(str, user_identity)
-            end
-          else
-            DismalTony::HandledResponse.finish "~e:frown I'm sorry, there appears to be a problem with that program"
-          end
+                         handle.activate_handler! str, user_identity
+                       else
+                         ret_method = user_cs.return_to_method
+                         post_handled = if handle.respond_to? ret_method
+                                          if user_cs.return_to_args
+                                            handle.method(ret_method.to_sym).call(user_cs.return_to_args.split(', ') + [str, user_identity])
+                                          else
+                                            handle.method(ret_method.to_sym).call(str, user_identity)
+                                          end
+                                        else
+                                          DismalTony::HandledResponse.finish "~e:frown I'm sorry, there appears to be a problem with that program"
+                         end
         end
       else
-       @handlers.each do |handler_class|
-         handler = handler_class.new(self)
-         responded << handler if handler.responds? str
+        @handlers.each do |handler_class|
+          handler = handler_class.new(self)
+          responded << handler if handler.responds? str
+        end
+        post_handled = if responded.empty?
+                         DismalTony::HandledResponse.error
+                       elsif responded.length == 1
+                         responded.first.activate_handler! str, user_identity
+                       elsif responded.any? { |hand| hand.handler_name = 'explain-handler' }
+                         (responded.select { |hand| hand.handler_name = 'explain-handler' }).first.activate_handler! str, user_identity
+                       else
+                         responded.first.activate_handler! str, user_identity
        end
-       post_handled = if responded.empty?
-        DismalTony::HandledResponse.error
-      elsif responded.length == 1
-        responded.first.activate_handler! str, user_identity
-      elsif responded.any? { |hand| hand.handler_name = 'explain-handler' }
-        (responded.select { |hand| hand.handler_name = 'explain-handler' }).first.activate_handler! str, user_identity
-      else
-        responded.first.activate_handler! str, user_identity
-      end
     end
-    say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet]
-    post_handled.conversation_state.from_h!(user_identity: user_identity, last_recieved_time: Time.now)
-    user_identity.conversation_state = post_handled.conversation_state
-    @data_store.on_query(post_handled)
-    post_handled
+      say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet]
+      post_handled.conversation_state.from_h(user_identity: user_identity, last_recieved_time: Time.now)
+      user_identity.modify_state!(post_handled.conversation_state)
+      @data_store.on_query(post_handled)
+      post_handled
   end
 
     # calls QueryResult#query_result for +str+ and +user_identity+
@@ -95,7 +95,6 @@ module DismalTony # :nodoc:
       nil
     end
 
-
     # Soft query. Searches the handlers for a query that matches +str+, and calls QueryHandler.activate_handler on it for +user_identity+
     def query(str, user_identity)
       responded = []
@@ -105,12 +104,12 @@ module DismalTony # :nodoc:
         responded << handler if handler.responds? str
       end
 
-      DismalTony::HandledResponse.error unless  responded.length == 1
+      DismalTony::HandledResponse.error unless responded.length == 1
       DismalTony::HandledResponse.finish(responded.first.activate_handler(str, user_identity))
     end
 
     # For internal use, handles a query silently and grants access to handlers inside other handlers or programs.
-    # 
+    #
     # * +qry+ - Used to match against QueryHandler.handler_name
     # * +usr+ - a UserIdentity object representing the user. Defaults to UserIdentity::DEFAULT
     # * +args+ - Optional parameter. Sets the QueryHandler.data of the handler manually
@@ -138,8 +137,8 @@ module DismalTony # :nodoc:
     end
 
     # Method for using SubHandler type handlers.
-    # 
-    # * +subject+ - The used to match against SubHandler.handler_name 
+    #
+    # * +subject+ - The used to match against SubHandler.handler_name
     # * +verb+ - The name of the method to use. Casts to a Symbol before being used.
     # * +params+ - Optional. Passed in to the handler's action as its arguments
     def control(subject, verb, params = {})

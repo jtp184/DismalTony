@@ -20,7 +20,7 @@ Bundler.require(:development, :default)
   filepath: './store.yml'
 )
 @db.load
-DismalTony::HandlerRegistry.load_handlers! "handlers"
+DismalTony::HandlerRegistry.load_handlers! 'handlers'
 @tony = DismalTony::VIBase.new(data_store: @db)
 
 def qp(str, debug = false)
@@ -37,4 +37,4 @@ def qp(str, debug = false)
 end
 
 # puts resp.inspect
-qp "Hello"
+qp 'Who am I?'

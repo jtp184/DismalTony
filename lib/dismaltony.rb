@@ -11,10 +11,10 @@ require 'dismaltony/handler_registry'
 require 'dismaltony/vi_base'
 
 module DismalTony
-	# Defines a new Handler and registers it in the HandlerRegistry
-	# 
-	# * +sc+ - The subclass of QueryHandler to use.
-	# * +block+ - The code block to use as the class's evaluation.
+  # Defines a new Handler and registers it in the HandlerRegistry
+  #
+  # * +sc+ - The subclass of QueryHandler to use.
+  # * +block+ - The code block to use as the class's evaluation.
   def self.create_handler(sc = DismalTony::QueryHandler, &block)
     c = Class.new(sc, &block)
     DismalTony::HandlerRegistry.register(c)

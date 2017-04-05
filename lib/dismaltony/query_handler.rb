@@ -1,19 +1,20 @@
 module DismalTony # :nodoc:
-
-  # The basic method to handle queries. Comes with lots of built in logic to help subclassing, 
+  # The basic method to handle queries. Comes with lots of built in logic to help subclassing,
   # or just writing clear handlers from the base class.
   class QueryHandler
     # The name of the handler. Must be unique
-    attr_accessor :handler_name
+    attr_reader :handler_name
+    # Metadata tag for handler selection
+    attr_reader :group
     # An Array of Regexps corresponding to queries that you want this Handler to be used for
-    attr_accessor :patterns
+    attr_reader :patterns
     # The results of the query being parsed are stored in this hash, to ease using that input in handlers.
-    attr_accessor :data
+    attr_reader :data
     # A VIBase object corresponding to the VI running the query.
-    attr_accessor :vi
+    attr_reader :vi
 
     # Instanciates this handler for use, using +virtual+ as the VI.
-    # 
+    #
     # Also sets the #patterns and #data attributes to blank values, then runs handler_start for itself.
     # Finally, if the patterns aren't already Regexps, they're mapped into literals using the //i option.
     # This can be useful if you want to use interpolation in your patterns, like inserting the VI's name.
@@ -21,8 +22,9 @@ module DismalTony # :nodoc:
       @vi = virtual
       @patterns = []
       @data = {}
+      @group = ''
       handler_start
-      @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
+      @patterns.map! { |patt| Regexp.new(patt, Regexp::IGNORECASE) } unless @patterns.all? { |patt| patt.is_a? Regexp }
     end
 
     def error_out # :nodoc:
@@ -33,12 +35,12 @@ module DismalTony # :nodoc:
     def handler_start; end
 
     # Hard Query. This is the method used to execute the individual handler's purpose, and must return a HandledResponse.
-    # 
+    #
     # Passes in the +_query+ and the +_user+ for use in resolving the handler.
     def activate_handler!(_query, _user); end
 
     # Soft Query. Used with the ExplainHandler to let you check the outcome of your query before actually running it. Must return a String.
-    # 
+    #
     # Passes in the +_query+ and +_user+ for use, although they can be unnecessary.
     def activate_handler(_query, _user); end
 
@@ -53,12 +55,15 @@ module DismalTony # :nodoc:
     end
 
     # Syntactic sugar for setting values in #data.
-    # 
+    #
     # Sets the data +index+ equal to +value+
     def set_value(index, value)
       @data[index] = value
     end
 
+    def merge_data(other)
+      @data.merge!(other)
+    end
 
     def []=(left, right) # :nodoc:
       @data[left] = right
@@ -70,7 +75,7 @@ module DismalTony # :nodoc:
     end
 
     # Main query resolution function. Takes the +query+ string, and iterates through #patterns checking for a match.
-    # If it finds one, it takes the captures and merges them into the #data hash. 
+    # If it finds one, it takes the captures and merges them into the #data hash.
     # Returns +match_data+ for the query, in case you want to use the actual MatchData object for something.
     def parse(query)
       match_data = nil
@@ -92,15 +97,14 @@ module DismalTony # :nodoc:
       match_data
     end
 
-    # Syntactic sugar. 
-    # Technically returns the same thing as just parsing the +query+ 
+    # Syntactic sugar.
+    # Technically returns the same thing as just parsing the +query+
     # but since that value is apropriately truthy, this works just as well.
-    alias_method :responds?, :parse
+    alias responds? parse
   end
 
   # Currently the only built-in handler. Matches <tt>/what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)/i</tt> and runs QueryHandler.activate_handler on the handler triggered by the second query.
   class ExplainHandler < QueryHandler
-
     # Instanciates this handler with the VIBase +virtual+, and sets values for the handler:
     # * +handler_name+ - 'explain-handler'
     # * +patterns+ - <tt>[/what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)/i]</tt>
@@ -108,9 +112,9 @@ module DismalTony # :nodoc:
       @vi = virtual
       @handler_name = 'explain-handler'
       @patterns = [/what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)/i]
-        @data = { 'second_query' => '' }
-        @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
-      end
+      @data = { 'second_query' => '' }
+      @patterns.map! { |patt| Regexp.new(patt, Regexp::IGNORECASE) } unless @patterns.all? { |patt| patt.is_a? Regexp }
+    end
 
     # Parses the +query+, then returns a HandledResponse corresponding to calling VIBase.query for the +user+ on the second query
     def activate_handler!(query, user)
@@ -129,7 +133,7 @@ module DismalTony # :nodoc:
   # Subclass responsible for doing simple call/response handlers, like greeters or Help descriptions
   class CannedResponse < QueryHandler
     # An Array of Strings corresponding to the possible replies
-    attr_accessor :responses
+    attr_reader :responses
 
     # Same as QueryHandler except this initializes #responses as well as instanciating this handler under +virtual+
     def initialize(virtual = DismalTony::VIBase.new)
@@ -138,7 +142,7 @@ module DismalTony # :nodoc:
       @data = {}
       @responses = []
       handler_start
-      @patterns.map! { |e| Regexp.new(e, Regexp::IGNORECASE) } unless @patterns.all? { |e| e.is_a? Regexp }
+      @patterns.map! { |patt| Regexp.new(patt, Regexp::IGNORECASE) } unless @patterns.all? { |patt| patt.is_a? Regexp }
     end
 
     # Defaults to "I'll reply with one of #{@responses.length} responses!" regardless of the values of +_query+ and +_user+
@@ -154,16 +158,16 @@ module DismalTony # :nodoc:
 
   # Designed to be accessed both programatically and via querying.
   # Useful for building handlers that simply transmit information, like the contents of a list, or a user's phone number.
-  # Handlers written with this subclass can then return the actual Ruby object result from one method, and have a wrapper method 
+  # Handlers written with this subclass can then return the actual Ruby object result from one method, and have a wrapper method
   # around #activate_handler! that formats it for a User, allowing you to use your handlers in-line in other handlers.
   class ResultQuery < QueryHandler
-    # The formatting method. The result of #query_result is sent to this method's +_input+ 
+    # The formatting method. The result of #query_result is sent to this method's +_input+
     # method before being used as the responding message for a HandledResponse.
     # Use it to create a user-friendly text representation of the results of the query, like a list(-item) or numerical value.
     def apply_format(_input); end
 
     # Takes the place of #activate_handler! in being the main resolution method.
-    # Parses the +_query+ for the +_user+ and then returns the result as a Ruby object, 
+    # Parses the +_query+ for the +_user+ and then returns the result as a Ruby object,
     # instead of returning a HandledResponse description of the result of the Query
     def query_result(_query, _user); end
 
@@ -172,7 +176,7 @@ module DismalTony # :nodoc:
     end
 
     # Regardless of the values of +_query+ and +_user+, returns <tt>"I'll calculate the result, and then list it out for you!"</tt>
-    def activate_handler(_query, _user) 
+    def activate_handler(_query, _user)
       "I'll calculate the result, and then list it out for you!"
     end
 
@@ -185,7 +189,7 @@ module DismalTony # :nodoc:
   # Used to create branching handlers easily.
   class QueryMenu < QueryHandler
     # A Hash of Symbol keyed HandledResponse objects corresponding to the result of choosing different menu options
-    attr_accessor :menu_choices
+    attr_reader :menu_choices
 
     # Syntactic sugar. Adds +response+ to #menu_choices with a key of +opt_name+
     def add_option(opt_name, response)
@@ -196,19 +200,20 @@ module DismalTony # :nodoc:
     def initialize(virtual)
       @menu_choices = {}
       super(virtual)
+      @data = { 'menu_choice' => '' }
     end
 
     # Handles this +query+ for the +user+
-    # 
+    #
     # Checks to see if, after parsing the query, there is a value for <tt>data['menu_choice']</tt>.
     # If so, it tries to return the value corresponding to that key (cast to Symbol) in #menu_choices.
     # If that key doesn't exist, it returns a HandledResponse saying so, otherwise it returns the HandledResponse in the menu.
-    # 
+    #
     # If it doesn't find a value for <tt>data['menu_choice']</tt>, it calls #menu to present the user with the options.
     def activate_handler!(query, user)
       parse query
-      if @data['menu_choice']
-        their_choice = @menu_choices[@data['menu_choice'].to_sym]
+      if mc = @data['menu_choice']
+        their_choice = @menu_choices[mc.to_sym]
         return DismalTony::HandledResponse.finish "~e:frown I'm sorry, that isn't an option!" if their_choice.nil?
         their_choice
       else
@@ -216,8 +221,8 @@ module DismalTony # :nodoc:
       end
     end
 
-    # Used to list the menu options to the +_user+. 
-    # 
+    # Used to list the menu options to the +_user+.
+    #
     # If this handler responds to the +_query+, but doesn't have match data for <tt>menu_choice</tt>, then this method is called.
     def menu(_query, _user); end
 
@@ -237,7 +242,7 @@ module DismalTony # :nodoc:
   # Kind of like a mini-API handler.
   class SubHandler < QueryHandler
     # An array containing method names corresponding to valid actions.
-    # 
+    #
     # Any valid action must be of the form <tt>def action_name(opts); end</tt>, and return a HandledResponse
     # but the handler may have other support methods not included in this array which don't use this structure.
     attr_accessor :actions

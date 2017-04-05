@@ -3,11 +3,11 @@ module DismalTony # :nodoc:
   # Functions as a rich join of the return message and the changed conversation state, with formatting options.
   class HandledResponse
     # The VI's reply to a query. Whatever you want said back to the user.
-    attr_accessor :return_message
+    attr_reader :return_message
     # A ConversationState object representing the User's new state after running the query
-    attr_accessor :conversation_state
+    attr_reader :conversation_state
     # Formatting options for how to display the return message
-    attr_accessor :format
+    attr_reader :format
 
     # Creates a new response with +rm+ serving as the return message, and +cs+ the conversation state
     def initialize(rm = '', cs = DismalTony::ConversationState.new)
@@ -17,7 +17,7 @@ module DismalTony # :nodoc:
     end
 
     # Returns #return_message
-    def to_s 
+    def to_s
       @return_message
     end
 
@@ -38,7 +38,7 @@ module DismalTony # :nodoc:
     end
 
     # Produces a new HandledResponse intended to then direct the next User input to a specific handler
-    # 
+    #
     # * +next_handler+ - a QueryHandler object corresponding to the handler
     # * +next_method+ - the name of the desired method inside that handler
     # * +rm+ - the return message to send
