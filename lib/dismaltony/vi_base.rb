@@ -47,7 +47,7 @@ module DismalTony # :nodoc:
 
       if ret = user_cs.return_to_handler
         handle = (@handlers.select { |hand| hand.new(self).handler_name == ret.to_s }).first.new(self)
-        handle.data = user_cs.data_packet
+        handle.merge_data(user_cs.data_packet)
         post_handled = if ret == 'index'
                          handle.activate_handler! str, user_identity
                        else

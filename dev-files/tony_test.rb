@@ -26,7 +26,6 @@ DismalTony::HandlerRegistry.load_handlers! 'handlers'
 def qp(str, debug = false)
   puts "[#{@laptop_emoji}]: #{str}"
   puts " #{@db.users.first.conversation_state.inspect}" if debug
-  puts
   if debug
     puts
     puts (@tony.query! str, @db.users.first).inspect
@@ -34,7 +33,9 @@ def qp(str, debug = false)
     @tony.query!(str, @db.users.first)
   end
   puts " #{@db.users.first.conversation_state.inspect}" if debug
+  puts
 end
 
 # puts resp.inspect
-qp 'Who am I?'
+qp 'Roll a dice'
+qp '6'
