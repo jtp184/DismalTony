@@ -36,7 +36,7 @@ module DismalTony # :nodoc:
       @is_idle
     end
 
-    # Combines the state of ConversationState +other+ in with this one safely, keeping existing values if +other+ has a null
+    # Combines the state of ConversationState +other+ in with this one safely, keeping existing values if +other+ has a nil
     def merge(other)
       @last_recieved_time = (other.last_recieved_time || @last_recieved_time)
       @is_idle = (other.is_idle || @is_idle)
@@ -60,7 +60,8 @@ module DismalTony # :nodoc:
       @data_packet = other.data_packet
     end
 
-    # Takes a hash +args+ with keys corresponding to the attribute to change, and the value to its new value
+    # Takes a hash +args+ with keys corresponding to the attribute to change, and the value to its new value. 
+    # Keeps existing values if the hash value is nil.
     def from_h(**args)
       @last_recieved_time = (args[:last_recieved_time] || @last_recieved_time)
       @is_idle = (args[:is_idle] || @is_idle)
@@ -72,7 +73,7 @@ module DismalTony # :nodoc:
       @data_packet = (args[:data_packet] || @data_packet)
     end
 
-    # Syntactic sugar. Returns true if #is_idle or #use_next do
+    # Syntactic sugar. Returns true if #is_idle or #use_next returns true
     def steer?
       @is_idle || @use_next
     end

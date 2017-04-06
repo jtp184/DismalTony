@@ -185,7 +185,7 @@ module DismalTony # :nodoc:
             :return_to_handler => record.return_to_handler,
             :return_to_method => record.return_to_method,
             :return_to_args => record.return_to_args,
-            :data_packet => Psych.load(record.data_packet)
+            :data_packet => (Psych.load(record.data_packet) || nil)
       )
 
       ud = (record.class.columns.map(&:name).reject { |e| skip_vals.include? e })
@@ -212,6 +212,7 @@ module DismalTony # :nodoc:
       skip_vals = %w(user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data)
 
       the_mod = model_class.find_by(id: uid['id'])
+      mod_cols = the_mod.class.columns.map(&:name)
 
       the_mod.last_recieved_time = cstate.last_recieved_time
       the_mod.is_idle = cstate.is_idle
@@ -219,9 +220,13 @@ module DismalTony # :nodoc:
       the_mod.return_to_handler = cstate.return_to_handler
       the_mod.return_to_method = cstate.return_to_method
       the_mod.return_to_args = cstate.return_to_args
-      the_mod.data_packet = Psych.dump(cstate.data_packet)
+      the_mod.data_packet = if cstate.data_packet.nil?
+                              nil
+                            else
+                              Psych.dump(cstate.data_packet)
+                            end
 
-      the_mod.class.columns.map(&:name).each do |col|
+      mod_cols.each do |col|
         next if skip_vals.include? col
         the_mod[col.to_sym] = uid[col]
       end
@@ -229,7 +234,7 @@ module DismalTony # :nodoc:
       remaining = {}
 
       uid.user_data.keys.each do |key|
-        next if the_mod.class.columns.map(&:name).include? key
+        next if mod_cols.include? key
         remaining[key] = uid[key]
       end
 

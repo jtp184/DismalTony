@@ -49,7 +49,7 @@ module DismalTony # :nodoc:
 
     # Returns an Array of the names of distinct groups Handlers are in. If a handler doesn't have a group, it is filed with 'none'
     def self.groups
-      ((@handlers.map { |e| e.new(DismalTony::VIBase.new) }).map { |h| (h.group || 'none') }).uniq
+      ((@handlers.map { |hand| hand.new(DismalTony::VIBase.new) }).map { |hand| (hand.group || 'none') }).uniq
     end
   end
 end

@@ -60,8 +60,8 @@ module DismalTony # :nodoc:
                                           end
                                         else
                                           DismalTony::HandledResponse.finish "~e:frown I'm sorry, there appears to be a problem with that program"
-                         end
-        end
+                                        end
+                       end
       else
         @handlers.each do |handler_class|
           handler = handler_class.new(self)

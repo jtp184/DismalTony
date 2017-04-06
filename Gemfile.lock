@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dismaltony (0.5.5)
+    dismaltony (0.5.6)
       duration
       json
       psych
@@ -49,9 +49,13 @@ GEM
       pry (>= 0.9.12)
       shellany (~> 0.0)
       thor (>= 0.18.1)
+    guard-compat (1.2.1)
     guard-rubycritic (2.9.3)
       guard (~> 2.6)
       rubycritic (>= 2.9.3)
+    guard-shell (0.7.1)
+      guard (>= 2.0.0)
+      guard-compat (~> 1.0)
     ice_nine (0.11.2)
     json (2.0.3)
     jwt (1.5.6)
@@ -134,6 +138,7 @@ DEPENDENCIES
   dismaltony!
   guard
   guard-rubycritic
+  guard-shell
   rake (~> 10.0)
   rspec (~> 3.5)
 
