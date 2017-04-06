@@ -35,7 +35,3 @@ def qp(str, debug = false)
   puts " #{@db.users.first.conversation_state.inspect}" if debug
   puts
 end
-
-# puts resp.inspect
-qp 'Roll a dice'
-qp '6'

@@ -185,7 +185,7 @@ module DismalTony # :nodoc:
             :return_to_handler => record.return_to_handler,
             :return_to_method => record.return_to_method,
             :return_to_args => record.return_to_args,
-            :data_packet => record.data_packet
+            :data_packet => Psych.load(record.data_packet)
       )
 
       ud = (record.class.columns.map(&:name).reject { |e| skip_vals.include? e })
@@ -219,7 +219,7 @@ module DismalTony # :nodoc:
       the_mod.return_to_handler = cstate.return_to_handler
       the_mod.return_to_method = cstate.return_to_method
       the_mod.return_to_args = cstate.return_to_args
-      the_mod.data_packet = cstate.data_packet
+      the_mod.data_packet = Psych.dump(cstate.data_packet)
 
       the_mod.class.columns.map(&:name).each do |col|
         next if skip_vals.include? col
