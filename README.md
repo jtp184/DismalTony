@@ -104,7 +104,7 @@ end
 #### Result Query
 Result Queries can be accessed in the code as well as via direct query, allowing you to stack queries together.
 ```ruby
-DismalTony.create_handler(DismalTony::ResultQuery) do
+DismalTony.create_handler(DismalTony::QueryResult) do
   def handler_start
     @handler_name = "numtween"
     @patterns = [/print numbers between (?<start>\d+) and (?<end>\d+)/i]

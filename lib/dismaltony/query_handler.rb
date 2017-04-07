@@ -160,7 +160,7 @@ module DismalTony # :nodoc:
   # Useful for building handlers that simply transmit information, like the contents of a list, or a user's phone number.
   # Handlers written with this subclass can then return the actual Ruby object result from one method, and have a wrapper method
   # around #activate_handler! that formats it for a User, allowing you to use your handlers in-line in other handlers.
-  class ResultQuery < QueryHandler
+  class QueryResult < QueryHandler
     # The formatting method. The result of #query_result is sent to this method's +_input+
     # method before being used as the responding message for a HandledResponse.
     # Use it to create a user-friendly text representation of the results of the query, like a list(-item) or numerical value.
@@ -226,7 +226,7 @@ module DismalTony # :nodoc:
     # If this handler responds to the +_query+, but doesn't have match data for <tt>menu_choice</tt>, then this method is called.
     def menu(_query, _user); end
 
-    # Special method to make all QueryMenu handlers compatible with ResultQuery handlers.
+    # Special method to make all QueryMenu handlers compatible with QueryResult handlers.
     # Returns #menu_choices regardless of the values of +_query+ and +_user+
     def query_result(_query, _user)
       @menu_choices

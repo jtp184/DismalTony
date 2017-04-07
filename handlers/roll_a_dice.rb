@@ -1,4 +1,4 @@
-DismalTony.create_handler(DismalTony::ResultQuery) do
+DismalTony.create_handler(DismalTony::QueryResult) do
   def handler_start
     @handler_name = 'roll-dice'
     @patterns = [/(?<noargs>roll a dice)/i, /roll (?<equation>.+)/i]
