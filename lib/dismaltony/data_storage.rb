@@ -196,7 +196,11 @@ module DismalTony # :nodoc:
         uid[datum] = record.method(datum.to_sym).call
       end
 
-      Psych.load(record.user_data).each_pair { |k, v| uid[k] = v }
+      begin
+        Psych.load(record.user_data).each_pair { |k, v| uid[k] = v }
+      rescue TypeError
+        puts "Unable to load UserData"
+      end
 
       uid.modify_state!(cstate)
 
