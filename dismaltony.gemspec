@@ -32,9 +32,6 @@ Gem::Specification.new do |spec|
 
   # Development Dependencies
   spec.add_development_dependency 'bundler'
-  spec.add_development_dependency 'guard'
-  spec.add_development_dependency 'guard-rubycritic'
-  spec.add_development_dependency 'guard-shell'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.5'
   # spec.add_development_dependency 'puma'

@@ -24,7 +24,7 @@ module DismalTony # :nodoc:
       @vi = virtual
     end
 
-    # Sends +msg+ by calling <tt>puts</tt> on it
+    # Sends +msg+ by calling <tt>puts</tt> on it.
     def send(msg)
       puts msg
     end
@@ -32,7 +32,7 @@ module DismalTony # :nodoc:
 
   # Used to facilitate Twilio SMS communication
   class SMSInterface < DialogInterface
-    # The destination phone number
+    # The destination phone number. Format as <tt>/\+\d{10}/</tt>
     attr_reader :destination
 
     # Using +dest+ as its #destination, instanciates this Interface. Uses ENV vars for <tt>twilio_account_sid, twilio_auth_token</tt>
