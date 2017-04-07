@@ -198,9 +198,9 @@ DismalTony.create_handler do
     parse query
     case @data['switch']
     when 'on'
-      @vi.control('light', 'turn_on')
+      @vi.use_service('light', 'turn_on')
     when 'off'
-      @vi.control('light', 'turn_off')
+      @vi.use_service('light', 'turn_off')
     else
       DismalTony::HandledResponse.error
     end

@@ -240,10 +240,10 @@ module DismalTony # :nodoc:
 
   # Used to group together handlers and actions with a like purpose.
   # Kind of like a mini-API handler.
-  class SubHandler < QueryHandler
+  class QueryService < QueryHandler
     # An array containing method names corresponding to valid actions.
     #
-    # Any valid action must be of the form <tt>def action_name(opts); end</tt>, and return a HandledResponse
+    # Any valid action must be of the form <tt>def action_name(opts); end</tt>
     # but the handler may have other support methods not included in this array which don't use this structure.
     attr_accessor :actions
 

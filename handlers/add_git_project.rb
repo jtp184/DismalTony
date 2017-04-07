@@ -10,7 +10,7 @@ DismalTony.create_handler do
 
   def activate_handler!(query, user)
     parse query
-    @vi.control(
+    @vi.use_service(
       'git-project',
       'add_project',
       nickname: @data['nickname'],

@@ -35,3 +35,5 @@ def qp(str, debug = false)
   puts " #{@db.users.first.conversation_state.inspect}" if debug
   puts
 end
+
+qp 'How cold is it in Moscow'

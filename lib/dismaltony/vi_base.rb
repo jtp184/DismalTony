@@ -136,14 +136,14 @@ module DismalTony # :nodoc:
       @return_interface.send(Formatter::Printer.format(str))
     end
 
-    # Method for using SubHandler type handlers.
+    # Method for using QueryService type handlers.
     #
-    # * +subject+ - The used to match against SubHandler.handler_name
+    # * +subject+ - The used to match against QueryService.handler_name
     # * +verb+ - The name of the method to use. Casts to a Symbol before being used.
     # * +params+ - Optional. Passed in to the handler's action as its arguments
-    def control(subject, verb, params = {})
+    def use_service(subject, verb, params = {})
       the_remote = (@handlers.select { |r| r.new(self).handler_name == subject })
-      return DismalTony::HandledResponse.finish("Sorry, that didn't work!") if the_remote.nil?
+      return DismalTony::HandledResponse.finish("~e:frown Sorry, that QueryService wasn't found!") if the_remote.nil?
       the_remote = the_remote.first.new(self)
       begin
         the_method = the_remote.method(verb.to_sym)
@@ -153,7 +153,7 @@ module DismalTony # :nodoc:
           the_method.call(params)
         end
       rescue NameError
-        DismalTony::HandledResponse.finish("Sorry, that didn't work!")
+        DismalTony::HandledResponse.finish("~e:frown Sorry, that QueryService method wasn't found!")
       end
     end
   end
