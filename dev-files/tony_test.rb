@@ -36,4 +36,4 @@ def qp(str, debug = false)
   puts
 end
 
-qp 'How cold is it in West Hills'
+qp 'Hello'

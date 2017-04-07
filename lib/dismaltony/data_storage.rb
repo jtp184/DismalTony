@@ -185,8 +185,13 @@ module DismalTony # :nodoc:
             :return_to_handler => record.return_to_handler,
             :return_to_method => record.return_to_method,
             :return_to_args => record.return_to_args,
-            :data_packet => (Psych.load(record.data_packet) || nil)
       )
+           
+
+      packet = begin
+        cstate.from_h(data_packet: Psych.load(record.data_packet))
+      rescue
+      end
 
       ud = (record.class.columns.map(&:name).reject { |e| skip_vals.include? e })
 
