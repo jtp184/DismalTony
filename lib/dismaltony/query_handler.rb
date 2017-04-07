@@ -200,7 +200,6 @@ module DismalTony # :nodoc:
     def initialize(virtual)
       @menu_choices = {}
       super(virtual)
-      @data = { 'menu_choice' => '' }
     end
 
     # Handles this +query+ for the +user+
