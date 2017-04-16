@@ -20,7 +20,7 @@ module DismalTony # :nodoc:
 
     # Attribute reader for the handlers class variable.
     class << self
-      attr_reader :handlers
+      attr_reader :handlers #:nodoc:
     end
 
     # Adds the QueryHandler +handler+ to HandlerRegistry.handlers
