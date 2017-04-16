@@ -1,5 +1,23 @@
-ngrok
+/.bundle/
+/.yardoc
+/Gemfile.lock
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+*.DS_Store
+.idea
 *.DS_Store
 .idea
 store.yml
+<<<<<<< HEAD
 doc/
+=======
+.rubocop.yml
+cop.txt
+ngrok
+Guardfile
+reek.txt
+>>>>>>> master

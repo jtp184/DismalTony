@@ -1,10 +1,11 @@
-DismalTony.create_handler do
+DismalTony.create_handler(DismalTony::QueryResult) do
   def handler_start
     @handler_name = 'roll-dice'
     @patterns = [/(?<noargs>roll a dice)/i, /roll (?<equation>.+)/i]
   end
 
   def activate_handler(query, user)
+    parse query
     if @data['noargs']
       "I'll ask how many sides you'd like, then roll it!"
     else
@@ -17,9 +18,12 @@ DismalTony.create_handler do
     if @data['noargs']
       DismalTony::HandledResponse.then_do(self, 'get_sides', '~e:think Okay! Just tell me how many sides you want on it.')
     else
-      result = parse_rolls(@data['equation']).map { |e| e.to_s }
-      DismalTony::HandledResponse.finish "~e:dice Okay! The results are: #{result.join(' ')}"
+      super(query, user)
     end
+  end
+
+  def apply_format(input)
+    "~e:dice Okay! The results are: #{input.join(', ')}"
   end
 
   def get_sides(query, user)

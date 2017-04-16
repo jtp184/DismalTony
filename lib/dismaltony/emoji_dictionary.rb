@@ -1,6 +1,9 @@
-module DismalTony
+module DismalTony # :nodoc:
+  # Used to assist with use of emojis. Mostly just a wrapper for a Hash table
   class EmojiDictionary
-    @emoji_array = {
+    # The crux of the class, this function returns the Hash of emojis
+    def self.emoji_table
+      {
         '0' => '0️⃣',
         '1' => '1️⃣',
         '10' => '🔟',
@@ -37,7 +40,7 @@ module DismalTony
         'chili' => '🌶',
         'clockface' => '🕓',
         'coffee' => '☕️',
-        'cookie' => '🍪', 
+        'cookie' => '🍪',
         'cool' => '😎',
         'creditcard' => '💳',
         'crystalball' => '🔮',
@@ -115,19 +118,22 @@ module DismalTony
         'wave' => '👋',
         'wink' => '😉',
         'worried' => '🤕',
-        'zzz' => '💤'   
+        'zzz' => '💤'
       }
-    class << self; attr_accessor :emoji_array end
+    end
+
+    # Allows hash syntax on the class itself for finding Emoji with the key +search+
     def self.[](search)
-        emoji_array[search]
+      emoji_table[search]
     end
 
-    def self.to_h
-        emoji_array
+    def self.to_h # :nodoc:
+      emoji_table
     end
 
+    # Inverse lookup of Emoji. Finds the name given to the emoji +moj+
     def self.name(moj)
-        @emoji_array.key(moj) || "emoji"
+      emoji_table.key(moj) || 'emoji'
     end
   end
 end

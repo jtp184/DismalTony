@@ -1,14 +1,25 @@
-module DismalTony
+module DismalTony # :nodoc:
+  # Represents the state of conversation, to allow for control flow in multi-stage handler resolution
   class ConversationState
-    attr_accessor :user_identity
-    attr_accessor :last_recieved_time
-    attr_accessor :is_idle
-    attr_accessor :use_next
-    attr_accessor :return_to_handler
-    attr_accessor :return_to_method
-    attr_accessor :return_to_args
-    attr_accessor :data_packet
+    # A UserIdentity object corresponding to the user which has this state
+    attr_reader :user_identity
+    # A Time object referencing the last time this user queried the VI
+    attr_reader :last_recieved_time
+    # True/False as to whether the VI is in the middle of a chain of handlers
+    attr_reader :is_idle
+    # TBI. Allows you to specify the overnext step in a handler chain in addition to a return handler
+    attr_reader :use_next
+    # Corresponds to the QueryHandler#handler_name of the handler to direct the input to next
+    attr_reader :return_to_handler
+    # Corresponds to the method name to use within the #return_to_handler
+    attr_reader :return_to_method
+    # Any arguments for the method to return to
+    attr_reader :return_to_args
+    # The hash to assign to QueryHandler#data
+    attr_reader :data_packet
 
+    # +args+ Options have no defaults by design, allowing values to be nil when necessary.
+    # Specify values by using the attribute names as Symbols
     def initialize(**args)
       @last_recieved_time = args[:last_recieved_time]
       @is_idle = args[:is_idle]
@@ -20,47 +31,51 @@ module DismalTony
       @data_packet = args[:data_packet]
     end
 
+    # Syntactic sugar for #is_idle
     def idle?
       @is_idle
     end
 
-    def from_h(the_hash)
-      state = self.clone
-      state.from_h!(the_hash)
-      return state
+    # Combines the state of ConversationState +other+ in with this one safely, keeping existing values if +other+ has a nil
+    def merge(other)
+      @last_recieved_time = (other.last_recieved_time || @last_recieved_time)
+      @is_idle = (other.is_idle || @is_idle)
+      @use_next = (other.use_next || @use_next)
+      @return_to_args = (other.return_to_args || @return_to_args)
+      @return_to_handler = (other.return_to_handler || @return_to_handler)
+      @return_to_method = (other.return_to_method || @return_to_method)
+      @user_identity = (other.user_identity || @user_identity)
+      @data_packet = (other.data_packet || @data_packet)
     end
 
-    def from_h!(the_hash)
-      the_hash.each_pair { |key, value| self.method("#{key}=".freeze).call(value) }
+    # Combines the state of ConversationState +other+ in with this one destructively, overwriting existing values
+    def merge!(other)
+      @last_recieved_time = other.last_recieved_time
+      @is_idle = other.is_idle
+      @use_next = other.use_next
+      @return_to_args = other.return_to_args
+      @return_to_handler = other.return_to_handler
+      @return_to_method = other.return_to_method
+      @user_identity = other.user_identity
+      @data_packet = other.data_packet
     end
 
-    def to_h
-      the_hash = {}
-      self.instance_variables.each do |var|
-        # next if var == :@user_identity
-        var = ((var.to_s).gsub(/\@(.+)/) { |match| $1 }).to_sym
-        the_hash[var] = self.method(var).call
-      end
-      return the_hash
+    # Takes a hash +args+ with keys corresponding to the attribute to change, and the value to its new value. 
+    # Keeps existing values if the hash value is nil.
+    def from_h(**args)
+      @last_recieved_time = (args[:last_recieved_time] || @last_recieved_time)
+      @is_idle = (args[:is_idle] || @is_idle)
+      @use_next = (args[:use_next] || @use_next)
+      @return_to_args = (args[:return_to_args] || @return_to_args)
+      @return_to_handler = (args[:return_to_handler] || @return_to_handler)
+      @return_to_method = (args[:return_to_method] || @return_to_method)
+      @user_identity = (args[:user_identity] || @user_identity)
+      @data_packet = (args[:data_packet] || @data_packet)
     end
 
+    # Syntactic sugar. Returns true if #is_idle or #use_next returns true
     def steer?
       @is_idle || @use_next
     end
-
-    def resume(virtual = DismalTony::VIBase.new, query)
-      handle = @return_to_handler.new(virtual)
-      handle.data = @data_packet
-      handle.method(@return_to_method.to_sym).call(query)
-    end
-
-    # def +(other)
-    #   raise ArgumentError, "Can only modify with another ConversationState (not a #{other.class})" unless other.is_a? DismalTony::ConversationState
-    #   current_state = self.to_h
-    #   new_state = other.to_h
-    #   combine = current_state.merge(new_state) { |key, old_value, new_value| new_value }
-    #   self.from_h! combine
-    # end
-
   end
 end

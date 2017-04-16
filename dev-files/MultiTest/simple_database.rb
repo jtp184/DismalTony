@@ -17,4 +17,3 @@ class SimpleDatabase
     @tables[table_name.to_sym]
   end
 end
-

@@ -104,7 +104,7 @@ end
 #### Result Query
 Result Queries can be accessed in the code as well as via direct query, allowing you to stack queries together.
 ```ruby
-DismalTony.create_handler(DismalTony::ResultQuery) do
+DismalTony.create_handler(DismalTony::QueryResult) do
   def handler_start
     @handler_name = "numtween"
     @patterns = [/print numbers between (?<start>\d+) and (?<end>\d+)/i]
@@ -143,6 +143,71 @@ DismalTony.create_handler(DismalTony::QueryMenu) do
 end
 ```
 
+#### Remote Control
+A Remote Control lets you define a bunch of mini-handlers. This is mostly designed to streamline other handlers by providing a simple method of grouping actions into a handler
+
+```ruby
+DismalTony.create_handler(DismalTony::QueryMenu) do
+  def handler_start
+    @handler_name = 'light'
+    @actions = ['turn_on', 'turn_off', 'check_switch']
+  end
+
+  def switch_status
+    LightSwitch.status
+  end
+
+  def turn_on
+    if self.switch_status
+      DismalTony::HandledResponse.finish "~e:smile It's already on!"
+    else
+      DismalTony::HandledResponse.finish "~e:lightbulb Okay, I turned it on!"
+    end
+  end
+
+  def turn_off
+    if !self.switch_status
+      DismalTony::HandledResponse.finish "~e:smile It's already off!"
+    else
+      DismalTony::HandledResponse.finish "~e:moon Okay, I turned it off."
+    end
+  end
+
+  def check_switch
+    if self.switch_status
+      DismalTony::HandledResponse.finish "~e:lightbulb It's turne on right now!"
+    else
+      DismalTony::HandledResponse.finish "~e:lightbulb It's turned off right now"
+    end
+  end
+```
+You could then easily make a handler to use this new remote control
+
+```ruby
+DismalTony.create_handler do 
+  def handler_start
+    @handler_name = 'light-switch'
+    @patterns = [/turn (?:the )lights (?<switch>on|off)/i,/turn (?<switch>on|off)(?: the) lights/i]
+  end
+
+  def activate_handler(query, user)
+    "~e:lightbulb I'll turn the lights #{@data['switch']}."
+  end
+
+  def activate_handler!(query, user)
+    parse query
+    case @data['switch']
+    when 'on'
+      @vi.use_service('light', 'turn_on')
+    when 'off'
+      @vi.use_service('light', 'turn_off')
+    else
+      DismalTony::HandledResponse.error
+    end
+  end
+end
+```
+
 ## Storing Data
 The DismalTony system allows you to store your users and user-data (necessary for multi-stage handlers) in different ways. 
 
@@ -154,7 +219,7 @@ store = DismalTony::DataStore.new
 usr = store.new_user
 # => <DismalTony::UserIdentity>
 
-ax = store.find { |u| u['first_name'] = "Aximilli"}
+ax = store.find { |u| u['first_name'] = "Aximili"}
 # Same as running store.users.select
 
 store.delete_user(ax)
