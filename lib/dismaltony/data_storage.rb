@@ -10,7 +10,6 @@ module DismalTony # :nodoc:
     attr_accessor :opts
     # an Array of UserIdentity objects that make up the userspace.
     attr_reader :users
-
     # an Array of ScheduleEvent objects. Might be empty
     attr_reader :events
 
@@ -46,7 +45,7 @@ module DismalTony # :nodoc:
 
     # Used to load the events from a store. Overridden by child classes.
     def load_events
-      []
+      @events
     end
   end
 
