@@ -11,11 +11,15 @@ module DismalTony # :nodoc:
     # an Array of UserIdentity objects that make up the userspace.
     attr_reader :users
 
+    # an Array of ScheduleEvent objects. Might be empty
+    attr_reader :events
+
     # Initializes an empty store, and merges +args+ with #opts
     def initialize(**args)
       @opts = {}
       @opts.merge!(args) unless args.nil?
       @users = []
+      @events = []
     end
 
     # Creates a new UserIdentity object with UserIdentity.user_data set to +opts+
@@ -38,6 +42,11 @@ module DismalTony # :nodoc:
     # Calls <tt>#reject!</tt> on +user+
     def delete_user(user)
       @users.reject! { |usr| usr == user }
+    end
+
+    # Used to load the events from a store. Overridden by child classes.
+    def load_events
+      []
     end
   end
 
@@ -81,22 +90,24 @@ module DismalTony # :nodoc:
       if @env_vars = enchilada['globals']['env_vars']
         @env_vars.each_pair { |key, val| ENV[key] = val }
       end
-      @users += (enchilada['users'])
+      @users = enchilada['users']
+      enchilada['events'].each { |event| @events << event unless (@events.include?(event) || event.finished?) }
       @opts.merge!(enchilada['config']) do |k, o, n|
         if k == :filepath
           o
         else
           n
         end
+        return true
       end
-      return true
     rescue StandardError
       return false
     end
 
+
     # Exports the LocalStore to the file specified by <tt>opts[:filepath]</tt>
     def save
-      output = { 'users' => @users, 'globals' => { 'config' => @opts, 'env_vars' => @env_vars } }
+      output = { 'users' => @users, 'globals' => { 'config' => @opts, 'env_vars' => @env_vars}, 'events' => @events}
       begin
         File.open(@opts[:filepath], 'w+') do |fil|
           fil << Psych.dump(output)
@@ -105,6 +116,16 @@ module DismalTony # :nodoc:
       rescue StandardError
         return false
       end
+    end
+
+    def load_events
+      self.load
+      @events
+    end
+
+    def add_event(the_event)
+      @events << the_event
+      self.save
     end
   end
 
@@ -179,14 +200,14 @@ module DismalTony # :nodoc:
       skip_vals = %w(user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data)
 
       cstate = DismalTony::ConversationState.new(
-            :last_recieved_time => record.last_recieved_time,
-            :is_idle => record.is_idle,
-            :use_next => record.use_next,
-            :return_to_handler => record.return_to_handler,
-            :return_to_method => record.return_to_method,
-            :return_to_args => record.return_to_args,
-      )
-           
+        :last_recieved_time => record.last_recieved_time,
+        :is_idle => record.is_idle,
+        :use_next => record.use_next,
+        :return_to_handler => record.return_to_handler,
+        :return_to_method => record.return_to_method,
+        :return_to_args => record.return_to_args,
+        )
+
 
       packet = begin
         cstate.from_h(data_packet: Psych.load(record.data_packet))
@@ -230,10 +251,10 @@ module DismalTony # :nodoc:
       the_mod.return_to_method = cstate.return_to_method
       the_mod.return_to_args = cstate.return_to_args
       the_mod.data_packet = if cstate.data_packet.nil?
-                              nil
-                            else
-                              Psych.dump(cstate.data_packet)
-                            end
+        nil
+      else
+        Psych.dump(cstate.data_packet)
+      end
 
       mod_cols.each do |col|
         next if skip_vals.include? col

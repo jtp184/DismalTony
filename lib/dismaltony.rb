@@ -8,6 +8,7 @@ require 'dismaltony/data_storage'
 require 'dismaltony/handled_response'
 require 'dismaltony/query_handler'
 require 'dismaltony/handler_registry'
+require 'dismaltony/scheduler'
 require 'dismaltony/vi_base'
 
 module DismalTony

@@ -40,6 +40,10 @@ module DismalTony # :nodoc:
       @user_data[str]
     end
 
+    def ==(other)
+      other.user_data == self.user_data
+    end
+
     # Uses ConversationState#merge to non-overwritingly merge the +new_state+ into the existing state
     def modify_state(new_state)
       @conversation_state.merge(new_state)

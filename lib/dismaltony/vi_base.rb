@@ -10,6 +10,8 @@ module DismalTony # :nodoc:
     attr_reader :handlers
     # A DataStorage object representing the VI's memory and userspace
     attr_reader :data_store
+    # the Scheduler object for executing timed tasks
+    attr_reader :scheduler
 
     # Options for +opts+
     # * +:name+ - The name for the VI. Defaults to 'Tony'
@@ -21,6 +23,7 @@ module DismalTony # :nodoc:
       @return_interface = (opts[:return_interface] || DismalTony::ConsoleInterface.new(self))
       @handlers = (opts[:handlers] || DismalTony::HandlerRegistry.handlers)
       @data_store = (opts[:data_store] || DismalTony::DataStorage.new)
+      @scheduler = DismalTony::Scheduler.new(vi: self)
     end
 
     # Returns an Array of strings corresponding to the +handler_name+ of all the handlers loaded.
@@ -40,7 +43,7 @@ module DismalTony # :nodoc:
     # * * If so, it uses that one, passing along the executing to the handler.
     # * * Otherwise, it will return a HandledResponse.error object.
     # * * Unless the HandledResponse.format has <tt>:quiet => true</tt>, VIBase.say will be called on the HandledResponse.return_message attribute.
-    def query!(str = '', user_identity = DismalTony::UserIdentity::DEFAULT)
+    def query!(str = '', user_identity = DismalTony::UserIdentity::DEFAULT, silent = false)
       responded = []
       user_cs = user_identity.conversation_state
       post_handled = DismalTony::HandledResponse.new
@@ -71,13 +74,13 @@ module DismalTony # :nodoc:
                          DismalTony::HandledResponse.error
                        elsif responded.length == 1
                          responded.first.activate_handler! str, user_identity
-                       elsif responded.any? { |hand| hand.handler_name = 'explain-handler' }
-                         (responded.select { |hand| hand.handler_name = 'explain-handler' }).first.activate_handler! str, user_identity
+                       elsif responded.any? { |hand| hand.handler_name == 'explain-handler' }
+                         (responded.select { |hand| hand.handler_name == 'explain-handler' }).first.activate_handler! str, user_identity
                        else
                          responded.first.activate_handler! str, user_identity
        end
     end
-      say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet]
+      say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet] or silent
       post_handled.conversation_state.from_h(user_identity: user_identity, last_recieved_time: Time.now)
       user_identity.modify_state!(post_handled.conversation_state)
       @data_store.on_query(post_handled)
@@ -115,7 +118,7 @@ module DismalTony # :nodoc:
     # * +args+ - Optional parameter. Sets the QueryHandler.data of the handler manually
     def quick_handle(qry = '', usr = DismalTony::UserIdentity::DEFAULT, args = {})
       use_handler = @handlers.select { |handler| handler.new(self).handler_name == qry }
-      return DismalTony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil) if use_handler.nil?
+      return DismalTony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil) if use_handler.nil? or use_handler == []
       handle = use_handler.first.new(self)
       handle.data = args
       handle.activate_handler! qry, usr
