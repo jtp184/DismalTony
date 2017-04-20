@@ -1,6 +1,5 @@
 module DismalTony
 	class Scheduler
-
 		def initialize(**opts)
 			@vi = (opts[:vi] || DismalTony::VIBase.new)
 		end
@@ -32,7 +31,7 @@ module DismalTony
 		attr_reader :query
 		attr_reader :user_id
 
-		def_delegators :@event_time, :<=>, :monday?, :tuesday?, :wednesday?, :thursday?, :friday?, :saturday?, :sunday?, :day, :sec, :hour, :day, :month, :year 
+		def_delegators :@event_time, :<, :>, :>=, :<=, :monday?, :tuesday?, :wednesday?, :thursday?, :friday?, :saturday?, :sunday?, :day, :sec, :hour, :day, :month, :year 
 
 		def initialize(**opts)
 			@time = (opts[:time] || Time.now)
@@ -48,6 +47,15 @@ module DismalTony
 
 		def ready?
 			!self.finished? and @time <= Time.now
+		end
+
+		def ==(other)
+			comp = other.time
+			comp.year == @event_time.year and comp.month == @event_time.month and comp.day == @event_time.day and comp.hour == @event_time.hour and comp.min == @event_time.min
+		end
+
+		def eql?(other)
+			other.time == self.time
 		end
 
 		def run(vi = DismalTony::VIBase.new)
