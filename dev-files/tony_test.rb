@@ -36,14 +36,14 @@ end
 
 # qp 'Hello', true
 
-# @tony.('Hello')
+@tony.('Hello')
 
 
-@tony.('add test schedule event')
-puts print @tony.scheduler.events
-3.times do 
-  sleep 2
-  @tony.('run all schedule events')
-  puts print @tony.scheduler.events
-end
-# qp 'Send a text to 8186208290 that says Hello'
+# @tony.('add test schedule event')
+# puts print @tony.scheduler.events
+# 3.times do 
+#   sleep 2
+#   @tony.('run all schedule events')
+#   puts print @tony.scheduler.events
+# end
+# # qp 'Send a text to 8186208290 that says Hello'

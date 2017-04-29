@@ -1,5 +1,5 @@
 require 'dismaltony/version'
-require 'dismaltony/formatter/formatter'
+require 'dismaltony/formatter'
 require 'dismaltony/dialog_interface'
 require 'dismaltony/emoji_dictionary'
 require 'dismaltony/conversation_state'

@@ -40,8 +40,9 @@ module DismalTony # :nodoc:
       @user_data[str]
     end
 
+    # Compares if these users have the same user_data hash
     def ==(other)
-      other.user_data == self.user_data
+      other.user_data == user_data
     end
 
     # Uses ConversationState#merge to non-overwritingly merge the +new_state+ into the existing state

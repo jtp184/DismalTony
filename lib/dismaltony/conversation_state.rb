@@ -60,7 +60,7 @@ module DismalTony # :nodoc:
       @data_packet = other.data_packet
     end
 
-    # Takes a hash +args+ with keys corresponding to the attribute to change, and the value to its new value. 
+    # Takes a hash +args+ with keys corresponding to the attribute to change, and the value to its new value.
     # Keeps existing values if the hash value is nil.
     def from_h(**args)
       @last_recieved_time = (args[:last_recieved_time] || @last_recieved_time)

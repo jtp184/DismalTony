@@ -80,14 +80,14 @@ module DismalTony # :nodoc:
                          responded.first.activate_handler! str, user_identity
        end
       end
-      say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet] or silent
+      say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet] || silent
       post_handled.conversation_state.from_h(user_identity: user_identity, last_recieved_time: Time.now)
       user_identity.modify_state!(post_handled.conversation_state)
       @data_store.on_query(post_handled)
       post_handled
     end
 
-    alias_method :call, :query!
+    alias call query!
 
     # calls QueryResult#query_result for +str+ and +user_identity+
     def query_result(str, user_identity = DismalTony::UserIdentity::DEFAULT)
@@ -120,25 +120,25 @@ module DismalTony # :nodoc:
     # * +args+ - Optional parameter. Sets the QueryHandler.data of the handler manually
     def quick_handle(qry = '', usr = DismalTony::UserIdentity::DEFAULT, args = {})
       use_handler = @handlers.select { |handler| handler.new(self).handler_name == qry }
-      return DismalTony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil) if use_handler.nil? or use_handler == []
+      return DismalTony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil) if use_handler.nil? || use_handler == []
       handle = use_handler.first.new(self)
       handle.data = args
       handle.activate_handler! qry, usr
     end
 
-    # Sends the message +str+ back through the DialogInterface +interface+, after calling Formatter::Printer.format on it.
+    # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it.
     def say_through(interface, str)
-      interface.send(Formatter::Printer.format(str, {}))
+      interface.send(DismalTony::Formatter.format(str, {}))
     end
 
-    # Sends the message +str+ back through the DialogInterface +interface+, after calling Formatter::Printer.format on it, with the options +opts+
+    # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it, with the options +opts+
     def say_opts(interface, str, opts)
-      interface.send(Formatter::Printer.format(str, opts))
+      interface.send(DismalTony::Formatter.format(str, opts))
     end
 
     # Simplest dialog function. Sends the message +str+ back through VIBase.return_interface
     def say(str)
-      @return_interface.send(Formatter::Printer.format(str))
+      @return_interface.send(DismalTony::Formatter.format(str))
     end
 
     # Method for using QueryService type handlers.

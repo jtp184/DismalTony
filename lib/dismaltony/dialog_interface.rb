@@ -44,7 +44,7 @@ module DismalTony # :nodoc:
         from: ENV['twilio_phone_number'],
         to: destination,
         body: msg
-        )
+      )
     end
   end
 
@@ -66,16 +66,21 @@ module DismalTony # :nodoc:
 
   # Used for sending as an HTTP request.
   class NetworkInterface < DialogInterface
+    # The location, automatically converted to URI
     attr_reader :location
+    # A hash containing any HTML form fields necessary, and their values
     attr_reader :fields
 
+    # Initializes using the provided +opts+ for :location and :fields
     def initialize(**opts)
       @location = URI((opts[:location] || 'http://127.0.0.1/'))
       @fields = (opts[:fields] || {})
     end
 
+    # Sends the +msg+ string as the body in a POST request to the #location
     def send(msg)
       req = Net::HTTP::Post.new(@location)
+      @fields['body'] = msg
       req.set_form_data(fields)
 
       res = Net::HTTP.start(@location.hostname, @location.port) do |http|

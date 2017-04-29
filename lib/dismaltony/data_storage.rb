@@ -47,6 +47,11 @@ module DismalTony # :nodoc:
     def load_events
       @events
     end
+
+    # Used to add events to the store. Overridden by child classes.
+    def add_event(the_event)
+      @events << the_event
+    end
   end
 
   # Represents storing the data to disk as a YAML file
@@ -90,7 +95,7 @@ module DismalTony # :nodoc:
         @env_vars.each_pair { |key, val| ENV[key] = val }
       end
       @users = enchilada['users']
-      enchilada['events'].each { |event| @events << event unless (@events.include?(event) || event.finished?) }
+      enchilada['events'].each { |event| @events << event unless @events.include?(event) || event.finished? }
       @opts.merge!(enchilada['config']) do |k, o, n|
         if k == :filepath
           o
@@ -105,7 +110,7 @@ module DismalTony # :nodoc:
 
     # Exports the LocalStore to the file specified by <tt>opts[:filepath]</tt>
     def save
-      output = { 'users' => @users, 'globals' => { 'config' => @opts, 'env_vars' => @env_vars}, 'events' => @events}
+      output = { 'users' => @users, 'globals' => { 'config' => @opts, 'env_vars' => @env_vars }, 'events' => @events }
       begin
         File.open(@opts[:filepath], 'w+') do |fil|
           fil << Psych.dump(output)
@@ -116,14 +121,16 @@ module DismalTony # :nodoc:
       end
     end
 
+    # Loads from the file first then returns the events visible.
     def load_events
-      self.load
+      load
       @events
     end
 
+    # Adds the event, then saves the file.
     def add_event(the_event)
       @events << the_event
-      self.save
+      save
     end
   end
 
@@ -195,17 +202,16 @@ module DismalTony # :nodoc:
     # Transforms a +record+ into a UserIdentity object.
     # Extra columns in the model are neatly turned into UserIdentity#user_data entries
     def self.to_tony(record)
-      skip_vals = %w(user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data)
+      skip_vals = %w[user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data]
 
       cstate = DismalTony::ConversationState.new(
-        :last_recieved_time => record.last_recieved_time,
-        :is_idle => record.is_idle,
-        :use_next => record.use_next,
-        :return_to_handler => record.return_to_handler,
-        :return_to_method => record.return_to_method,
-        :return_to_args => record.return_to_args,
-        )
-
+        last_recieved_time: record.last_recieved_time,
+        is_idle: record.is_idle,
+        use_next: record.use_next,
+        return_to_handler: record.return_to_handler,
+        return_to_method: record.return_to_method,
+        return_to_args: record.return_to_args
+      )
 
       packet = begin
         cstate.from_h(data_packet: Psych.load(record.data_packet))
@@ -223,7 +229,7 @@ module DismalTony # :nodoc:
       begin
         Psych.load(record.user_data).each_pair { |k, v| uid[k] = v }
       rescue TypeError
-        puts "Unable to load UserData"
+        puts 'Unable to load UserData'
       end
 
       uid.modify_state!(cstate)
@@ -237,7 +243,7 @@ module DismalTony # :nodoc:
     def save(tony_data)
       uid = tony_data
       cstate = uid.state
-      skip_vals = %w(user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data)
+      skip_vals = %w[user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data]
 
       the_mod = model_class.find_by(id: uid['id'])
       mod_cols = the_mod.class.columns.map(&:name)
@@ -249,9 +255,9 @@ module DismalTony # :nodoc:
       the_mod.return_to_method = cstate.return_to_method
       the_mod.return_to_args = cstate.return_to_args
       the_mod.data_packet = if cstate.data_packet.nil?
-        nil
-      else
-        Psych.dump(cstate.data_packet)
+                              nil
+                            else
+                              Psych.dump(cstate.data_packet)
       end
 
       mod_cols.each do |col|
