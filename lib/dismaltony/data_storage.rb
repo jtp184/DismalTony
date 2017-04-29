@@ -35,12 +35,12 @@ module DismalTony # :nodoc:
 
     # Syntactic sugar. Selects users for whom +block+ returns true
     def find(&block)
-      @users.select(&block)
+      @users.find(&block)
     end
 
     # Calls <tt>#reject!</tt> on +user+
     def delete_user(user)
-      @users.reject! { |usr| usr == user }
+      @users.delete(user)
     end
 
     # Used to load the events from a store. Overridden by child classes.
@@ -102,7 +102,6 @@ module DismalTony # :nodoc:
     rescue StandardError
       return false
     end
-
 
     # Exports the LocalStore to the file specified by <tt>opts[:filepath]</tt>
     def save

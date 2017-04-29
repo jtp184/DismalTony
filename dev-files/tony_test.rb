@@ -16,11 +16,9 @@ Bundler.require(:development, :default)
 # 	:user_data => {"nickname" => 'Justin'}
 # 	)
 # puts "[#{DismalTony::EmojiDictionary['exclamationmark']}]: WARNING not idle (#{@db.users.first.conversation_state.return_to_handler} => #{@db.users.first.conversation_state.return_to_method} #{@db.users.first.conversation_state.data_packet})" unless @db.users.first.conversation_state.is_idle
-@db = DismalTony::LocalStore.new(
-  filepath: './store.yml'
-)
-@db.load
+@db = DismalTony::LocalStore.load_from('./store.yml')
 DismalTony::HandlerRegistry.load_handlers! 'handlers'
+
 @tony = DismalTony::VIBase.new(data_store: @db)
 
 def qp(str, debug = false)
@@ -32,11 +30,15 @@ def qp(str, debug = false)
   else
     @tony.query!(str, @db.users.first)
   end
-  puts " #{@db.users.first.conversation_state.inspect}" if debug
+  # puts " #{@db.users.first.conversation_state.inspect}" if debug
   puts
 end
 
+qp 'Hello', true
+
+# @tony.('Hello')
+
 # qp 'add test schedule event'
 # sleep 2
-qp 'run all schedule events'
+# qp 'run all schedule events'
 # qp 'Send a text to 8186208290 that says Hello'

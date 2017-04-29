@@ -79,13 +79,15 @@ module DismalTony # :nodoc:
                        else
                          responded.first.activate_handler! str, user_identity
        end
-    end
+      end
       say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet] or silent
       post_handled.conversation_state.from_h(user_identity: user_identity, last_recieved_time: Time.now)
       user_identity.modify_state!(post_handled.conversation_state)
       @data_store.on_query(post_handled)
       post_handled
-  end
+    end
+
+    alias_method :call, :query!
 
     # calls QueryResult#query_result for +str+ and +user_identity+
     def query_result(str, user_identity = DismalTony::UserIdentity::DEFAULT)

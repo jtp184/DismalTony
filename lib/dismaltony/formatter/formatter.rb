@@ -21,6 +21,7 @@ module DismalTony # :nodoc:
         result = md['message']
 
         result = Printer.colorize(result, opts[:color]) if opts[:color]
+        em = opts[:use_icon] if opts[:use_icon]
         result = Printer.add_icon(result, em) unless opts[:icon] == false
 
         result
