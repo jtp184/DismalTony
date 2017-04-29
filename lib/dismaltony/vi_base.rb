@@ -33,7 +33,7 @@ module DismalTony # :nodoc:
 
     # * +str+ - the Query to resolve.
     # * +user_identity+ - a UserIdentity object corresponding to the user making the query. Defaults to UserIdentity::DEFAULT
-    #
+    # * +silent+ - True/False whether the VI should silence the default #say at the end of handler resolution.
     #
     # The primary method. Uses any available handler to handle a query, calls QueryHandler.activate_handler! and returns a HandledResponse object.
     #

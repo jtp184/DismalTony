@@ -64,7 +64,7 @@ module DismalTony # :nodoc:
     end
   end
 
-  # :nodoc:
+  # Used for sending as an HTTP request.
   class NetworkInterface < DialogInterface
     attr_reader :location
     attr_reader :fields

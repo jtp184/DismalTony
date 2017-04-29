@@ -34,11 +34,16 @@ def qp(str, debug = false)
   puts
 end
 
-qp 'Hello', true
+# qp 'Hello', true
 
 # @tony.('Hello')
 
-# qp 'add test schedule event'
-# sleep 2
-# qp 'run all schedule events'
+
+@tony.('add test schedule event')
+puts print @tony.scheduler.events
+3.times do 
+  sleep 2
+  @tony.('run all schedule events')
+  puts print @tony.scheduler.events
+end
 # qp 'Send a text to 8186208290 that says Hello'
