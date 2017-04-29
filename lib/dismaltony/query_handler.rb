@@ -61,6 +61,7 @@ module DismalTony # :nodoc:
       @data[index] = value
     end
 
+    # Merges in the data from +other+ using Hash.merge!
     def merge_data(other)
       @data.merge!(other)
     end
