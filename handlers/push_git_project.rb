@@ -1,8 +1,6 @@
 DismalTony.create_handler do
-  def handler_start
-    @handler_name = 'push-git-project'
-    @patterns = [/push (?:the )?(?<which>[\w_]+) project/i]
-  end
+  @handler_name = 'push-git-project'
+  @patterns = [/push (?:the )?(?<which>[\w_]+) project/i]
 
   def activate_handler(_query, _user)
     "~e:smile I'll push the #{@data['which']} project."
@@ -15,6 +13,6 @@ DismalTony.create_handler do
       'push_project',
       nickname: @data['which'],
       user: user
-    )
+      )
   end
 end

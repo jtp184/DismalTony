@@ -1,8 +1,8 @@
 DismalTony.create_handler(DismalTony::QueryMenu) do
-  def handler_start
     @handler_name = 'animal-moji-menu'
     @patterns = [/show me an animal emoji/i]
 
+  def handler_start
     add_option(:dog, DismalTony::HandledResponse.finish('~e:dog Woof!'))
     add_option(:cat, DismalTony::HandledResponse.finish('~e:cat Meow!'))
     add_option(:fish, DismalTony::HandledResponse.finish('~e:fish Glub!'))

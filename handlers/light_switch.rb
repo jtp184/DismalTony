@@ -1,8 +1,6 @@
 DismalTony.create_handler do
-  def handler_start
     @handler_name = 'light-switch'
     @patterns = [/turn (?:the )lights (?<switch>on|off)/i, /turn (?<switch>on|off)(?: the) lights/i]
-  end
 
   def activate_handler(_query, _user)
     "~e:lightbulb I'll turn the lights #{@data['switch']}."

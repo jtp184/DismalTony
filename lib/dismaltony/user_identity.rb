@@ -37,7 +37,7 @@ module DismalTony # :nodoc:
 
     # Used to access UserIdentity.user_data using +str+ as a key
     def[](str)
-      @user_data[str]
+      user_data[str]
     end
 
     # Compares if these users have the same user_data hash
@@ -47,12 +47,16 @@ module DismalTony # :nodoc:
 
     # Uses ConversationState#merge to non-overwritingly merge the +new_state+ into the existing state
     def modify_state(new_state)
-      @conversation_state.merge(new_state)
+      conversation_state.merge(new_state)
     end
 
     # Uses ConversationState#merge! to overwrite the existing state with the +new_state+
     def modify_state!(new_state)
-      @conversation_state.merge!(new_state)
+      conversation_state.merge!(new_state)
+    end
+
+    def idle?
+      conversation_state.idle?
     end
   end
 end

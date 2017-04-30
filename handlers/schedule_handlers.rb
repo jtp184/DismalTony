@@ -1,8 +1,6 @@
 DismalTony.create_handler do
-	def handler_start
-		@handler_name = 'schedule-run'
-		@patterns = [/run all schedule events/i]
-	end
+	@handler_name = 'schedule-run'
+	@patterns = [/run all schedule events/i]
 
 	def activate_handler(_query, _uid)
 		"~e:checkbox I'll run any outstanding schedule events"
@@ -15,10 +13,8 @@ DismalTony.create_handler do
 end
 
 DismalTony.create_handler do
-	def handler_start
-		@handler_name = 'schedule-add-test'
-		@patterns = [/add test schedule event/i]
-	end
+	@handler_name = 'schedule-add-test'
+	@patterns = [/add test schedule event/i]
 
 	def activate_handler(_query, _uid)
 		"I'll add a schedule event to test the scheduler"
@@ -26,9 +22,9 @@ DismalTony.create_handler do
 
 	def activate_handler!(_query, _uid)
 		@vi.scheduler << DismalTony::ScheduleEvent.new(
-											time: Time.now,
-											query: 'Send a text to 8186208290 that says ~e:alarmclock Scheduler Test Message!'
-										)
+			time: Time.now,
+			query: 'Send a text to 8186208290 that says ~e:alarmclock Scheduler Test Message!'
+			)
 		DismalTony::HandledResponse.finish "~e:checkbox Okay! I added the schedule event"
 	end
 end

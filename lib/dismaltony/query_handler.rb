@@ -13,6 +13,9 @@ module DismalTony # :nodoc:
     # A VIBase object corresponding to the VI running the query.
     attr_reader :vi
 
+    @patterns = []
+    @handler_name = ''
+
     # Instanciates this handler for use, using +virtual+ as the VI.
     #
     # Also sets the #patterns and #data attributes to blank values, then runs handler_start for itself.
@@ -20,11 +23,20 @@ module DismalTony # :nodoc:
     # This can be useful if you want to use interpolation in your patterns, like inserting the VI's name.
     def initialize(virtual = DismalTony::VIBase.new)
       @vi = virtual
-      @patterns = []
       @data = {}
-      @group = ''
       handler_start
-      @patterns.map! { |patt| Regexp.new(patt, Regexp::IGNORECASE) } unless @patterns.all? { |patt| patt.is_a? Regexp }
+    end
+
+    class << self
+      attr_reader :handler_name #:nodoc:
+    end
+    
+    class << self
+      attr_reader :group #:nodoc:
+    end  
+      
+    class << self
+      attr_reader :patterns #:nodoc:
     end
 
     def error_out # :nodoc:
@@ -98,10 +110,11 @@ module DismalTony # :nodoc:
       match_data
     end
 
-    # Syntactic sugar.
-    # Technically returns the same thing as just parsing the +query+
-    # but since that value is apropriately truthy, this works just as well.
-    alias responds? parse
+    def responds?(str)
+      puts self
+      puts self.patterns
+      patterns.any? { |pat| pat =~ str }
+    end
   end
 
   # Currently the only built-in handler. Matches <tt>/what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)/i</tt> and runs QueryHandler.activate_handler on the handler triggered by the second query.
@@ -109,12 +122,11 @@ module DismalTony # :nodoc:
     # Instanciates this handler with the VIBase +virtual+, and sets values for the handler:
     # * +handler_name+ - 'explain-handler'
     # * +patterns+ - <tt>[/what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)/i]</tt>
+    @handler_name = 'explain-handler'
+    @patterns = [/what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)/i]
+
     def initialize(virtual)
       @vi = virtual
-      @handler_name = 'explain-handler'
-      @patterns = [/what (?:would|will) (?:you do|happen) if i (?:ask(?:ed)?|say) (?<second_query>.+)/i]
-      @data = { 'second_query' => '' }
-      @patterns.map! { |patt| Regexp.new(patt, Regexp::IGNORECASE) } unless @patterns.all? { |patt| patt.is_a? Regexp }
     end
 
     # Parses the +query+, then returns a HandledResponse corresponding to calling VIBase.query for the +user+ on the second query

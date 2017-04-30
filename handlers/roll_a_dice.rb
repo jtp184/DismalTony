@@ -1,8 +1,6 @@
 DismalTony.create_handler(DismalTony::QueryResult) do
-  def handler_start
-    @handler_name = 'roll-dice'
-    @patterns = [/(?<noargs>roll a dice)/i, /roll (?<equation>.+)/i]
-  end
+  @handler_name = 'roll-dice'
+  @patterns = [/(?<noargs>roll a dice)/i, /roll (?<equation>.+)/i]
 
   def activate_handler(query, user)
     parse query

@@ -1,6 +1,8 @@
 DismalTony.create_handler(DismalTony::QueryService) do
+  @handler_name = 'git-project'
+  @patterns = [/^git-project: (?<next>.+)/i]
+  
   def handler_start
-    @handler_name = 'git-project'
     @actions = %w(push_project push_deploy_project push_version_project version_push_deploy_project list_projects add_project)
   end
 

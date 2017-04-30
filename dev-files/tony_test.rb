@@ -38,6 +38,10 @@ end
 
 @tony.('Hello')
 
+# @tony.handlers.each do |hand|
+#   (puts hand.patterns) if hand.respond_to? 'patterns'
+# end
+
 
 # @tony.('add test schedule event')
 # puts print @tony.scheduler.events

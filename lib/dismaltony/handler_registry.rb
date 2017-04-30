@@ -25,23 +25,23 @@ module DismalTony # :nodoc:
 
     # Adds the QueryHandler +handler+ to HandlerRegistry.handlers
     def self.register(handler)
-      @handlers << handler
+      handlers << handler
     end
 
     # Syntactic sugar. Calls the method on HandlerRegistry.handlers
     def self.each
-      @handlers.each
+      handlers.each
     end
 
     # Returns an array of QueryHandler objects whose name matches +par+
     def self.[](par)
       par = Regexp.new(par, Regexp::IGNORECASE) if par.is_a? String
-      @handlers.select { |hand| hand.new(DismalTony::VIBase.new).handler_name =~ par }
+      handlers.select { |hand| hand.new(DismalTony::VIBase.new).handler_name =~ par }
     end
 
     # Returns an array of QueryHandler objects whose group (if one exists) matches +par+
     def self.group(par)
-      (@handlers.map { |e| e.new(DismalTony::VIBase.new) }).select do |h|
+      (handlers.map { |e| e.new(DismalTony::VIBase.new) }).select do |h|
         next unless h.responds_to?('group')
         h.group == par
       end
@@ -49,7 +49,7 @@ module DismalTony # :nodoc:
 
     # Returns an Array of the names of distinct groups Handlers are in. If a handler doesn't have a group, it is filed with 'none'
     def self.groups
-      ((@handlers.map { |hand| hand.new(DismalTony::VIBase.new) }).map { |hand| (hand.group || 'none') }).uniq
+      ((handlers.map { |hand| hand.new(DismalTony::VIBase.new) }).map { |hand| (hand.group || 'none') }).uniq
     end
   end
 end

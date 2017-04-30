@@ -1,8 +1,6 @@
 DismalTony.create_handler do
-  def handler_start
     @handler_name = 'initial-setup'
     @patterns = [/(begin|setup|start)/i]
-  end
 
   def get_name(query, user)
     @data['name'] = query

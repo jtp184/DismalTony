@@ -1,8 +1,6 @@
 DismalTony.create_handler do
-  def handler_start
-    @handler_name = 'self-diagnostic'
-    @patterns = ["(?:#{@vi.name}, )?(?:run a )self diagnostic"]
-  end
+  @handler_name = 'self-diagnostic'
+  @patterns = ["(?:run a )self diagnostic"]
 
   def activate_handler(_q, _u)
     "I'll run a diagnostic on myself!"
