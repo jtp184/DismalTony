@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dismaltony (0.5.10)
+    dismaltony (0.6.0)
       duration
       json
       psych
@@ -64,7 +64,7 @@ GEM
       rdoc (>= 4.0)
       sass
     ice_nine (0.11.2)
-    json (2.0.3)
+    json (2.0.4)
     jwt (1.5.6)
     launchy (2.4.3)
       addressable (~> 2.3)

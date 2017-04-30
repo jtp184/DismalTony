@@ -28,7 +28,7 @@ module DismalTony # :nodoc:
 
     # Returns an Array of strings corresponding to the +handler_name+ of all the handlers loaded.
     def list_handlers
-      @handlers.map { |handler| handler.new(self).handler_name.to_s }
+      handlers.map { |handler| handler.new(self).handler_name.to_s }
     end
 
     # * +str+ - the Query to resolve.
@@ -49,7 +49,7 @@ module DismalTony # :nodoc:
       post_handled = DismalTony::HandledResponse.new
 
       if ret = user_cs.return_to_handler
-        handle = (@handlers.select { |hand| hand.new(self).handler_name == ret.to_s }).first.new(self)
+        handle = (handlers.select { |hand| hand.new(self).handler_name == ret.to_s }).first.new(self)
         handle.merge_data(user_cs.data_packet)
         post_handled = if user_cs.return_to_method == 'index'
                          handle.activate_handler! str, user_identity
@@ -66,7 +66,7 @@ module DismalTony # :nodoc:
                                         end
                        end
       else
-        @handlers.each do |handler_class|
+        handlers.each do |handler_class|
           handler = handler_class.new(self)
           responded << handler if handler.responds? str
         end
@@ -80,7 +80,7 @@ module DismalTony # :nodoc:
                          responded.first.activate_handler! str, user_identity
        end
       end
-      say_opts(@return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet] || silent
+      say_opts(return_interface, post_handled.to_s, post_handled.format) unless post_handled.format[:quiet] || silent
       post_handled.conversation_state.from_h(user_identity: user_identity, last_recieved_time: Time.now)
       user_identity.modify_state!(post_handled.conversation_state)
       @data_store.on_query(post_handled)
@@ -91,7 +91,7 @@ module DismalTony # :nodoc:
 
     # calls QueryResult#query_result for +str+ and +user_identity+
     def query_result(str, user_identity = DismalTony::UserIdentity::DEFAULT)
-      @handlers.each do |handler_class|
+      handlers.each do |handler_class|
         handler = handler_class.new(self)
         if handler.responds?(str) && handler.respond_to?('query_result')
           return handler.query_result str, user_identity
@@ -119,7 +119,7 @@ module DismalTony # :nodoc:
     # * +usr+ - a UserIdentity object representing the user. Defaults to UserIdentity::DEFAULT
     # * +args+ - Optional parameter. Sets the QueryHandler.data of the handler manually
     def quick_handle(qry = '', usr = DismalTony::UserIdentity::DEFAULT, args = {})
-      use_handler = @handlers.select { |handler| handler.new(self).handler_name == qry }
+      use_handler = handlers.select { |handler| handler.new(self).handler_name == qry }
       return DismalTony::HandledResponse.new("I'm sorry! I couldn't find that handler", nil) if use_handler.nil? || use_handler == []
       handle = use_handler.first.new(self)
       handle.data = args
@@ -138,7 +138,7 @@ module DismalTony # :nodoc:
 
     # Simplest dialog function. Sends the message +str+ back through VIBase.return_interface
     def say(str)
-      @return_interface.send(DismalTony::Formatter.format(str))
+      return_interface.send(DismalTony::Formatter.format(str))
     end
 
     # Method for using QueryService type handlers.
