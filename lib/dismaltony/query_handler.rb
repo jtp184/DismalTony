@@ -30,11 +30,11 @@ module DismalTony # :nodoc:
     class << self
       attr_reader :handler_name #:nodoc:
     end
-    
+
     class << self
       attr_reader :group #:nodoc:
-    end  
-      
+    end
+
     class << self
       attr_reader :patterns #:nodoc:
     end
@@ -112,7 +112,7 @@ module DismalTony # :nodoc:
 
     def responds?(str)
       puts self
-      puts self.patterns
+      puts patterns
       patterns.any? { |pat| pat =~ str }
     end
   end

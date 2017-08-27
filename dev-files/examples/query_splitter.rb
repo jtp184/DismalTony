@@ -2,9 +2,9 @@ require 'engtagger'
 
 $tgr = EngTagger.new
 
-@tags = %w(CC CD DET EX FW IN JJ JJR JJS LS MD NN NNP NNPS NNS PDT POS PRP PRPS RB RBR RBS RP SYM TO UH VB VBD VBG VBN VBP VBZ WDT WP WPS WRB PP PPC PPD PPL PPR PPS LRB RRB)
+@tags = %w[CC CD DET EX FW IN JJ JJR JJS LS MD NN NNP NNPS NNS PDT POS PRP PRPS RB RBR RBS RP SYM TO UH VB VBD VBG VBN VBP VBZ WDT WP WPS WRB PP PPC PPD PPL PPR PPS LRB RRB]
 @pos = ['Conjunction, coordinating', 'Adjective, cardinal number', 'Determiner', 'Pronoun, existential there', 'Foreign words', 'Preposition / Conjunction', 'Adjective', 'Adjective, comparative', 'Adjective, superlative', 'Symbol, list item', 'Verb, modal', 'Noun', 'Noun, proper', 'Noun, proper, plural', 'Noun, plural', 'Determiner, prequalifier', 'Possessive', 'Determiner, possessive second', 'Determiner, possessive', 'Adverb', 'Adverb, comparative', 'Adverb, superlative', 'Adverb, particle', 'Symbol', 'Preposition', 'Interjection', 'Verb, infinitive', 'Verb, past tense', 'Verb, gerund', 'Verb, past/passive participle', 'Verb, base present form', 'Verb, present 3SG -s form', 'Determiner, question', 'Pronoun, question', 'Determiner, possessive & question', 'Adverb, question', 'Punctuation, sentence ender', 'Punctuation, comma', 'Punctuation, dollar sign', 'Punctuation, quotation mark left', 'Punctuation, quotation mark right', 'Punctuation, colon, semicolon, elipsis', 'Punctuation, left bracket', 'Punctuation, right bracket']
-@colors = %w(g r y y n g r r r g b c c c c y y y y i i i i n g n b b b b b b u u u u n n n n n n n n)
+@colors = %w[g r y y n g r r r g b c c c c y y y y i i i i n g n b b b b b b u u u u n n n n n n n n]
 @tags.map!(&:downcase)
 @colors = Hash[@tags.zip(@colors)]
 @tag_types = Hash[@tags.zip(@pos)]
@@ -25,7 +25,7 @@ class ActionDefinition
 
   def initialize(pt)
     @pattern = pt
-    @tags = %w(CC CD DET EX FW IN JJ JJR JJS LS MD NN NNP NNPS NNS PDT POS PRP PRPS RB RBR RBS RP SYM TO UH VB VBD VBG VBN VBP VBZ WDT WP WPS WRB PP PPC PPD PPL PPR PPS LRB RRB)
+    @tags = %w[CC CD DET EX FW IN JJ JJR JJS LS MD NN NNP NNPS NNS PDT POS PRP PRPS RB RBR RBS RP SYM TO UH VB VBD VBG VBN VBP VBZ WDT WP WPS WRB PP PPC PPD PPL PPR PPS LRB RRB]
     @tags.map!(&:downcase)
     @pos = ['Conjunction, coordinating', 'Adjective, cardinal number', 'Determiner', 'Pronoun, existential there', 'Foreign words', 'Preposition / Conjunction', 'Adjective', 'Adjective, comparative', 'Adjective, superlative', 'Symbol, list item', 'Verb, modal', 'Noun', 'Noun, proper', 'Noun, proper, plural', 'Noun, plural', 'Determiner, prequalifier', 'Possessive', 'Determiner, possessive second', 'Determiner, possessive', 'Adverb', 'Adverb, comparative', 'Adverb, superlative', 'Adverb, particle', 'Symbol', 'Preposition', 'Interjection', 'Verb, infinitive', 'Verb, past tense', 'Verb, gerund', 'Verb, past/passive participle', 'Verb, base present form', 'Verb, present 3SG -s form', 'Determiner, question', 'Pronoun, question', 'Determiner, possessive & question', 'Adverb, question', 'Punctuation, sentence ender', 'Punctuation, comma', 'Punctuation, dollar sign', 'Punctuation, quotation mark left', 'Punctuation, quotation mark right', 'Punctuation, colon, semicolon, elipsis', 'Punctuation, left bracket', 'Punctuation, right bracket']
     @tag_types = Hash[@tags.zip(@pos)]

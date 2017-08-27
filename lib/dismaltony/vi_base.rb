@@ -38,26 +38,26 @@ module DismalTony # :nodoc:
     # The primary method. Uses any available handler to handle a query, calls QueryHandler.activate_handler! and returns a HandledResponse object.
     #
     # * First, it checks if the ConversationState indicates that we're resuming.
-    # * * If so, it uses the information in that to handle the query by calling ConversationState.return_to_handler and passing the query.
+    # * * If so, it uses the information in that to handle the query by calling ConversationState.next_handler and passing the query.
     # * If we aren't resuming, it checks to see if any known handler matches the query via the QueryHandler.responds? method.
     # * * If so, it uses that one, passing along the executing to the handler.
     # * * Otherwise, it will return a HandledResponse.error object.
-    # * * Unless the HandledResponse.format has <tt>:quiet => true</tt>, VIBase.say will be called on the HandledResponse.return_message attribute.
+    # * * Unless the HandledResponse.format has <tt>:quiet => true</tt>, VIBase.say will be called on the HandledResponse.outgoing_message attribute.
     def query!(str = '', user_identity = DismalTony::UserIdentity::DEFAULT, silent = false)
       responded = []
       user_cs = user_identity.conversation_state
       post_handled = DismalTony::HandledResponse.new
 
-      if ret = user_cs.return_to_handler
+      if ret = user_cs.next_handler
         handle = (handlers.select { |hand| hand.new(self).handler_name == ret.to_s }).first.new(self)
         handle.merge_data(user_cs.data_packet)
-        post_handled = if user_cs.return_to_method == 'index'
+        post_handled = if user_cs.next_method == 'index'
                          handle.activate_handler! str, user_identity
                        else
-                         ret_method = user_cs.return_to_method
+                         ret_method = user_cs.next_method
                          post_handled = if handle.respond_to? ret_method
-                                          if user_cs.return_to_args
-                                            handle.method(ret_method.to_sym).call(user_cs.return_to_args.split(', ') + [str, user_identity])
+                                          if user_cs.next_args
+                                            handle.method(ret_method.to_sym).call(user_cs.next_args.split(', ') + [str, user_identity])
                                           else
                                             handle.method(ret_method.to_sym).call(str, user_identity)
                                           end

@@ -13,6 +13,6 @@ DismalTony.create_handler do
       'push_project',
       nickname: @data['which'],
       user: user
-      )
+    )
   end
 end

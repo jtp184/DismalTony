@@ -5,10 +5,30 @@ require 'dismaltony'
 
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
+require 'psych'
+@laptop_emoji = DismalTony::EmojiDictionary['laptop']
+
+@db = DismalTony::LocalStore.load_from('./store.yml')
+DismalTony::HandlerRegistry.load_handlers! 'handlers'
+
+@tony = DismalTony::VIBase.new(data_store: @db)
+
+def qp(str, debug = false)
+  puts "[#{@laptop_emoji}]: #{str}"
+  puts " #{@db.users.first.conversation_state.inspect}" if debug
+  if debug
+    puts
+    puts (@tony.query! str, @db.users.first).inspect
+  else
+    @tony.query!(str, @db.users.first)
+  end
+  # puts " #{@db.users.first.conversation_state.inspect}" if debug
+  puts
+end
 
 # (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
+require 'pry'
+Pry.start
 
-require 'irb'
-IRB.start
+# require 'irb'
+# IRB.start

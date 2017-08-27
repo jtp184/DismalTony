@@ -1,12 +1,12 @@
 DismalTony.create_handler do
   @handler_name = 'self-diagnostic'
-  @patterns = ["(?:run a )self diagnostic"]
+  @patterns = ['(?:run a )self diagnostic']
 
   def activate_handler(_q, _u)
     "I'll run a diagnostic on myself!"
   end
 
-  def activate_handler!(query, user)
+  def activate_handler!(_query, user)
     begin
       return_string = "~e:checkbox Diagnostic Successful!\n\n"
       return_string << "    Time: #{Time.now.strftime('%F %l:%M%P')}\n"
@@ -18,6 +18,6 @@ DismalTony.create_handler do
     rescue StandardError => err
       return_string = "~e:cancel Something went wrong!\n#{puts err}"
     end
-    DismalTony::HandledResponse.finish return_string      
+    DismalTony::HandledResponse.finish return_string
   end
 end

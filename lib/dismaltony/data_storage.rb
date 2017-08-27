@@ -34,8 +34,8 @@ module DismalTony # :nodoc:
     def on_query(_handled); end
 
     # Syntactic sugar. Selects users for whom +block+ returns true
-    def find(&block)
-      @users.find(&block)
+    def select(&block)
+      @users.select(&block)
     end
 
     # Calls <tt>#reject!</tt> on +user+
@@ -91,7 +91,7 @@ module DismalTony # :nodoc:
     # Loads in an existing LocalStore using the file specified by <tt>opts[:filepath]</tt>
     def load
       enchilada = Psych.load File.open(@opts[:filepath])
-      if @env_vars = enchilada['globals']['env_vars']
+      if @env_vars == enchilada['globals']['env_vars']
         @env_vars.each_pair { |key, val| ENV[key] = val }
       end
       @users = enchilada['users']
@@ -202,15 +202,15 @@ module DismalTony # :nodoc:
     # Transforms a +record+ into a UserIdentity object.
     # Extra columns in the model are neatly turned into UserIdentity#user_data entries
     def self.to_tony(record)
-      skip_vals = %w[user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data]
+      skip_vals = %w[user_identity last_recieved_time idle use_next next_handler next_method next_args data_packet created_at updated_at user_data]
 
       cstate = DismalTony::ConversationState.new(
         last_recieved_time: record.last_recieved_time,
-        is_idle: record.is_idle,
+        idle: record.idle,
         use_next: record.use_next,
-        return_to_handler: record.return_to_handler,
-        return_to_method: record.return_to_method,
-        return_to_args: record.return_to_args
+        next_handler: record.next_handler,
+        next_method: record.next_method,
+        next_args: record.next_args
       )
 
       packet = begin
@@ -243,17 +243,17 @@ module DismalTony # :nodoc:
     def save(tony_data)
       uid = tony_data
       cstate = uid.state
-      skip_vals = %w[user_identity last_recieved_time is_idle use_next return_to_handler return_to_method return_to_args data_packet created_at updated_at user_data]
+      skip_vals = %w[user_identity last_recieved_time idle use_next next_handler next_method next_args data_packet created_at updated_at user_data]
 
       the_mod = model_class.find_by(id: uid['id'])
       mod_cols = the_mod.class.columns.map(&:name)
 
       the_mod.last_recieved_time = cstate.last_recieved_time
-      the_mod.is_idle = cstate.is_idle
+      the_mod.idle = cstate.idle
       the_mod.use_next = cstate.use_next
-      the_mod.return_to_handler = cstate.return_to_handler
-      the_mod.return_to_method = cstate.return_to_method
-      the_mod.return_to_args = cstate.return_to_args
+      the_mod.next_handler = cstate.next_handler
+      the_mod.next_method = cstate.next_method
+      the_mod.next_args = cstate.next_args
       the_mod.data_packet = if cstate.data_packet.nil?
                               nil
                             else

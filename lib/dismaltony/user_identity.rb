@@ -14,7 +14,7 @@ module DismalTony # :nodoc:
     # * +:conversation_state+ - The ConversationState to use. Defaults to a blank, idle state.
     def initialize(**args)
       @user_data = (args[:user_data] || {})
-      @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(is_idle: true, user_identity: self))
+      @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(idle: true, user_identity: self))
     end
 
     # A Default user, in case none is provided. Has data for <tt>nickname, first_name, last_name</tt>.

@@ -14,6 +14,6 @@ DismalTony.create_handler do
       nickname: @data['nickname'],
       filepath: @data['where'],
       user: user
-      )
+    )
   end
 end

@@ -20,16 +20,16 @@ module DismalTony
       user_cs = user_identity.conversation_state
       post_handled = DismalTony::HandledResponse.new
 
-      if ret = user_cs.return_to_handler
+      if ret = user_cs.next_handler
         handle = (handlers.select { |hand| hand.new(self).handler_name == ret.to_s }).first.new(self)
         handle.merge_data(user_cs.data_packet)
-        post_handled = if user_cs.return_to_method == 'index'
+        post_handled = if user_cs.next_method == 'index'
          handle.activate_handler! str, user_identity
        else
-        ret_method = user_cs.return_to_method
+        ret_method = user_cs.next_method
         post_handled = if handle.respond_to? ret_method
-          if user_cs.return_to_args
-            handle.method(ret_method.to_sym).call(user_cs.return_to_args.split(', ') + [str, user_identity])
+          if user_cs.next_args
+            handle.method(ret_method.to_sym).call(user_cs.next_args.split(', ') + [str, user_identity])
           else
             handle.method(ret_method.to_sym).call(str, user_identity)
           end

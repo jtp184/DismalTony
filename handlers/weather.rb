@@ -7,12 +7,12 @@ DismalTony.create_handler(DismalTony::QueryService) do
   @handler_name = 'weather'
   @patterns = [/^weather: (?<next>.+)/i]
 
-  CodeStruct = Struct.new("WeatherCode", :id, :flavor, :icon)
-  WeatherCodes = []
+  CodeStruct = Struct.new('WeatherCode', :id, :flavor, :icon)
+  WeatherCodes = [].freeze
 
   def handler_start
     @key = ENV['open_weather_api_key']
-    @actions = ['get_current_temp', 'get_current_weather']
+    @actions = %w[get_current_temp get_current_weather]
 
     weather_codes_yaml = <<DOC
  ---
@@ -214,23 +214,23 @@ DismalTony.create_handler(DismalTony::QueryService) do
    icon: "🌪"
 - !ruby/struct:Struct::WeatherCode
    id: 800
-    flavor: clear sky  
+    flavor: clear sky
     icon: "☀️"
  - !ruby/struct:Struct::WeatherCode
     id: 801
-    flavor: few clouds  
+    flavor: few clouds
     icon: "🌤"
  - !ruby/struct:Struct::WeatherCode
     id: 802
-    flavor: scattered clouds  
+    flavor: scattered clouds
     icon: "🌤"
  - !ruby/struct:Struct::WeatherCode
     id: 803
-    flavor: broken clouds  
+    flavor: broken clouds
     icon: "🌤"
  - !ruby/struct:Struct::WeatherCode
     id: 804
-    flavor: overcast clouds  
+    flavor: overcast clouds
     icon: "🌥"
  - !ruby/struct:Struct::WeatherCode
     id: 900
@@ -310,38 +310,38 @@ DismalTony.create_handler(DismalTony::QueryService) do
     icon: "🌪"
 DOC
     Psych.load(weather_codes_yaml).each do |code|
-     WeatherCodes << code
-   end
+      WeatherCodes << code
+    end
  end
 
- def get_current_weather(opts)
-  resp = api_req(opts)
-  {:city_name => resp['name'], :weather => parse_code(resp['weather'].first['id']) }
-end
+  def get_current_weather(opts)
+    resp = api_req(opts)
+    { city_name: resp['name'], weather: parse_code(resp['weather'].first['id']) }
+ end
 
-def get_current_temp(opts)
-  resp = api_req(opts)
-  {:city_name => resp['name'], :temp => resp['main']['temp'], :temp_min => resp['main']['temp_min'], :temp_max => resp['main']['temp_max']}
-end
+  def get_current_temp(opts)
+    resp = api_req(opts)
+    { city_name: resp['name'], temp: resp['main']['temp'], temp_min: resp['main']['temp_min'], temp_max: resp['main']['temp_max'] }
+  end
 
-def api_req(opts)
-  web_addr = URI('http://api.openweathermap.org/data/2.5/weather?')
-  opts['APPID'] = @key
-  opts['units'] = 'imperial'
-  web_addr.query = URI.encode_www_form(opts)
-  JSON.parse(Net::HTTP.get(web_addr))
-end
+  def api_req(opts)
+    web_addr = URI('http://api.openweathermap.org/data/2.5/weather?')
+    opts['APPID'] = @key
+    opts['units'] = 'imperial'
+    web_addr.query = URI.encode_www_form(opts)
+    JSON.parse(Net::HTTP.get(web_addr))
+  end
 
-def parse_code(idnum)
-  WeatherCodes.find { |c| c.id == idnum }
-end
+  def parse_code(idnum)
+    WeatherCodes.find { |c| c.id == idnum }
+  end
 end
 
 DismalTony.create_handler(DismalTony::QueryResult) do
   @handler_name = 'get-temperature'
-  @patterns = [/how (?:hot|cold) is it (?:at|in) (?<location>[\w ]+)\??/i,/what is the temp(?:erature)? (?:at|in) (?<location>[\w ]+)\??/i]
+  @patterns = [/how (?:hot|cold) is it (?:at|in) (?<location>[\w ]+)\??/i, /what is the temp(?:erature)? (?:at|in) (?<location>[\w ]+)\??/i]
 
-  def activate_handler(query, user)
+  def activate_handler(query, _user)
     parse query
     "I'll tell you the temperature in #{@data['location']}"
   end
@@ -350,13 +350,13 @@ DismalTony.create_handler(DismalTony::QueryResult) do
     result_string = "~e:thermometer Currently, in #{input[:city_name]}, it is #{input[:temp]}˚F"
   end
 
-  def query_result(query, uid)
+  def query_result(query, _uid)
     parse query
     @vi.use_service(
-     'weather',
-     'get_current_temp',
-     q: @data['location']
-     )
+      'weather',
+      'get_current_temp',
+      q: @data['location']
+    )
   end
 end
 
@@ -364,7 +364,7 @@ DismalTony.create_handler(DismalTony::QueryResult) do
   @handler_name = 'get-weather'
   @patterns = [/what(?: i|')s the weather (?:like )(?:at|in) (?<location>[\w ]+)\??/i]
 
-  def activate_handler(query, user)
+  def activate_handler(query, _user)
     parse query
     "~e:sun I'll tell you the weather in #{@data['location']}"
   end
@@ -373,12 +373,12 @@ DismalTony.create_handler(DismalTony::QueryResult) do
     result_string = "~e:raincloud The weather in #{input[:city_name]} is currently #{input[:weather].flavor}"
   end
 
-  def query_result(query, uid)
+  def query_result(query, _uid)
     parse query
     @vi.use_service(
-     'weather',
-     'get_current_weather',
-     q: @data['location']
-     )
+      'weather',
+      'get_current_weather',
+      q: @data['location']
+    )
   end
 end

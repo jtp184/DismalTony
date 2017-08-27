@@ -13,7 +13,7 @@ module DismalTony # :nodoc:
     end
 
     # The main function of the class. Parses +opts+ to determine what transformations to apply to +str+ before returning it
-    def self.format(str, opts)
+    def self.format(str, opts = {})
       md = Formatter::INCOMING.match(str)
       em = (md['emote'] || 'smile')
 
