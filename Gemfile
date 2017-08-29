@@ -17,5 +17,5 @@ group :development do
 end
 
 group :runtime do
-  gem 'ParseyParse', git: 'https://github.com/jtp184/ParseyParse'
+  gem 'parseyparse', git: 'https://github.com/jtp184/ParseyParse'
 end

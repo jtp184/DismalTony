@@ -42,5 +42,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'psych'
   spec.add_runtime_dependency 'twilio-ruby'
   spec.add_runtime_dependency 'duration'
-  spec.add_runtime_dependency 'ParseyParse'
+  spec.add_runtime_dependency 'parseyparse'
 end
