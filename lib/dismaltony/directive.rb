@@ -9,7 +9,7 @@ module DismalTony # :nodoc:
     end
 
     def self.all
-      self.each.to_a
+      self.constants.select { |sym| self.const_get(sym).is_a? Class}.map! { |sym| self.const_get(sym)}
     end
 
     def self.each
@@ -36,8 +36,6 @@ module DismalTony # :nodoc:
     attr_accessor :parameters
     attr_reader :match_criteria
 
-    @match_criteria = {:unparsed => [], :parsed => []}
-
     class << self
       attr_reader :name #:nodoc:
       attr_reader :group #:nodoc:
@@ -49,39 +47,33 @@ module DismalTony # :nodoc:
       @name = (self.class.name || '')
       @group = (self.class.group || 'none')
       @parameters = (self.class.parameters || {})
-      @match_criteria = (self.class.match_criteria || {:unparsed => [], :parsed => []})
+      @match_criteria = (self.class.match_criteria || [] )
       @query = qry
     end
 
-    def self.match_on(&block)
+    def self.add_criteria(&block)
       crit = []
       yield crit
-      @match_criteria ||= {}
-      @match_criteria[:unparsed] = crit
+      @match_criteria ||= []
+      @match_criteria += crit
+    end
+
+    def self.must(&block)
+      [:must, Proc.new(&block)]
+    end
+
+    def self.should(&block)
+      [:should, Proc.new(&block)]
     end
 
     def self.matches?(qry)
-      crits = self.match_criteria
-
-      unpar = crits[:unparsed].all? { |crit| crit.call(qry.raw_text) } unless crits[:unparsed].nil?
-      par = crits[:parsed].all? { |crit| crit.call(qry.parsed_result) } unless qry.parsed_result.nil?
-
-      [unpar, par].reject!(&:nil?).all?
+      return false if self.match_criteria.empty?
+      return false unless self.match_criteria.select { |pri, _c| pri == :must }.all? { |pri, crit| crit.(qry) }
+      return (self.match_criteria.select { |_pri, crit| crit.(qry) }).length / self.match_criteria.length.to_f
     end
 
     class << self
-      alias matches? =~
-    end
-
-    def self.match_on_parsed(&block)
-      parpar = []
-      yield parpar
-      @match_criteria ||= {}
-      @match_criteria[:parsed] = parpar
-    end
-
-    def self.criterion(&block)
-      return block
+      alias =~ matches?
     end
 
     def self.set_name(param)

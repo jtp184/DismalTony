@@ -26,12 +26,20 @@ module DismalTony # :nodoc:
       @parsed_result = opts[:parsed_result]
       @user = opts[:user]
       @timestamp = Time.now
-      @previous_state = user.state
+      @previous_state = @user&.state
     end
 
     def complete(state)
       @completed_at = Time.now
       @result_state = state
+    end
+
+    def method_missing(method_name, *params)
+      if parsed_result.respond_to?(method_name)
+        parsed_result.method(method_name).(*params)
+      else
+        super
+      end
     end
   end
 end

@@ -15,13 +15,14 @@ DismalTony::HandlerRegistry.load_handlers! 'handlers'
 
 module DismalTony::Directives
   class DrinkMixDirective < DismalTony::Directive
-    @name = 'drinkmix'
-    @group = 'fun'
-    @parameters = {:drink => nil}
+    set_name :drinkmix
+    set_group :fun
+    add_param :drink
 
-    match_on_parsed do |crit|
-      crit << criterion { |q| q.root =~ /mix/i}
-      crit << criterion { |q| q.dobj.first =~ /drink/i}
+    add_criteria do |qry|
+      qry << must { |q| q.root =~ /mix/i}
+      qry << should { |q| q.dobj =~ /drink/i}
+      qry << should { |q| q.rel('punct') =~ /!/}
     end
 
     def run
