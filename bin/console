@@ -6,12 +6,105 @@ require 'dismaltony'
 # You can add fixtures and/or initialization code here to make experimenting
 # with your gem easier. You can also use a different console, if you like.
 require 'psych'
+require 'ParseyParse'
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
 
 @db = DismalTony::LocalStore.load_from('./store.yml')
+
 DismalTony::HandlerRegistry.load_handlers! 'handlers'
 
+module DismalTony::Directives
+  class DrinkMixDirective < DismalTony::Directive
+    @name = 'drinkmix'
+    @group = 'fun'
+    @parameters = {:drink => nil}
+
+    match_on_parsed do |crit|
+      crit << criterion { |q| q.root =~ /mix/i}
+      crit << criterion { |q| q.dobj.first =~ /drink/i}
+    end
+
+    def run
+      DismalTony::HandledResponse.finish("Okay, #{query.user['nickname']}. Have some water!")
+    end
+  end
+end
+
 @tony = DismalTony::VIBase.new(data_store: @db)
+@qry = <<DOC
+--- !ruby/object:DismalTony::Query
+raw_text: Mix me a drink.
+parsed_result: !ruby/object:ParseyParse::Sentence
+  words:
+  - !ruby/object:ParseyParse::Word
+    id: 2
+    form: Mix
+    lemma:
+    pos: VERB
+    xpos: VB
+    feats:
+    head: 0
+    rel: ROOT
+    deps:
+    misc:
+  - !ruby/object:ParseyParse::Word
+    id: 3
+    form: me
+    lemma:
+    pos: PRON
+    xpos: PRP
+    feats:
+    head: 2
+    rel: iobj
+    deps:
+    misc:
+  - !ruby/object:ParseyParse::Word
+    id: 4
+    form: a
+    lemma:
+    pos: DET
+    xpos: DT
+    feats:
+    head: 5
+    rel: det
+    deps:
+    misc:
+  - !ruby/object:ParseyParse::Word
+    id: 5
+    form: drink
+    lemma:
+    pos: NOUN
+    xpos: NN
+    feats:
+    head: 2
+    rel: dobj
+    deps:
+    misc:
+  - !ruby/object:ParseyParse::Word
+    id: 6
+    form: "."
+    lemma:
+    pos: "."
+    xpos: "."
+    feats:
+    head: 2
+    rel: punct
+    deps:
+    misc:
+user: !ruby/object:DismalTony::UserIdentity
+  user_data:
+    :nickname: User
+  conversation_state: &1 !ruby/object:DismalTony::ConversationState
+    last_recieved_time:
+    idle: true
+    next_args:
+    next_handler:
+    next_method:
+    data_packet:
+timestamp: 2017-08-30 18:58:54.140965000 -07:00
+previous_state: *1
+DOC
+@qry = Psych.load(@qry)
 
 def qp(str, debug = false)
   puts "[#{@laptop_emoji}]: #{str}"

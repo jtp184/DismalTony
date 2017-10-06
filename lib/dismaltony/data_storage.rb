@@ -17,6 +17,7 @@ module DismalTony # :nodoc:
     def initialize(**args)
       @opts = {}
       @opts.merge!(args) unless args.nil?
+      opts['env_vars'].each_pair { |key, val| ENV[key] = val } unless (args.nil? || opts['env_vars'].nil?)
       @users = []
       @events = []
     end
@@ -56,9 +57,6 @@ module DismalTony # :nodoc:
 
   # Represents storing the data to disk as a YAML file
   class LocalStore < DataStorage
-    # Allows setting env_vars via manually editing the store file. Any values included in this hash will be merged with ENV
-    attr_accessor :env_vars
-
     # Calls #load on the file +fp+
     def self.load_from(fp = '/')
       the_store = LocalStore.new(filepath: fp)
@@ -91,28 +89,27 @@ module DismalTony # :nodoc:
     # Loads in an existing LocalStore using the file specified by <tt>opts[:filepath]</tt>
     def load
       enchilada = Psych.load File.open(@opts[:filepath])
-      if @env_vars == enchilada['globals']['env_vars']
-        @env_vars.each_pair { |key, val| ENV[key] = val }
-      end
+
       @users = enchilada['users']
       enchilada['events'].each { |event| @events << event unless @events.include?(event) || event.finished? }
-      @opts.merge!(enchilada['config']) do |k, o, n|
+      @opts.merge!(enchilada['opts']) do |k, o, n|
         if k == :filepath
           o
         else
           n
         end
-        return true
       end
+      opts['env_vars'].each_pair { |key, val| ENV[key] = val }
+      return true
     rescue StandardError
       return false
     end
 
     # Exports the LocalStore to the file specified by <tt>opts[:filepath]</tt>
     def save
-      output = { 'users' => @users, 'globals' => { 'config' => @opts, 'env_vars' => @env_vars }, 'events' => @events }
+      output = { 'users' => users, 'opts' => opts, 'events' => events }
       begin
-        File.open(@opts[:filepath], 'w+') do |fil|
+        File.open(opts[:filepath], 'w+') do |fil|
           fil << Psych.dump(output)
         end
         return true
@@ -124,7 +121,7 @@ module DismalTony # :nodoc:
     # Loads from the file first then returns the events visible.
     def load_events
       load
-      @events
+      events
     end
 
     # Adds the event, then saves the file.
@@ -211,7 +208,7 @@ module DismalTony # :nodoc:
         next_handler: record.next_handler,
         next_method: record.next_method,
         next_args: record.next_args
-      )
+        )
 
       packet = begin
         cstate.from_h(data_packet: Psych.load(record.data_packet))
@@ -255,9 +252,9 @@ module DismalTony # :nodoc:
       the_mod.next_method = cstate.next_method
       the_mod.next_args = cstate.next_args
       the_mod.data_packet = if cstate.data_packet.nil?
-                              nil
-                            else
-                              Psych.dump(cstate.data_packet)
+        nil
+      else
+        Psych.dump(cstate.data_packet)
       end
 
       mod_cols.each do |col|

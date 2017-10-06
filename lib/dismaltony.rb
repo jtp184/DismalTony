@@ -1,4 +1,6 @@
 require 'dismaltony/version'
+require 'dismaltony/directive'
+require 'dismaltony/query'
 require 'dismaltony/formatter'
 require 'dismaltony/dialog_interface'
 require 'dismaltony/emoji_dictionary'
