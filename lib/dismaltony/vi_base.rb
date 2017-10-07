@@ -44,7 +44,7 @@ module DismalTony # :nodoc:
 
     def call(q)
       result = QueryResolver.(q, self)
-      say result.outgoing_message unless result.format[:silent]
+      say result.response.outgoing_message unless result.response.format[:silent]
       @user.modify_state!(result.user.state)
       result      
     end
