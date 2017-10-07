@@ -16,6 +16,10 @@ module DismalTony # :nodoc:
       @format = {}
     end
 
+    def clone
+      Marshal::load(Marshal.dump(self))
+    end
+
     # Returns #outgoing_message
     def to_s
       @outgoing_message

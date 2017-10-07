@@ -9,7 +9,7 @@ module DismalTony
     def self.query_from_text(txt, user)
       Query.new(
         :raw_text => txt,
-        :user => user
+        :user => user.clone
         )
     end
 
@@ -17,7 +17,7 @@ module DismalTony
       Query.new(
         :raw_text => txt,
         :parsed_result => ParseyParse.(txt),
-        :user => user
+        :user => user.clone
         )
     end
 
@@ -28,7 +28,7 @@ module DismalTony
     end
 
     def self.call(txt, vi)
-      st8 = vi.user.state
+      st8 = vi.user.clone.state
 
       if st8.idle?
         qry = query_from_text!(txt, vi.user)

@@ -21,6 +21,11 @@ module DismalTony # :nodoc:
       @parse_next = args[:parse_next]
     end
 
+    def clone
+      Marshal::load(Marshal.dump(self))
+    end
+
+
     # Syntactic sugar for #idle
     def idle?
       @idle

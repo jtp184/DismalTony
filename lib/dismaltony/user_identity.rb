@@ -17,6 +17,10 @@ module DismalTony # :nodoc:
       @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(idle: true, user_identity: self))
     end
 
+    def clone
+      Marshal::load(Marshal.dump(self))
+    end
+
     # A Default user, in case none is provided. Has data for <tt>nickname, first_name, last_name</tt>.
     DEFAULT = DismalTony::UserIdentity.new(
       user_data: {

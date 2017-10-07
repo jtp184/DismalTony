@@ -24,9 +24,9 @@ module DismalTony # :nodoc:
     def initialize(**opts)
       @raw_text = opts[:raw_text]
       @parsed_result = opts[:parsed_result]
-      @user = opts[:user]
+      @user = opts[:user].clone
       @timestamp = Time.now
-      @previous_state = @user&.state
+      @previous_state = @user&.state&.clone
     end
 
     def complete(directive, hr)
