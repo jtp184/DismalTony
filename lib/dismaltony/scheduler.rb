@@ -1,6 +1,6 @@
 module DismalTony #:nodoc:
   # The resolver for the Scheduling system
-  # Loads events from a DataStorage object and handles their execution.
+  # Loads events from a DataStore object and handles their execution.
   class Scheduler
     # Configures using +opts+
     # * :vi - The VIBase to use to execute the events

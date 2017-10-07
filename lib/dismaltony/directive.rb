@@ -96,8 +96,16 @@ module DismalTony # :nodoc:
       end
     end
 
-    def run
+    def response
+      query.response
+    end
 
+    def run; end
+
+    def call
+      fin = run
+      @query.complete(self, fin)
+      self 
     end
   end
 end

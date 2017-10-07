@@ -14,7 +14,7 @@ module DismalTony # :nodoc:
     # a ConversationState representing the state of +user+ before the query is run.
     attr_reader :previous_state
     # a ConversationState representing the state of +user+ after the query is run.
-    attr_reader :result_state
+    attr_reader :response
     # the Directive was is triggered by the query
     attr_reader :directive
     # a Time object for when the query completed
@@ -29,9 +29,15 @@ module DismalTony # :nodoc:
       @previous_state = @user&.state
     end
 
-    def complete(state)
+    def complete(directive, hr)
+      @directive = directive
       @completed_at = Time.now
-      @result_state = state
+      @response = hr
+      self
+    end
+
+    def =~(check)
+      raw_text =~ check
     end
 
     def method_missing(method_name, *params)

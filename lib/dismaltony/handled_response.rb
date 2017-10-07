@@ -28,22 +28,12 @@ module DismalTony # :nodoc:
 
     # Produces a new HandledResponse with a blank ConversationState and a return message of +rm+
     def self.finish(rm = '')
-      new_state = DismalTony::ConversationState.new(idle: true, use_next: nil, next_handler: nil, next_method: nil, next_args: nil, data_packet: nil)
+      new_state = DismalTony::ConversationState.new(idle: true, use_next: nil, next_directive: nil, next_method: nil, data: nil, parse_next: true)
       new(rm, new_state)
     end
 
-    def self.ask_for(next_handler = DismalTony::QueryHandler.new, data_index = nil, rm = '') # :nodoc:
-      new_state = DismalTony::ConversationState.new(idle: false, next_handler: next_handler.handler_name, next_method: 'set_value', next_args: data_index, data_packet: next_handler.data)
-      new(rm, new_state)
-    end
-
-    # Produces a new HandledResponse intended to then direct the next User input to a specific handler
-    #
-    # * +next_handler+ - a QueryHandler object corresponding to the handler
-    # * +next_method+ - the name of the desired method inside that handler
-    # * +rm+ - the return message to send
-    def self.then_do(next_handler = DismalTony::QueryHandler.new, next_method = '', rm = '')
-      new_state = DismalTony::ConversationState.new(idle: false, next_handler: next_handler.handler_name, next_method: next_method, data_packet: next_handler.data)
+    def self.then_do(**opts)
+      new_state = DismalTony::ConversationState.new(idle: false, next_directive: opts[:directive], next_method: (opts[:method] || :run), data: opts[:data], parse_next: !(opts[:parse_next] == false) )
       new(rm, new_state)
     end
 

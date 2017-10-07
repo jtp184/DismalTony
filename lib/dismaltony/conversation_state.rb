@@ -5,14 +5,10 @@ module DismalTony # :nodoc:
     attr_reader :last_recieved_time
     # True/False as to whether the VI is in the middle of a chain of handlers
     attr_reader :idle
-    # Corresponds to the QueryHandler#handler_name of the handler to direct the input to next
-    attr_reader :next_handler
-    # Corresponds to the method name to use within the #next_handler
+    attr_reader :next_directive
     attr_reader :next_method
-    # Any arguments for the method to return to
-    attr_reader :next_args
-    # The hash to assign to QueryHandler#data
-    attr_reader :data_packet
+    attr_reader :data
+    attr_reader :parse_next
 
     # +args+ Options have no defaults by design, allowing values to be nil when necessary.
     # Specify values by using the attribute names as Symbols
@@ -22,7 +18,8 @@ module DismalTony # :nodoc:
       @next_args = args[:next_args]
       @next_handler = args[:next_handler]
       @next_method = args[:next_method]
-      @data_packet = args[:data_packet]
+      @data = args[:data]
+      @parse_next = args[:parse_next]
     end
 
     # Syntactic sugar for #idle
@@ -30,14 +27,19 @@ module DismalTony # :nodoc:
       @idle
     end
 
+    def parse_next?
+      @parse_next
+    end
+
     # Combines the state of ConversationState +other+ in with this one safely, keeping existing values if +other+ has a nil
     def merge(other)
-      @last_recieved_time = (other.last_recieved_time || @last_recieved_time)
-      @idle = (other.idle || @idle)
-      @next_args = (other.next_args || @next_args)
-      @next_handler = (other.next_handler || @next_handler)
-      @next_method = (other.next_method || @next_method)
-      @data_packet = (other.data_packet || @data_packet)
+      @last_recieved_time = (other.last_recieved_time || last_recieved_time)
+      @idle = (other.idle || idle)
+      @next_args = (other.next_args || next_args)
+      @next_handler = (other.next_handler || next_handler)
+      @next_method = (other.next_method || next_method)
+      @data = (other.data || data)
+      @parse_next = (other.parse_next || parse_next)
     end
 
     # Combines the state of ConversationState +other+ in with this one destructively, overwriting existing values
@@ -47,18 +49,8 @@ module DismalTony # :nodoc:
       @next_args = other.next_args
       @next_handler = other.next_handler
       @next_method = other.next_method
-      @data_packet = other.data_packet
-    end
-
-    # Takes a hash +args+ with keys corresponding to the attribute to change, and the value to its new value.
-    # Keeps existing values if the hash value is nil.
-    def from_h(**args)
-      @last_recieved_time = (args[:last_recieved_time] || @last_recieved_time)
-      @idle = (args[:idle] || @idle)
-      @next_args = (args[:next_args] || @next_args)
-      @next_handler = (args[:next_handler] || @next_handler)
-      @next_method = (args[:next_method] || @next_method)
-      @data_packet = (args[:data_packet] || @data_packet)
+      @data = other.data
+      @parse_next = other.parse_next
     end
   end
 end

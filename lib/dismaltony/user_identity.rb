@@ -55,6 +55,10 @@ module DismalTony # :nodoc:
       conversation_state.merge!(new_state)
     end
 
+    def modify_user_data(data)
+      @user_data.merge!(data)
+    end
+
     def idle?
       conversation_state.idle?
     end

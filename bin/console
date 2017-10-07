@@ -9,15 +9,13 @@ require 'psych'
 require 'ParseyParse'
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
 
-@db = DismalTony::LocalStore.load_from('./store.yml')
-
-DismalTony::HandlerRegistry.load_handlers! 'handlers'
+# @db = DismalTony::LocalStore.load_from('./store.yml')
 
 module DismalTony::Directives
   class DrinkMixDirective < DismalTony::Directive
     set_name :drinkmix
     set_group :fun
-    add_param :drink
+    add_param :drink, 'Old Fashioned'
 
     add_criteria do |qry|
       qry << must { |q| q.root =~ /mix/i}
@@ -26,12 +24,12 @@ module DismalTony::Directives
     end
 
     def run
-      DismalTony::HandledResponse.finish("Okay, #{query.user['nickname']}. Have some water!")
+      DismalTony::HandledResponse.finish("Okay, #{query.user[:nickname]}. Have a #{parameters[:drink]}!")
     end
   end
 end
 
-@tony = DismalTony::VIBase.new(data_store: @db)
+@tony = DismalTony::VIBase.new
 @qry = <<DOC
 --- !ruby/object:DismalTony::Query
 raw_text: Mix me a drink.
