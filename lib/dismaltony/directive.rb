@@ -72,8 +72,8 @@ module DismalTony # :nodoc:
     end
 
     def self.matches?(qry)
-      return false if self.match_criteria.empty?
-      return false unless self.match_criteria.select { |pri, _c| pri == :must }.all? { |pri, crit| crit.(qry) }
+      return nil if self.match_criteria.empty?
+      return nil unless self.match_criteria.select { |pri, _c| pri == :must }.all? { |pri, crit| crit.(qry) }
       return (self.match_criteria.select { |_pri, crit| crit.(qry) }).length / self.match_criteria.length.to_f
     end
 
