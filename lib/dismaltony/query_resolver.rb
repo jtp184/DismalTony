@@ -4,7 +4,8 @@ module DismalTony
       succeeds = directives.map { |d| [d, d =~ query] }
       succeeds.reject! { |d, p| p.nil? }
       succeeds.sort_by! { |d, p| p }
-      succeeds.empty? ? raise NoDirectiveError : succeeds
+      raise NoDirectiveError, "No Matching Directive!" if succeeds.empty?
+      succeeds
     end
 
     def self.query_from_text(txt, user)
@@ -31,7 +32,6 @@ module DismalTony
         Directive.error(query)
       end
     end
-  end
 
   def self.call(txt, vi)
     st8 = vi.user.clone.state
