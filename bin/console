@@ -24,7 +24,7 @@ module DismalTony::Directives
     end
 
     def run
-      DismalTony::HandledResponse.finish("Okay, #{query.user[:nickname]}. Have a #{parameters[:drink]}!")
+      DismalTony::HandledResponse.finish("Okay, #{query.user['nickname']}. Have a #{parameters[:drink]}!")
     end
   end
 end

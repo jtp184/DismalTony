@@ -32,12 +32,12 @@ module DismalTony # :nodoc:
 
     # Combines the state of ConversationState +other+ in with this one safely, keeping existing values if +other+ has a nil
     def merge(other)
-      @last_recieved_time = (other.last_recieved_time || last_recieved_time)
-      @idle = (other.idle || idle)
-      @next_directive = (other.next_directive || next_directive)
-      @next_method = (other.next_method || next_method)
-      @data = (other.data || data)
-      @parse_next = (other.parse_next || parse_next)
+      @last_recieved_time ||= other.last_recieved_time
+      @idle ||= other.idle
+      @next_directive ||= other.next_directive
+      @next_method ||= other.next_method
+      @data ||= other.data
+      @parse_next ||= other.parse_next
     end
 
     # Combines the state of ConversationState +other+ in with this one destructively, overwriting existing values
@@ -48,6 +48,11 @@ module DismalTony # :nodoc:
       @next_method = other.next_method
       @data = other.data
       @parse_next = other.parse_next
+    end
+
+    def stamp
+      @last_recieved_time = Time.now
+      self
     end
   end
 end
