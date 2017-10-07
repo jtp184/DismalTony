@@ -15,8 +15,7 @@ module DismalTony # :nodoc:
     def initialize(**args)
       @last_recieved_time = args[:last_recieved_time]
       @idle = args[:idle]
-      @next_args = args[:next_args]
-      @next_handler = args[:next_handler]
+      @next_directive = args[:next_directive]
       @next_method = args[:next_method]
       @data = args[:data]
       @parse_next = args[:parse_next]
@@ -35,8 +34,7 @@ module DismalTony # :nodoc:
     def merge(other)
       @last_recieved_time = (other.last_recieved_time || last_recieved_time)
       @idle = (other.idle || idle)
-      @next_args = (other.next_args || next_args)
-      @next_handler = (other.next_handler || next_handler)
+      @next_directive = (other.next_directive || next_directive)
       @next_method = (other.next_method || next_method)
       @data = (other.data || data)
       @parse_next = (other.parse_next || parse_next)
@@ -46,8 +44,7 @@ module DismalTony # :nodoc:
     def merge!(other)
       @last_recieved_time = other.last_recieved_time
       @idle = other.idle
-      @next_args = other.next_args
-      @next_handler = other.next_handler
+      @next_directive = other.next_directive
       @next_method = other.next_method
       @data = other.data
       @parse_next = other.parse_next
