@@ -13,4 +13,7 @@ require 'dismaltony/scheduler'
 require 'dismaltony/vi_base'
 
 module DismalTony
+
+	class NoDirectiveError < StandardError; end
+
 end

@@ -51,6 +51,11 @@ module DismalTony # :nodoc:
       @query = qry
     end
 
+    def self.error(qry)
+      me = new(qry)
+      me.query.complete(self, HandledResponse.error)
+    end
+
     def self.add_criteria(&block)
       crit = []
       yield crit
