@@ -10,6 +10,7 @@ module DismalTony # :nodoc:
     attr_reader :directives
     # A DataStore object representing the VI's memory and userspace
     attr_reader :data_store
+    attr_reader :user
     # the Scheduler object for executing timed tasks
     attr_reader :scheduler
 
@@ -22,8 +23,8 @@ module DismalTony # :nodoc:
       @name = (opts[:name] || 'Tony'.freeze)
       @return_interface = (opts[:return_interface] || DismalTony::ConsoleInterface.new)
       @directives = (opts[:directives] || DismalTony::Directives.all)
-      @data_store = (opts[:data_store] || DismalTony::DataStore.new)
-      @scheduler = DismalTony::Scheduler.new(vi: self)
+      @data_store = (opts[:data_store] || DismalTony::DataStore.new(vi_name: name))
+      @user = (@data_store.users.find { |u| u == opts[:user]} || DismalTony::UserIdentity::DEFAULT)
     end
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it.
@@ -42,8 +43,10 @@ module DismalTony # :nodoc:
     end
 
     def call(q)
-      result = QueryResolver.(q)
-      say(result.response.to_s)
+      result = QueryResolver.(q, self)
+      say result.outgoing_message unless result.format[:silent]
+      @user.modify_state!(result.user.state)
+      result      
     end
   end
 end

@@ -74,6 +74,7 @@ module DismalTony # :nodoc:
 
     class << self
       alias =~ matches?
+      alias from new
     end
 
     def self.set_name(param)

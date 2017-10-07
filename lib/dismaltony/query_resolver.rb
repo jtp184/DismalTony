@@ -1,16 +1,47 @@
 module DismalTony
   module QueryResolver
-    def self.match(query, directives = DismalTony::Directives.all)
+    def self.match(query, directives)
       succeeds = directives.map { |d| [d, d =~ query] }
       succeeds.reject! { |d, p| p.nil? }
       succeeds.sort_by! { |d, p| p }
     end
 
-    def self.call(query, directives = DismalTony::Directives.all)
+    def self.query_from_text(txt, user)
+      Query.new(
+        :raw_text => txt,
+        :user => user
+        )
+    end
+
+    def self.query_from_text!(txt, user)
+      Query.new(
+        :raw_text => txt,
+        :parsed_result => ParseyParse.(txt),
+        :user => user
+        )
+    end
+
+    def self.run_match(query, directives)
       result = match(query, directives).first.first
-      result = result.new(query)
+      result = result.from(query)
       result.call
     end
 
+    def self.call(txt, vi)
+      st8 = vi.user.state
+
+      if st8.idle?
+        qry = query_from_text!(txt, vi.user)
+        run_match qry, vi.directives
+      else
+        if st8.parse_next
+          qry = query_from_text!(txt, vi.user)
+        else
+          qry = query_from_text(txt, vi.user)
+        end
+        res = DismalTony::Directives[st8.next_directive].new(qry)
+        res.parameters = st8.data
+        res.call
+      end
+    end
   end
-end
