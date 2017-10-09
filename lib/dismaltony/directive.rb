@@ -114,7 +114,7 @@ module DismalTony # :nodoc:
 
     def call
       fin = run
-      raise "No response" unless fin&.response&.outgoing_message
+      raise "No response" unless fin.respond_to? :outgoing_message
       @query.complete(self, fin)
       self 
     end
