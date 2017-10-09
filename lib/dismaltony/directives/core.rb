@@ -8,11 +8,11 @@ module DismalTony::Directives
 
 		add_criteria do |qry|
 			qry << must { |q| q.verb =~ /send/i || q.root =~ /text/i }
-			qry << should { |q| q.children_of(q.verb).include? { |w| w.pos == 'NUM' } }
+			qry << should { |q| q.children_of(q.verb).any? { |w| w.pos == 'NUM' } }
 		end
 
 		def run
-			parameters[:sendto] = query.children_of(query.verb).select { |w| w.pos == 'NUM'}.first
+			parameters[:sendto] = query['pos', 'NUM'}.first
 			if parameters[:sendto].nil?
 				parameters[:sendto] = if query.children_of(query.verb).first =~ /me/i
 					query.user['phone_number']
@@ -25,9 +25,9 @@ module DismalTony::Directives
 				end
 			end
 
-			parameters[:sendmsg] = query.raw_text.split(r['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s<< " ")[1]
+			parameters[:sendmsg] = query.raw_text.split(query['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s << " ")[1]
 
-			vi.send_through(DismalTony::SMSInterface.new(parameters[:sendto]), parameters[:sendmsg])
+			vi.say_through(DismalTony::SMSInterface.new(parameters[:sendto]), parameters[:sendmsg])
 			HandledResponse.finish("~e:speechbubble Okay! I sent the message.")
 		end
 	end
