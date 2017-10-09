@@ -1,7 +1,7 @@
 module DismalTony
   module QueryResolver
     def self.match(query, directives)
-      succeeds = self.match!
+      succeeds = self.match!(query, directives)
       succeeds.reject! { |d, p| p.nil? }
       succeeds.sort_by! { |d, p| p }
       raise NoDirectiveError, "No Matching Directive!" if succeeds.empty?
