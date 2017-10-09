@@ -15,7 +15,7 @@ module DismalTony::Directives
   class DrinkMixDirective < DismalTony::Directive
     set_name :drinkmix
     set_group :fun
-    add_param :drink, 'Old Fashioned'
+    add_param :drink
 
     add_criteria do |qry|
       qry << must { |q| q.verb =~ /mix/i}
@@ -24,6 +24,7 @@ module DismalTony::Directives
     end
 
     def run
+      parameters[:drink] = ['Glass of Water', 'Old Fashioned', 'Zombie', 'Mai Tai', 'Rum & Coke', 'Gin & Tonic', 'Pepsi Crystal'].sample
       DismalTony::HandledResponse.finish("Okay, #{query.user['nickname']}. Have a #{parameters[:drink]}!")
     end
   end
