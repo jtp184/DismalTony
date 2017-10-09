@@ -4,7 +4,7 @@ module DismalTony::Directives
 		set_group :core
 		
 		add_param :sendto
-
+		add_param :sendmsg
 
 		add_criteria do |qry|
 			qry << must { |q| q.verb =~ /send/i || q.root =~ /text/i }
@@ -25,8 +25,10 @@ module DismalTony::Directives
 				end
 			end
 
-			
+			parameters[:sendmsg] = query.raw_text.split(r['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s<< " ")[1]
 
+			vi.send_through(DismalTony::SMSInterface.new(parameters[:sendto]), parameters[:sendmsg])
+			HandledResponse.finish("~e:speechbubble Okay! I sent the message.")
 		end
 	end
 end
