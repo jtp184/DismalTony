@@ -20,7 +20,7 @@ module DismalTony # :nodoc:
     # * +:data_store+ - The data store to use with this VI. Defaults to a generic DataStore object.
     # * +:return_interface+ - The interface to route conversation back through. Defaults to the ConsoleInterface.
     def initialize(**opts)
-      @name = (opts[:name] || 'Tony'.freeze)
+      @name = (opts[:name].freeze || 'Tony'.freeze)
       @return_interface = (opts[:return_interface] || DismalTony::ConsoleInterface.new)
       @directives = (opts[:directives] || DismalTony::Directives.all)
       @data_store = (opts[:data_store] || DismalTony::DataStore.new(vi_name: name))

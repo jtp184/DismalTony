@@ -78,7 +78,7 @@ module DismalTony # :nodoc:
     end
 
     def self.test_matches(qry)
-      self.match_criteria.map { |_pri, c| [pri, c.(qry)]}
+      self.match_criteria.map { |pri, c| [pri, c.(qry)]}
     end
 
     class << self

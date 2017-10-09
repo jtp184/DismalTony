@@ -8,8 +8,9 @@ require 'dismaltony'
 require 'psych'
 require 'ParseyParse'
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
+@db = DismalTony::DataStore.new
+u = @db.new_user('nickname' => 'Justin')
 
-# @db = DismalTony::LocalStore.load_from('./store.yml')
 
 module DismalTony::Directives
   class DrinkMixDirective < DismalTony::Directive
@@ -50,7 +51,10 @@ module DismalTony::Directives
   end
 end
 
-@tony = DismalTony::VIBase.new
+@tony = DismalTony::VIBase.new(
+  :data_store => @db,
+  :user => u
+  )
 @qry = <<DOC
 --- !ruby/object:DismalTony::Query
 raw_text: Mix me a drink.
