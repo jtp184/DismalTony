@@ -36,12 +36,12 @@ module DismalTony # :nodoc:
     end
 
     def[]=(left, right) # :nodoc:
-      @user_data[left] = right
+      @user_data[left.to_sym] = right
     end
 
     # Used to access UserIdentity.user_data using +str+ as a key
     def[](str)
-      user_data[str]
+      user_data[str.to_sym]
     end
 
     # Compares if these users have the same user_data hash

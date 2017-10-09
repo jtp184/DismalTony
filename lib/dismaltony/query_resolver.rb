@@ -27,13 +27,13 @@ module DismalTony
         )
     end
 
-    def self.run_match(query, directives)
+    def self.run_match(query, vi)
       begin
-        result = match(query, directives).first.first
-        result = result.from(query)
+        result = match(query, vi.directives).first.first
+        result = result.from(query, vi)
         result.call
       rescue NoDirectiveError
-        Directive.error(query)
+        Directive.error(query, vi)
       end
     end
 
@@ -42,14 +42,14 @@ module DismalTony
 
     if st8.idle?
       qry = query_from_text!(txt, vi.user)
-      run_match qry, vi.directives
+      run_match qry, vi
     else
       if st8.parse_next
         qry = query_from_text!(txt, vi.user)
       else
         qry = query_from_text(txt, vi.user)
       end
-      res = DismalTony::Directives[st8.next_directive].new(qry)
+      res = DismalTony::Directives[st8.next_directive].new(qry, vi)
       res.parameters = st8.data
       res.call
     end

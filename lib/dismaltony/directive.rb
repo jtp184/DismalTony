@@ -35,6 +35,7 @@ module DismalTony # :nodoc:
     attr_reader :query
     attr_accessor :parameters
     attr_reader :match_criteria
+    attr_reader :vi
 
     class << self
       attr_reader :name #:nodoc:
@@ -43,12 +44,13 @@ module DismalTony # :nodoc:
       attr_reader :match_criteria #:nodoc:
     end
 
-    def initialize(qry)
+    def initialize(qry, vi)
       @name = (self.class.name || '')
       @group = (self.class.group || 'none')
       @parameters = (self.class.parameters || {})
       @match_criteria = (self.class.match_criteria || [] )
       @query = qry
+      @vi = vi
     end
 
     def self.error(qry)
