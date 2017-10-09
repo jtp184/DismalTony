@@ -19,7 +19,7 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << must { |q| q.verb =~ /mix/i}
-      qry << should { q.children_of(q.verb).any? { |c| c =~ /drink/i } }
+      qry << should { |q| q.children_of(q.verb).any? { |c| c =~ /drink/i } }
       qry << should { |q| q =~ /please/i }
     end
 
