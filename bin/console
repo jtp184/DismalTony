@@ -26,7 +26,8 @@ module DismalTony::Directives
 
     def run
       parameters[:drink] = ['Glass of Water', 'Old Fashioned', 'Zombie', 'Mai Tai', 'Rum & Coke', 'Gin & Tonic', 'Pepsi Crystal'].sample
-      DismalTony::HandledResponse.finish("Okay, #{query.user['nickname']}. Have a #{parameters[:drink]}!")
+      moj = ['martini', 'pineapple', 'think', 'tropicaldrink', 'beer', 'cheers', 'toast', 'champagne'].sample
+      DismalTony::HandledResponse.finish("~e:#{moj} Okay, #{query.user['nickname']}. Have a #{parameters[:drink]}!")
     end
   end
 
@@ -139,6 +140,7 @@ DOC
 @qry = Psych.load(@qry)
 
 def self.interactive(debug = false)
+  puts
   loop do
     print "[#{@laptop_emoji}  ]: "
     res = @tony.(gets.chomp)
