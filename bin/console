@@ -27,6 +27,24 @@ module DismalTony::Directives
       DismalTony::HandledResponse.finish("Okay, #{query.user['nickname']}. Have a #{parameters[:drink]}!")
     end
   end
+
+  class GreetingDirective < DismalTony::Directive
+    set_name :hello
+    set_group :fun
+
+    add_criteria do |qry|
+      qry << must { |q| !q['rel', 'discourse'].empty? }
+    end
+
+    def run
+      if query =~ /how are you/i
+        DismalTony::HandledResponse.finish("~e:thumbsup I'm doing well!")
+      else
+        DismalTony::HandledResponse.finish ['~e:wave Hello!', '~e:smile Greetings!', '~e:rocket Hi!', "~e:star Hello, #{query.user['nickname']}!", '~e:snake Greetings!', '~e:cat Hi!', "~e:octo Greetings, #{query.user['nickname']}!", '~e:spaceinvader Hello!'].sample
+      end
+    end
+
+  end
 end
 
 @tony = DismalTony::VIBase.new
@@ -34,76 +52,91 @@ end
 --- !ruby/object:DismalTony::Query
 raw_text: Mix me a drink.
 parsed_result: !ruby/object:ParseyParse::Sentence
-  words:
-  - !ruby/object:ParseyParse::Word
-    id: 2
-    form: Mix
-    lemma:
-    pos: VERB
-    xpos: VB
-    feats:
-    head: 0
-    rel: ROOT
-    deps:
-    misc:
-  - !ruby/object:ParseyParse::Word
-    id: 3
-    form: me
-    lemma:
-    pos: PRON
-    xpos: PRP
-    feats:
-    head: 2
-    rel: iobj
-    deps:
-    misc:
-  - !ruby/object:ParseyParse::Word
-    id: 4
-    form: a
-    lemma:
-    pos: DET
-    xpos: DT
-    feats:
-    head: 5
-    rel: det
-    deps:
-    misc:
-  - !ruby/object:ParseyParse::Word
-    id: 5
-    form: drink
-    lemma:
-    pos: NOUN
-    xpos: NN
-    feats:
-    head: 2
-    rel: dobj
-    deps:
-    misc:
-  - !ruby/object:ParseyParse::Word
-    id: 6
-    form: "."
-    lemma:
-    pos: "."
-    xpos: "."
-    feats:
-    head: 2
-    rel: punct
-    deps:
-    misc:
+words:
+- &1 !ruby/object:ParseyParse::Word
+id: 2
+form: Mix
+lemma:
+pos: VERB
+xpos: VB
+feats:
+head:
+rel: ROOT
+deps:
+misc:
+- !ruby/object:ParseyParse::Word
+id: 3
+form: me
+lemma:
+pos: PRON
+xpos: PRP
+feats:
+head: *1
+rel: iobj
+deps:
+misc:
+- !ruby/object:ParseyParse::Word
+id: 4
+form: a
+lemma:
+pos: DET
+xpos: DT
+feats:
+head: &2 !ruby/object:ParseyParse::Word
+id: 5
+form: drink
+lemma:
+pos: NOUN
+xpos: NN
+feats:
+head: *1
+rel: dobj
+deps:
+misc:
+rel: det
+deps:
+misc:
+- *2
+- !ruby/object:ParseyParse::Word
+id: 6
+form: "."
+lemma:
+pos: "."
+xpos: "."
+feats:
+head: *1
+rel: punct
+deps:
+misc:
 user: !ruby/object:DismalTony::UserIdentity
-  user_data:
-    :nickname: User
-  conversation_state: &1 !ruby/object:DismalTony::ConversationState
-    last_recieved_time:
-    idle: true
-    next_args:
-    next_handler:
-    next_method:
-    data_packet:
-timestamp: 2017-08-30 18:58:54.140965000 -07:00
-previous_state: *1
+user_data:
+nickname: User
+first_name: Default
+last_name: User
+conversation_state: !ruby/object:DismalTony::ConversationState
+last_recieved_time:
+idle: true
+next_directive:
+next_method:
+data:
+parse_next:
+timestamp: 2017-10-09 21:11:01.548131566 +00:00
+previous_state: !ruby/object:DismalTony::ConversationState
+last_recieved_time:
+idle: true
+next_directive:
+next_method:
+data:
+parse_next:
 DOC
 @qry = Psych.load(@qry)
+
+def interactive
+  loop do
+    print "[#{@laptop_emoji}]: "
+    @tony.(gets.chomp)
+  end
+end
 
 def qp(str, debug = false)
   puts "[#{@laptop_emoji}]: #{str}"

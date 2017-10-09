@@ -47,5 +47,9 @@ module DismalTony # :nodoc:
         super
       end
     end
+
+    def complete?
+      completed_at && response
+    end
   end
 end
