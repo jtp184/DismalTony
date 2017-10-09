@@ -1,11 +1,15 @@
 module DismalTony
   module QueryResolver
     def self.match(query, directives)
-      succeeds = directives.map { |d| [d, d =~ query] }
+      succeeds = self.match!
       succeeds.reject! { |d, p| p.nil? }
       succeeds.sort_by! { |d, p| p }
       raise NoDirectiveError, "No Matching Directive!" if succeeds.empty?
       succeeds
+    end
+
+    def self.match!(query, directives)
+      succeeds = directives.map { |d| [d, d =~ query] }
     end
 
     def self.query_from_text(txt, user)

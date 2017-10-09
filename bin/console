@@ -18,9 +18,9 @@ module DismalTony::Directives
     add_param :drink, 'Old Fashioned'
 
     add_criteria do |qry|
-      qry << must { |q| q.root =~ /mix/i}
-      qry << should { |q| q.dobj =~ /drink/i}
-      qry << should { |q| q.rel('punct') =~ /!/}
+      qry << must { |q| q.verb =~ /mix/i}
+      qry << should { q.children_of(q.verb).any? { |c| c =~ /drink/i } }
+      qry << should { |q| q =~ /please/i }
     end
 
     def run
