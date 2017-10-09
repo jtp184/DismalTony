@@ -12,7 +12,7 @@ module DismalTony::Directives
 		end
 
 		def run
-			parameters[:sendto] = query['pos', 'NUM'}.first
+			parameters[:sendto] = query['pos', 'NUM'].first
 			if parameters[:sendto].nil?
 				parameters[:sendto] = if query.children_of(query.verb).first =~ /me/i
 					query.user['phone_number']
