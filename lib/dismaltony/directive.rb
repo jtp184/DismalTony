@@ -77,6 +77,10 @@ module DismalTony # :nodoc:
       return (self.match_criteria.select { |_pri, crit| crit.(qry) }).length / self.match_criteria.length.to_f
     end
 
+    def self.test_matches(qry)
+      self.match_criteria.map { |_pri, c| [pri, c.(qry)]}
+    end
+
     class << self
       alias =~ matches?
       alias from new

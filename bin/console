@@ -33,7 +33,9 @@ module DismalTony::Directives
     set_group :fun
 
     add_criteria do |qry|
-      qry << must { |q| !q['rel', 'discourse'].empty? }
+      qry << must { |q| q.any_of?(/hello/i, /greetings/i) }
+      qry << should { |q| !q['rel', 'discourse'].empty?}
+      qry << should { |q| !q['xpos', 'UH'].empty?}
     end
 
     def run
