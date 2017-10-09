@@ -6,6 +6,11 @@ module DismalTony # :nodoc:
   class DialogInterface
     # Used to send the content of +_msg+ to the user via this interface.
     # Must be overriden by child classes.
+
+    def default_format
+      {}
+    end
+
     def send(_msg)
       raise 'Should be overriden by child classes'
     end
@@ -17,6 +22,11 @@ module DismalTony # :nodoc:
     def send(msg)
       puts msg
     end
+    
+    def default_format
+      {:extra_space => true}
+    end
+
   end
 
   # Used to facilitate Twilio SMS communication

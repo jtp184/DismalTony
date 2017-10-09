@@ -131,24 +131,12 @@ parse_next:
 DOC
 @qry = Psych.load(@qry)
 
-def interactive
+def self.interactive(debug = false)
   loop do
-    print "[#{@laptop_emoji}]: "
-    @tony.(gets.chomp)
+    print "[#{@laptop_emoji}  ]: "
+    res = @tony.(gets.chomp)
+    puts res.inspect if debug
   end
-end
-
-def qp(str, debug = false)
-  puts "[#{@laptop_emoji}]: #{str}"
-  puts " #{@db.users.first.conversation_state.inspect}" if debug
-  if debug
-    puts
-    puts (@tony.query! str, @db.users.first).inspect
-  else
-    @tony.query!(str, @db.users.first)
-  end
-  # puts " #{@db.users.first.conversation_state.inspect}" if debug
-  puts
 end
 
 # (If you use this, don't forget to add pry to your Gemfile!)
