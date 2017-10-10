@@ -31,7 +31,6 @@ module DismalTony::Directives
 					# Code for if it's a name
 				else
 					# If it's really nonexistent
-					return DismalTony::HandledResponse.then_do(directive: self, method: :get_tel, message: "~e:pound Okay, to what number should I send the message?", parse_next: false, data: parameters)
 				end
 			else
 				if (parameters[:sendto] =~ /^\d{10}$/) == nil
@@ -39,6 +38,7 @@ module DismalTony::Directives
 				end
 			end
 
+			return DismalTony::HandledResponse.then_do(directive: self, method: :get_tel, message: "~e:pound Okay, to what number should I send the message?", parse_next: false, data: parameters) if parameters[:sendto].nil?
 			parameters[:sendmsg] = query.raw_text.split(query['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s << " ")[1]
 
 			vi.say_through(DismalTony::SMSInterface.new(parameters[:sendto]), parameters[:sendmsg])
