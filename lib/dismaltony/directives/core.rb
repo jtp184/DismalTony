@@ -31,7 +31,7 @@ module DismalTony::Directives
 					# Code for if it's a name
 				else
 					# If it's really nonexistent
-					DismalTony::HandledResponse.then_do(directive: self, method: :get_tel, message: "~e:pound Okay, to what number should I send the message?", parse_next: false, data: parameters)
+					return DismalTony::HandledResponse.then_do(directive: self, method: :get_tel, message: "~e:pound Okay, to what number should I send the message?", parse_next: false, data: parameters)
 				end
 			else
 				if (parameters[:sendto] =~ /^\d{10}$/) == nil
