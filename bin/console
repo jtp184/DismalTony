@@ -84,7 +84,7 @@ module DismalTony::Directives
 end
 @tony = DismalTony::VIBase.new(
   :data_store => @db,
-  :user => u
+  :user => @db.users.first
   )
 @qry = <<DOC
 --- !ruby/object:DismalTony::Query
