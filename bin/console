@@ -174,7 +174,9 @@ def self.interactive(debug = false)
   loop do
     print "[#{@laptop_emoji}  ]: "
     res = @tony.(gets.chomp)
+    puts
     puts res.inspect if debug
+    puts
   end
 end
 
