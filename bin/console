@@ -10,7 +10,7 @@ require 'psych'
 require 'ParseyParse'
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
 @db = DismalTony::DataStore.new
-u = @db.new_user('nickname' => 'Justin')
+u = @db.new_user(:nickname => 'Justin')
 
 
 module DismalTony::Directives
