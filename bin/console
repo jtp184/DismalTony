@@ -9,8 +9,11 @@ require 'dismaltony/directives/core'
 require 'psych'
 require 'ParseyParse'
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
-@db = DismalTony::DataStore.new
-u = @db.new_user(:nickname => 'Justin')
+@db = begin
+  DismalTony::YAMLStore.load_from('tmp/tony.yml')
+rescue
+  DismalTony::DataStore.new
+end
 
 
 module DismalTony::Directives

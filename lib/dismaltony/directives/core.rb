@@ -21,14 +21,14 @@ module DismalTony::Directives
 				end
 			else
 				if !parameters[:sendto] =~ /\d{10}/
-					HandledResponse.finish("~e:frown That isn't a valid phone number!") 
+					DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") 
 				end
 			end
 
 			parameters[:sendmsg] = query.raw_text.split(query['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s << " ")[1]
 
 			vi.say_through(DismalTony::SMSInterface.new(parameters[:sendto]), parameters[:sendmsg])
-			HandledResponse.finish("~e:speechbubble Okay! I sent the message.")
+			DismalTony::HandledResponse.finish("~e:speechbubble Okay! I sent the message.")
 		end
 	end
 end
