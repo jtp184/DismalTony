@@ -119,7 +119,7 @@ module DismalTony # :nodoc:
         'tropicaldrink' => '🍹',
         'tv' => '📺',
         'unlock' => '🔓',
-        'watch' => '⌚️'
+        'watch' => '⌚️',
         'wave' => '👋',
         'whiskey' => '🥃',
         'wineglass' => '🍷',
