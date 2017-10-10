@@ -53,8 +53,8 @@ module DismalTony # :nodoc:
       @vi = vi
     end
 
-    def self.error(qry)
-      me = new(qry)
+    def self.error(qry, vi)
+      me = new(qry, vi)
       me.query.complete(self, HandledResponse.error)
     end
 
