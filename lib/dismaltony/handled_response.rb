@@ -38,7 +38,7 @@ module DismalTony # :nodoc:
 
     def self.then_do(**opts)
       new_state = DismalTony::ConversationState.new(idle: false, next_directive: opts[:directive], next_method: (opts[:method] || :run), data: opts[:data], parse_next: !(opts[:parse_next] == false) )
-      new(rm, new_state)
+      new(opts[:message], new_state)
     end
 
     # Allows you to append formatting options +form+ to a Class Method created response easily.

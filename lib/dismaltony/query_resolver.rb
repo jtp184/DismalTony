@@ -51,7 +51,7 @@ module DismalTony
       end
       res = DismalTony::Directives[st8.next_directive].new(qry, vi)
       res.parameters = st8.data
-      res.call
+      res.call(st8.next_method.to_sym)
     end
   end
 end
