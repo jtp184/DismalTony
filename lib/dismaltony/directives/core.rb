@@ -20,8 +20,8 @@ module DismalTony::Directives
 					# Code for if it's a name
 				end
 			else
-				if !(parameters[:sendto] =~ /^\d{10}$/)
-					DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") 
+				if (parameters[:sendto] =~ /^\d{10}$/) == nil
+					return DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") 
 				end
 			end
 
