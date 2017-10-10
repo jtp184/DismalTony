@@ -27,8 +27,6 @@ module DismalTony::Directives
 			if parameters[:sendto].nil?
 				parameters[:sendto] = if query.children_of(query.verb).first =~ /me/i
 					query.user[:phone_number]
-				elsif query.children_of(query.verb).first =~ /[a-z]/i
-					# Code for if it's a name
 				else
 					# If it's really nonexistent
 					DismalTony::HandledResponse.then_do(directive: self, method: :get_tel, message: "~e:pound Okay, to what number should I send the message?", parse_next: false, data: parameters)
