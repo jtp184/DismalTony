@@ -21,7 +21,7 @@ module DismalTony::Directives
 				end
 			else
 				if !parameters[:sendto] =~ /^\d{10}$/
-					DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") 
+					return DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") 
 				end
 			end
 
