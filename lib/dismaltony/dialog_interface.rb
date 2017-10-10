@@ -46,7 +46,7 @@ module DismalTony # :nodoc:
     def send(msg)
       return nil if msg =~ /^ *$/
       raise 'No Destination!' if @destination.nil?
-      @client.account.messages.create(
+      @client.api.account.messages.create(
         from: ENV['twilio_phone_number'],
         to: destination,
         body: msg
@@ -55,7 +55,7 @@ module DismalTony # :nodoc:
 
     def send_to(msg, num)
       return nil if msg =~ /^ *$/
-      @client.account.messages.create(
+      @client.api.account.messages.create(
         from: ENV['twilio_phone_number'],
         to: num,
         body: msg
