@@ -12,7 +12,7 @@ module DismalTony::Directives
 		end
 
 		def run
-			parameters[:sendto] = query['pos', 'NUM'].first
+			parameters[:sendto] = query['pos', 'NUM'].first&.to_s
 			if parameters[:sendto].nil?
 				parameters[:sendto] = if query.children_of(query.verb).first =~ /me/i
 					query.user['phone_number']
@@ -20,7 +20,7 @@ module DismalTony::Directives
 					# Code for if it's a name
 				end
 			else
-				if !parameters[:sendto] =~ /\d{10}/
+				if !parameters[:sendto] =~ /^\d{10}$/
 					DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") 
 				end
 			end

@@ -42,6 +42,7 @@ module DismalTony # :nodoc:
         'chili' => '🌶',
         'clockface' => '🕓',
         'coffee' => '☕️',
+        'computer' => '🖥',
         'cookie' => '🍪',
         'cool' => '😎',
         'creditcard' => '💳',
@@ -118,6 +119,7 @@ module DismalTony # :nodoc:
         'tropicaldrink' => '🍹',
         'tv' => '📺',
         'unlock' => '🔓',
+        'watch' => '⌚️'
         'wave' => '👋',
         'whiskey' => '🥃',
         'wineglass' => '🍷',
@@ -129,7 +131,7 @@ module DismalTony # :nodoc:
 
     # Allows hash syntax on the class itself for finding Emoji with the key +search+
     def self.[](search)
-      emoji_table[search]
+      emoji_table[search] || emoji_table['smile']
     end
 
     def self.to_h # :nodoc:
