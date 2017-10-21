@@ -39,7 +39,7 @@ module DismalTony # :nodoc:
 
     # Simplest dialog function. Sends the message +str+ back through VIBase.return_interface
     def say(str)
-      return_interface.send(DismalTony::Formatter.format(str, return_interface.default_format))
+      return_interface.send(DismalTony::Formatter.format(str, str.format || return_interface.default_format))
     end
 
     def call(q)
