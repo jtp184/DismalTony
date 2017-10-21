@@ -153,6 +153,7 @@ def self.interactive(debug = false)
     inp = gets.chomp
     puts
     res = @tony.(inp)
+    puts
     @last = res if debug
   end
 end
