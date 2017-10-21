@@ -335,7 +335,7 @@ end
         @@codes
       end
 
-      def find(byid)
+      def self.find(byid)
         @@codes.find { |v| v.id == byid}
       end
 
@@ -343,7 +343,7 @@ end
     
     Psych.load(WeatherCodeYAML).each { |wc| WeatherCode << wc }
 
-    def self.api_req(opts)
+    def api_req(opts)
       web_addr = URI('http://api.openweathermap.org/data/2.5/weather?')
       opts['APPID'] = ENV['open_weather_api_key']
       opts['units'] = 'imperial'
@@ -353,8 +353,8 @@ end
       JSON.parse(Net::HTTP.get(web_addr))
     end
 
-    def self.retrieve_for(loc)
-      resp = self.api_req(location: loc)
+    def retrieve_for(loc)
+      resp = api_req(location: loc)
       {
         city_name: resp['name'],
         weather: WeatherCode.find(resp['weather'].first['id']),
@@ -364,8 +364,8 @@ end
     end
 
     def run
-      parameters[:location] = query.propn.join(' ')
-      req = self.retrieve_for(parameters[:location])
+      parameters[:location] = query['xpos', 'NNP'].join(' ')
+      req = retrieve_for(parameters[:location])
 
       reply = if query.contains?(/temperature/i)
         "~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}"
