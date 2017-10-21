@@ -39,13 +39,17 @@ module DismalTony # :nodoc:
 
     # Simplest dialog function. Sends the message +str+ back through VIBase.return_interface
     def say(str)
-      return_interface.send(DismalTony::Formatter.format(str, str.format || return_interface.default_format))
+      return_interface.send(DismalTony::Formatter.format(str, return_interface.default_format))
     end
 
     def call(q)
       result = QueryResolver.(q, self)
       response = result.response
-      say response.outgoing_message unless response.format[:silent]
+      if response.format.empty?
+        say response.outgoing_message
+      else
+        say_opts(return_interface, response.outgoing_message, response.format) unless response.format[:silent]
+      end
       @user.modify_state!(response.conversation_state.stamp)
       result      
     end
