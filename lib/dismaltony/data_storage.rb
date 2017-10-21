@@ -52,7 +52,7 @@ module DismalTony # :nodoc:
 
     def self.load_from(fp = './')
       loaded = self.new(filepath: fp, data_store: Psych.load(File.read(fp)))
-      loaded.opts[:env_vars].each_pair { |key, val| ENV[key] = val }
+      loaded.opts[:env_vars]&.each_pair { |key, val| ENV[key] = val }
       loaded
     end
 
