@@ -365,7 +365,7 @@ end
 
     def run
       parameters[:location] = query.propn.join(' ')
-      req = self.retrieve_for(params[:location])
+      req = self.retrieve_for(parameters[:location])
 
       reply = if query.contains?(/temperature/i)
         "~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}"

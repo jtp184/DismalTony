@@ -108,6 +108,10 @@ module DismalTony # :nodoc:
       end
     end
 
+    def params
+      @parameters
+    end
+
     def response
       query.response
     end
