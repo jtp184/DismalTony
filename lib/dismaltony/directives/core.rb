@@ -107,8 +107,8 @@ module DismalTony::Directives
 		def run
 			begin
 				good_moj = ['tophat', 'thumbsup', 'star', 'checkbox', 'chartup'].sample
-				str = ParseyParse.('Diagnostic Complete').to_s
-				str << ", I am #{vi.name}! "
+				str = ParseyParse.('Diagnostic successful').to_s
+				str << ". I am #{vi.name}! "
 				str << "I have #{DismalTony::Directives.all.length} Directives"
 				str << ", and it is #{Time.now.strftime('%I:%M%p')} where I am."
 				DismalTony::HandledResponse.finish("~e:#{good_moj} #{str}")
