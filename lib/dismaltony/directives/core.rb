@@ -76,11 +76,10 @@ module DismalTony::Directives
 					['magnifyingglass', 'key'].sample
 				end
 
-				ky = if (seek.to_s == 'number')
-					     :phone
-						 else
-					    seek.to_s.to_sym
-				     end
+				return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}") if (seek.to_s == 'name')
+
+				ky = seek.to_s.to_sym
+				ky = :phone if ky == :number
 
 				if query.user[ky]
 					DismalTony::HandledResponse.finish("~e:#{moj} Your #{seek.to_s} is #{query.user[ky]}")
