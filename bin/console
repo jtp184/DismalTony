@@ -144,6 +144,7 @@ data:
 parse_next:
 DOC
 @qry = Psych.load(@qry)
+@last = nil
 
 def self.interactive(debug = false)
   puts
@@ -151,7 +152,7 @@ def self.interactive(debug = false)
     print "[#{@laptop_emoji}  ]: "
     res = @tony.(gets.chomp)
     puts
-    pp res.inspect if debug
+    @last = res if debug
     puts
   end
 end
