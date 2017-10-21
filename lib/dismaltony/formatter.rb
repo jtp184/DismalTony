@@ -19,15 +19,21 @@ module DismalTony # :nodoc:
 
       result = md['message']
 
+      em = get_icon(em)
       em = opts[:use_icon] if opts[:use_icon]
+      
       result = Formatter.add_icon(result, em) unless opts[:icon] == false
       result = extra_space(result) if opts[:extra_space]
       result
     end
 
+    def self.get_icon(emo)
+      DismalTony::EmojiDictionary[emo]
+    end
+
     # Takes +str+ and an emoji +emo+ and creates a standard formatted string
     def self.add_icon(str, emo)
-      "[#{DismalTony::EmojiDictionary[emo]}]: #{str}"
+      "[#{emo}]: #{str}"
     end
 
     def self.extra_space(str)

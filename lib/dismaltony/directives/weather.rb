@@ -355,9 +355,18 @@ end
 
     def retrieve_for(loc)
       resp = api_req(location: loc)
+
+
+      parameters[:location] = resp['name']
+      parameters[:id_code] = resp['weather'].first['id']
+
+      wc = WeatherCode.find(parameters[:id_code])
+
+      parameters[:flavor] = wc.flavor
+      parameters[:icon] = wc.icon
       {
-        city_name: resp['name'],
-        weather: WeatherCode.find(resp['weather'].first['id']),
+        city_name: parameters[:location],
+        weather: wc,
         temp_min: resp['main']['temp_min'],
         temp_max: resp['main']['temp_max'],
       }
