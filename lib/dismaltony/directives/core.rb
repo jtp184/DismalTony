@@ -59,8 +59,8 @@ module DismalTony::Directives
 		def run
 			if query =~ /who am i/i
 				moj = ['think','magnifyingglass','crystalball','smile'].sample
-				DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}")
-			elsif query =~ /what is my/i
+				DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.")
+			elsif query =~ /what('| i)s my/i
 				seek = query.children_of(query.root).select { |w| w.rel == 'nsubj' }&.first
 				
 				moj = case seek.to_s
@@ -76,7 +76,7 @@ module DismalTony::Directives
 					['magnifyingglass', 'key'].sample
 				end
 
-				return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}") if (seek.to_s == 'name')
+				return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.") if (seek.to_s == 'name')
 
 				ky = seek.to_s.to_sym
 				ky = :phone if ky == :number
