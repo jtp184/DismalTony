@@ -60,7 +60,7 @@ module DismalTony::Directives
 			if query =~ /who am i/i
 				moj = ['think','magnifyingglass','crystalball','smile'].sample
 				DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.")
-			elsif query =~ /what('| i)s my/i
+			elsif query =~ /what('| i)?s my/i
 				seek = query.children_of(query.root).select { |w| w.rel == 'nsubj' }&.first
 				
 				moj = case seek.to_s
