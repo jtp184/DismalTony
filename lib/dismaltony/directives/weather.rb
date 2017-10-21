@@ -364,7 +364,7 @@ end
     end
 
     def run
-      params[:location] = query.propn.join(' ')
+      parameters[:location] = query.propn.join(' ')
       req = self.retrieve_for(params[:location])
 
       reply = if query.contains?(/temperature/i)
