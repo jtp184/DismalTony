@@ -37,7 +37,7 @@ module DismalTony # :nodoc:
     end
 
     def self.then_do(**opts)
-      new_state = DismalTony::ConversationState.new(idle: false, next_directive: opts[:directive], next_method: (opts[:method] || :run), data: opts[:data], parse_next: !(opts[:parse_next] == false) )
+      new_state = DismalTony::ConversationState.new(idle: false, next_directive: opts[:directive].name, next_method: (opts[:method] || :run), data: opts[:data], parse_next: !(opts[:parse_next] == false) )
       new(opts[:message], new_state)
     end
 
