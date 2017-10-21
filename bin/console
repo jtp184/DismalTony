@@ -10,7 +10,17 @@ require 'dismaltony/directives/weather'
 # with your gem easier. You can also use a different console, if you like.
 require 'psych'
 require 'ParseyParse'
+require 'ParseyParse/cache'
 require 'pp'
+
+ParseyParse.configure do |conf|
+  conf[:cache] = begin
+    ParseyParse::YAMLCache.load_from('./tmp/cache.yml')
+  rescue
+    ParseyParse::Cache.new
+  end
+end
+
 
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
 @db = begin
