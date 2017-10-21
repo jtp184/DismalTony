@@ -48,7 +48,7 @@ module DismalTony # :nodoc:
       if response.format.empty?
         say response.outgoing_message
       else
-        say_opts(return_interface, response.outgoing_message, response.format) unless response.format[:silent]
+        say_opts(return_interface, response.outgoing_message, return_interface.default_forrmat.merge response.format) unless response.format[:silent]
       end
       @user.modify_state!(response.conversation_state.stamp)
       result      
