@@ -68,6 +68,8 @@ module DismalTony::Directives
 					'phone'
 				when /name/i
 					'speechbubble'
+				when /birthday/i
+					'calendar'
 				when /age/i
 					'clockface'
 				when /email/i
@@ -77,6 +79,7 @@ module DismalTony::Directives
 				end
 
 				return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.") if (seek.to_s == 'name')
+				return DismalTony::HandledResponse.finish("~e:#{moj} You are #{Duration.new(Time.now - j[:birthday]).weeks / 52} years old, #{query.user[:nickname]}!") if (seek.to_s == 'age')
 
 				ky = seek.to_s.to_sym
 				ky = :phone if ky == :number
