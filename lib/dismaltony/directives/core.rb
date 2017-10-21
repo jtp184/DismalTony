@@ -110,7 +110,7 @@ module DismalTony::Directives
 				str = ParseyParse.('Hello').to_s
 				str << ", I am #{vi.name}! "
 				str << "I have #{DismalTony::Directives.all.length} Directives"
-				str << ", and it is #{Time.now.strftime('%I%M%P')} where I am."
+				str << ", and it is #{Time.now.strftime('%I:%M%p')} where I am."
 				DismalTony::HandledResponse.finish("~e:#{good_moj} #{str}")
 			rescue
 				bad_moj = ['cancel','caution', 'alarmbell', 'thumbsdown', 'thermometer', 'worried'].sample
