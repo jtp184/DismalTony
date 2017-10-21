@@ -150,8 +150,9 @@ def self.interactive(debug = false)
   puts
   loop do
     print "[#{@laptop_emoji}  ]: "
-    puts res = @tony.(gets.chomp)
+    inp = gets.chomp
     puts
+    res = @tony.(inp)
     @last = res if debug
   end
 end
