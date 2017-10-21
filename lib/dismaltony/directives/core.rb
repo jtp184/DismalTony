@@ -26,7 +26,7 @@ module DismalTony::Directives
 			parameters[:sendto] = query['pos', 'NUM'].first&.to_s
 			if parameters[:sendto].nil?
 				parameters[:sendto] = if query.children_of(query.verb)&.first =~ /^me$/i
-																query.user[:phone_number]
+																query.user[:phone]
 														elsif query.children_of(query.verb)&.first =~ /[a-z]/i
 															# Code for if it's a name
 														else
