@@ -367,13 +367,11 @@ end
       parameters[:location] = query['xpos', 'NNP'].join(' ')
       req = retrieve_for(parameters[:location])
 
-      reply = if query.contains?(/temperature/i)
-        "~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}"
+      if query.contains?(/temperature/i)
+        DismalTony::HandledResponse.finish("~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}")
       else
-        "~e:#{DismalTony::EmojiDictionary.name(req[:weather].icon)} The current weather in #{req[:city_name]} is #{req[:weather].flavor}"
+        DismalTony::HandledResponse.finish("The current weather in #{req[:city_name]} is #{req[:weather].flavor}").with_format(use_icon: req[:weather].icon)
       end
-
-      DismalTony::HandledResponse.finish(reply)
     end
   end
 end
