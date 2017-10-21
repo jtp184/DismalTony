@@ -10,6 +10,8 @@ require 'dismaltony/directives/weather'
 # with your gem easier. You can also use a different console, if you like.
 require 'psych'
 require 'ParseyParse'
+require 'pp'
+
 @laptop_emoji = DismalTony::EmojiDictionary['laptop']
 @db = begin
   DismalTony::YAMLStore.load_from('./tmp/tony.yml')
@@ -149,7 +151,7 @@ def self.interactive(debug = false)
     print "[#{@laptop_emoji}  ]: "
     res = @tony.(gets.chomp)
     puts
-    puts res.inspect if debug
+    pp res.inspect if debug
     puts
   end
 end
