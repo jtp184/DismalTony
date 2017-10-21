@@ -45,4 +45,69 @@ module DismalTony::Directives
 			DismalTony::HandledResponse.finish("~e:thumbsup Okay! I sent the message.")
 		end
 	end
+
+	class UserInfoDirective < DismalTony::Directive
+		set_name :whoami
+		set_group :info
+
+		add_criteria do |qry|
+			qry << must { |q| q.contains?(/who/i, /what/i) }
+			qry << must { |q| q.contains?(/i/i, /my/i) }
+			qry << should { |q| q.contains?(/is/i, /are/i, /am/i)}
+		end
+
+		def run
+			if query =~ /who am i/i
+				moj = ['think','magnifyingglass','crystalball','smile'].sample
+				DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}!")
+			elsif query =~ /what is my/i
+				seek = query.children_of(query.root).select { |w| w.rel == 'nsubj' }
+				
+				moj = case seek.to_s
+				when /phone/i, /number/i
+					'phone'
+				when /name/i
+					'speechbubble'
+				when /age/i
+					'clockface'
+				when /email/i
+					'envelope'
+				else
+					['magnifyingglass', 'key'].sample
+				end
+
+				if user[seek.to_s.to_sym]
+					DismalTony::HandledResponse.finish("~e:#{moj} Your #{seek.to_s} is #{user[seek.to_s.to_sym]}")
+				else
+					DismalTony::HandledResponse.finish("~e:frown I'm sorry, I don't know your #{seek.to_s}")
+				end
+			else
+				DismalTony::HandledResponse.finish("~e:frown I'm not quite sure how to answer that.")
+			end
+		end
+	end
+
+	class SelfDiagnosticDirective < DismalTony::Directive
+		set_name :selfdiagnostic
+		set_group :debug
+
+		add_criteria do |qry|
+			qry << must { |q| q =~ /diagnostic/i }
+			qry << must { |q| q.verb.any_of?(/run/i, /execute/i, /perform/i) }
+		end
+
+		def run
+			begin
+				good_moj = ['tophat', 'thumbsup', 'star', 'checkbox', 'chartup'].sample
+				str = ParseyParse.('Hello')
+				str << ", I am #{vi.name}! "
+				str << "I have #{DismalTony::Directives.all.length} Directives"
+				str << ", and it is #{Time.now.strftime('%I%M%P')} where I am."
+				DismalTony::HandledResponse.finish("~e:#{good_moj} #{str}")
+			rescue
+				bad_moj = ['cancel','caution', 'alarmbell', 'thumbsdown', 'thermometer', 'worried'].sample
+				return DismalTony::HandledResponse.finish("~e:#{bad_moj} Something went wrong!")
+			end
+		end
+	end
 end
