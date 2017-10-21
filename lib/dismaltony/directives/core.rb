@@ -13,7 +13,7 @@ module DismalTony::Directives
 
 		def get_tel
 			parameters[:sendto] = query.raw_text
-			DismalTony::HandledResponse.then_do(directive: self, method: :get_msg, message: "~e:pound Okay, what shall I say to them?", parse_next: false, data: parameters)
+			DismalTony::HandledResponse.then_do(directive: self, method: :get_msg, message: "~e:speechbubble Okay, what shall I say to them?", parse_next: false, data: parameters)
 		end
 
 		def get_msg
@@ -42,7 +42,7 @@ module DismalTony::Directives
 			parameters[:sendmsg] = query.raw_text.split(query['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s << " ")[1]
 
 			vi.say_through(DismalTony::SMSInterface.new(parameters[:sendto]), parameters[:sendmsg])
-			DismalTony::HandledResponse.finish("~e:speechbubble Okay! I sent the message.")
+			DismalTony::HandledResponse.finish("~e:thumbsup Okay! I sent the message.")
 		end
 	end
 end
