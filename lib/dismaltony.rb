@@ -16,4 +16,36 @@ module DismalTony
 
 	class NoDirectiveError < StandardError; end
 
+	@@config = {
+		data_store: nil,
+		vi: nil,
+	}
+
+	def self.configure(&blk)
+		yield @@config
+		@@config
+	end
+
+	def self.config
+		@@config
+	end
+
+	def self.vi
+		return config[:vi] if config[:vi]
+		data_store = if config[:data_store]
+			config[:data_store]
+		else
+			nil
+		end
+
+		@@config[:vi] = DismalTony::VIBase.new(
+			data_store: (config[:data_store])
+			)
+	end
+
+	def self.call(*args)
+		return vi if args.empty?
+		return vi.(args[0]) if args.length == 1
+		raise NoMethodError
+	end
 end

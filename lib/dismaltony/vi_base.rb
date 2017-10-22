@@ -20,11 +20,16 @@ module DismalTony # :nodoc:
     # * +:data_store+ - The data store to use with this VI. Defaults to a generic DataStore object.
     # * +:return_interface+ - The interface to route conversation back through. Defaults to the ConsoleInterface.
     def initialize(**opts)
-      @name = (opts[:name].freeze || 'Tony'.freeze)
+      @name = (opts[:name].freeze || opts[:data_store]&.opts&.[](:vi_name) || 'Tony'.freeze)
       @return_interface = (opts[:return_interface] || DismalTony::ConsoleInterface.new)
       @directives = (opts[:directives] || DismalTony::Directives.all)
-      @data_store = (opts[:data_store] || DismalTony::DataStore.new(vi_name: name))
-      @user = (@data_store.users.find { |u| u == opts[:user]} || DismalTony::UserIdentity::DEFAULT)
+      if opts[:data_store]
+        opts[:data_store].opts[:vi_name] = @name
+        @data_store = opts[:data_store]
+      else
+        @data_store = DismalTony::DataStore.new(vi_name: name)
+      end
+      @user = (@data_store.users.find { |u| u == opts[:user]} if opts[:user] || @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT)
     end
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it.
@@ -50,6 +55,7 @@ module DismalTony # :nodoc:
       else
         say_opts(return_interface, response.outgoing_message, return_interface.default_format.merge(response.format)) unless response.format[:silent]
       end
+      data_store.on_query(response)
       @user.modify_state!(response.conversation_state.stamp)
       result      
     end

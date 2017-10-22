@@ -46,6 +46,7 @@ module DismalTony # :nodoc:
 
     # Compares if these users have the same user_data hash
     def ==(other)
+      return nil unless other.respond_to?(:user_data)
       other.user_data == user_data
     end
 
