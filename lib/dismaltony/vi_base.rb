@@ -1,4 +1,4 @@
-module DismalTony # :nodoc:
+ module DismalTony # :nodoc:
   # The essential class. A VI, or Virtual Intelligence,
   # forms the basis for the DismalTony gem, and is your conversational agents for handling queries
   class VIBase
@@ -30,6 +30,16 @@ module DismalTony # :nodoc:
         @data_store = DismalTony::DataStore.new(vi_name: name)
       end
       @user = (@data_store.users.find { |u| u == opts[:user]} if opts[:user] || @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT)
+    end
+
+    def self.inherit(**opts)
+      DismalTony::VIBase.new(
+        name: (opts[:name] || DismalTony.().name),
+        return_interface: (opts[:return_interface] || DismalTony.().return_interface),
+        directives: (opts[:directives] || DismalTony.().directives),
+        data_store: (opts[:data_store] || DismalTony.().data_store),
+        user: (opts[:user] || DismalTony.().user || DismalTony::UserIdentity::DEFAULT)
+        )
     end
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it.
