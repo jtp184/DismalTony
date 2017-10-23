@@ -29,7 +29,7 @@
       else
         @data_store = DismalTony::DataStore.new(vi_name: name)
       end
-      @user = (@data_store.users.find { |u| u == opts[:user]} if opts[:user] || @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT)
+      @user = (opts[:user] || @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT)
     end
 
     def self.inherit(**opts)
