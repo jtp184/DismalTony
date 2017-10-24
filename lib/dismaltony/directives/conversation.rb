@@ -80,7 +80,7 @@ module DismalTony::Directives
 		end
 
 		def run
-			parameters[:send_number] = '+1' << query['xpos', 'NUM'].first
+			parameters[:send_number] = '+1' << query['pos', 'NUM'].first
 			ncs = query.previous_state.clone
 			ncs.merge(return_cs)
 			parameters[:user_id] = DismalTony::UserIdentity.new(
