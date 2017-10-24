@@ -1,7 +1,7 @@
 module DismalTony::Directives
 	class GreetingDirective < DismalTony::Directive
 		set_name :hello
-		set_group :fun
+		set_group :conversation
 
 		add_criteria do |qry|
 			qry << must { |q| q.contains?(/hello/i) || q.contains?(/greetings/i) }
@@ -35,7 +35,18 @@ module DismalTony::Directives
 		add_param :send_number
 
 		add_criteria do |qry|
-			qry << must { |q| q }
+			qry << must { |q| q.contains?(/invit(e|ation)/i, /join/i, /send/i)}
+			qry << should { |q| !q['pos', 'NUM'].empty? }
+		end
+
+		def welcome_msg
+			moj = ['exclamationmark', 'present', 'scroll', 'speechbubble', 'wave', 'envelopearrow'].sample
+			"~e:#{moj} Hello! I'm #{vi.name}, a Virtual Intelligence. What is your name?"
+		end
+
+		def finish_msg
+			moj = ['wave', 'smile', 'envelopeheart', 'checkbox', 'thumbsup', 'star', 'toast'].sample
+			"~e:#{moj} Greetings, #{parameters[:user_id][:nickname]}!"
 		end
 
 		def return_cs
@@ -47,7 +58,8 @@ module DismalTony::Directives
 		end
 
 		def get_last_name
-			
+			parameters[:user_id][:last_name] = query.raw_text
+			DismalTony::HandledResponse.finish(finish_msg)
 		end
 
 		def get_name
@@ -56,18 +68,27 @@ module DismalTony::Directives
 				parameters[:user_id][:last_name] = query.raw_text.split(' ')[1]
 
 				parameters[:user_id][:nickname] = parameters[:user_id][:first_name]
+				
+				vi.data_store.new_user(user_data: parameters[:user_id].user_data)
+
+				DismalTony::HandledResponse.finish(finish_msg)
 			else
+				parameters[:user_id][:first_name] = query.raw_text
+				parameters[:user_id][:nickname] = parameters[:user_id][:first_name]
+				DismalTony::HandledResponse.then_do(directive: self, method: :get_last_name, data: self.parameters, parse_next: false, message: "Okay! And what is your last name?")
 			end
 		end
 
 		def run
-			parameters[:send_number] = query['xpos', 'NUM'].first
+			parameters[:send_number] = '+1' << query['xpos', 'NUM'].first
 			ncs = query.previous_state.clone
 			ncs.merge(return_cs)
 			parameters[:user_id] = DismalTony::UserIdentity.new(
 				user_data: { phone: parameters[:send_number] },
 				conversation_state: ncs
 				)
+			vi.say_through(DismalTony::SMSInterface.new(parameters[:send_number]), )
+			HandledResponse.finish("~e:thumbsup Okay! I sent the message to #{parameters[:send_number]}")
 		end
 	end
 end
