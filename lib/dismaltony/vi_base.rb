@@ -38,7 +38,7 @@
         name: (opts[:name] || DismalTony.().name),
         return_interface: (opts[:return_interface] || DismalTony.().return_interface),
         directives: (opts[:directives] || DismalTony.().directives),
-        data_store: (opts[:data_store] || DismalTony.().data_store),
+        data_store: (opts[:data_store] || DismalTony.().data_store)
         )
     end
 
