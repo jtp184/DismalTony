@@ -1,3 +1,3 @@
 module DismalTony # :nodoc:
-  VERSION = '0.5.13'.freeze # :nodoc:
+  VERSION = '0.5.14'.freeze # :nodoc:
 end
