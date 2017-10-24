@@ -34,7 +34,7 @@
 
     def self.inherit(**opts)
       DismalTony::VIBase.new(
-        user: (opts[:user] || DismalTony.().user || DismalTony::UserIdentity::DEFAULT)
+        user: (opts[:user] || DismalTony.().user || DismalTony::UserIdentity::DEFAULT),
         name: (opts[:name] || DismalTony.().name),
         return_interface: (opts[:return_interface] || DismalTony.().return_interface),
         directives: (opts[:directives] || DismalTony.().directives),
