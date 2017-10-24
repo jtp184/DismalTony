@@ -87,7 +87,7 @@ module DismalTony::Directives
 				user_data: { phone: parameters[:send_number] },
 				conversation_state: ncs
 				)
-			vi.say_through(DismalTony::SMSInterface.new(parameters[:send_number]), )
+			vi.say_through(DismalTony::SMSInterface.new(parameters[:send_number]), welcome_msg)
 			HandledResponse.finish("~e:thumbsup Okay! I sent the message to #{parameters[:send_number]}")
 		end
 	end
