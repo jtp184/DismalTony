@@ -23,11 +23,12 @@ module DismalTony::Directives
 		end
 
 		def run
+			resp = nil
 			parameters[:sendto] = query['pos', 'NUM'].first&.to_s
 			if parameters[:sendto].nil?
 				parameters[:sendto] = if query.children_of(query.verb)&.first =~ /^me$/i
 																query.user[:phone]
-														elsif query.children_of(query.verb)&.first =~ /[a-z]/i
+														elsif query.children_of(query.verb)&.first =~ /[a-z]*/i
 															# Code for if it's a name
 															nil
 														else
@@ -36,15 +37,20 @@ module DismalTony::Directives
 														end
 			else
 				if (parameters[:sendto] =~ /^\d{10}$/) == nil
-					return DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") 
+					resp = DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") 
 				end
 			end
 
-			return DismalTony::HandledResponse.then_do(directive: self, method: :get_tel, message: "~e:pound Okay, to what number should I send the message?", parse_next: false, data: parameters) if parameters[:sendto].nil?
-			parameters[:sendmsg] = query.raw_text.split(query['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s << " ")[1]
-
-			vi.say_through(DismalTony::SMSInterface.new(parameters[:sendto]), parameters[:sendmsg])
-			DismalTony::HandledResponse.finish("~e:thumbsup Okay! I sent the message.")
+			return resp if resp
+ 
+			if parameters[:sendto].nil?
+				resp = DismalTony::HandledResponse.then_do(directive: self, method: :get_tel, message: "~e:pound Okay, to what number should I send the message?", parse_next: false, data: parameters) if parameters[:sendto].nil?
+			else
+				parameters[:sendmsg] = query.raw_text.split(query['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s << " ")[1]
+				vi.say_through(DismalTony::SMSInterface.new(parameters[:sendto]), parameters[:sendmsg])
+				resp = DismalTony::HandledResponse.finish("~e:thumbsup Okay! I sent the message.")
+			end
+			resp
 		end
 	end
 
