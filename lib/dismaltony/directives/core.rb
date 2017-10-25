@@ -29,8 +29,10 @@ module DismalTony::Directives
 																query.user[:phone]
 														elsif query.children_of(query.verb)&.first =~ /[a-z]/i
 															# Code for if it's a name
+															nil
 														else
 															# If it's really nonexistent
+															nil
 														end
 			else
 				if (parameters[:sendto] =~ /^\d{10}$/) == nil

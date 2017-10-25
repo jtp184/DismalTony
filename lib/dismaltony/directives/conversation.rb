@@ -58,23 +58,25 @@ module DismalTony::Directives
 		end
 
 		def get_last_name
+			the_user = vi.data_store.select { |u| u == parameters[:user_id] }
 			parameters[:user_id][:last_name] = query.raw_text
+			the_user.modify_user_data(parameters[:user_id].user_data)
 			DismalTony::HandledResponse.finish(finish_msg)
 		end
 
 		def get_name
 			if query.raw_text =~ /\s/
+				the_user = vi.data_store.select { |u| u == parameters[:user_id] }
 				parameters[:user_id][:first_name] = query.raw_text.split(' ')[0]
 				parameters[:user_id][:last_name] = query.raw_text.split(' ')[1]
 
 				parameters[:user_id][:nickname] = parameters[:user_id][:first_name]
-				
-				vi.data_store.new_user(user_data: parameters[:user_id].user_data)
-
+				the_user.modify_user_data(parameters[:user_id].user_data)
 				DismalTony::HandledResponse.finish(finish_msg)
 			else
 				parameters[:user_id][:first_name] = query.raw_text
 				parameters[:user_id][:nickname] = parameters[:user_id][:first_name]
+				the_user.modify_user_data(parameters[:user_id].user_data)
 				DismalTony::HandledResponse.then_do(directive: self, method: :get_last_name, data: self.parameters, parse_next: false, message: "Okay! And what is your last name?")
 			end
 		end
@@ -87,6 +89,7 @@ module DismalTony::Directives
 				user_data: { phone: parameters[:send_number] },
 				conversation_state: ncs
 				)
+			vi.data_store.new_user(user_data: parameters[:user_id].user_data)
 			vi.say_through(DismalTony::SMSInterface.new(parameters[:send_number]), welcome_msg)
 			DismalTony::HandledResponse.finish("~e:thumbsup Okay! I sent the message to #{parameters[:send_number]}")
 		end
