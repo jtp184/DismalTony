@@ -3,7 +3,7 @@ module DismalTony
     def self.match(query, directives)
       succeeds = self.match!(query, directives)
       succeeds.reject! { |d, p| p.nil? }
-      succeeds.sort_by! { |d, p| p }
+      succeeds.sort_by! { |d, p| p }.reverse!
       raise NoDirectiveError, "No Matching Directive!" if succeeds.empty?
       succeeds
     end
