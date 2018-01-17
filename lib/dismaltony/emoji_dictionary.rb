@@ -21,6 +21,7 @@ module DismalTony # :nodoc:
         'americanflag' => '🇺🇸',
         'anchor' => '⚓️',
         'angry' => '😡',
+        'barchart' => '📊',
         'beer' => '🍺',
         'birthdaycake' => '🎂',
         'bolt' => '⚡️',
