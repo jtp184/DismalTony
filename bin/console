@@ -21,145 +21,23 @@ ParseyParse.configure do |conf|
   end
 end
 
-
-@laptop_emoji = DismalTony::EmojiDictionary['laptop']
 @db = begin
   DismalTony::YAMLStore.load_from('./tmp/tony.yml')
 rescue
   DismalTony::DataStore.new
 end
 
-
-module DismalTony::Directives
-  class DrinkMixDirective < DismalTony::Directive
-    set_name :drinkmix
-    set_group :fun
-    add_param :drink
-
-    add_criteria do |qry|
-      qry << must { |q| q.verb&.any_of?(/want/i, /like/i, /mix/i, /make/i, /pick/i, /choose/i) }
-      qry << must { |q| q.children_of(q.verb).any? { |c| c =~ /drink/i } }
-      qry << should { |q| q =~ /please/i }
-    end
-
-    def run
-      parameters[:drink] = [
-        'Glass of Water',
-        'Old Fashioned',
-        'Zombie',
-        'Mai Tai',
-        'Rum & Coke',
-        'Gin & Tonic',
-        'Pepsi Crystal'
-        ].sample
-
-        moj = [
-          'martini',
-          'pineapple',
-          'think',
-          'tropicaldrink',
-          'beer',
-          'cheers',
-          'toast',
-          'champagne'
-          ].sample
-
-          DismalTony::HandledResponse.finish("~e:#{moj} Okay, #{query.user['nickname']}. Have a #{parameters[:drink]}!")
-    end
-  end
-end
-@tony = DismalTony::VIBase.new(
+DismalTony.vi = DismalTony::VIBase.new(
   :data_store => @db,
   :user => @db.users.first
   )
-@qry = <<DOC
---- !ruby/object:DismalTony::Query
-raw_text: Mix me a drink.
-parsed_result: !ruby/object:ParseyParse::Sentence
-words:
-- &1 !ruby/object:ParseyParse::Word
-id: 2
-form: Mix
-lemma:
-pos: VERB
-xpos: VB
-feats:
-head:
-rel: ROOT
-deps:
-misc:
-- !ruby/object:ParseyParse::Word
-id: 3
-form: me
-lemma:
-pos: PRON
-xpos: PRP
-feats:
-head: *1
-rel: iobj
-deps:
-misc:
-- !ruby/object:ParseyParse::Word
-id: 4
-form: a
-lemma:
-pos: DET
-xpos: DT
-feats:
-head: &2 !ruby/object:ParseyParse::Word
-id: 5
-form: drink
-lemma:
-pos: NOUN
-xpos: NN
-feats:
-head: *1
-rel: dobj
-deps:
-misc:
-rel: det
-deps:
-misc:
-- *2
-- !ruby/object:ParseyParse::Word
-id: 6
-form: "."
-lemma:
-pos: "."
-xpos: "."
-feats:
-head: *1
-rel: punct
-deps:
-misc:
-user: !ruby/object:DismalTony::UserIdentity
-user_data:
-nickname: User
-first_name: Default
-last_name: User
-conversation_state: !ruby/object:DismalTony::ConversationState
-last_recieved_time:
-idle: true
-next_directive:
-next_method:
-data:
-parse_next:
-timestamp: 2017-10-09 21:11:01.548131566 +00:00
-previous_state: !ruby/object:DismalTony::ConversationState
-last_recieved_time:
-idle: true
-next_directive:
-next_method:
-data:
-parse_next:
-DOC
-@qry = Psych.load(@qry)
+
 @last = nil
 
 def self.interactive(debug = false)
   puts
   loop do
-    print "[#{@laptop_emoji}  ]: "
+    print "[#{DismalTony::EmojiDictionary['laptop']}  ]: "
     inp = gets.chomp
     puts
     res = @tony.(inp)
