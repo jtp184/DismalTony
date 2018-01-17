@@ -1,17 +1,21 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
+require 'psych'
+require 'pp'
 require 'dismaltony'
+require 'ParseyParse'
+require 'ParseyParse/cache'
+
+Dir.entries('lib/dismaltony/directives').select { |f| f =~ /(\w*)\.rb/i }.each do |f|
+  mod = /(\w*)\.rb/.match(f)[1]
+  require "dismaltony/directives/#{ mod }"
+end
+
 require 'dismaltony/directives/core'
 require 'dismaltony/directives/conversation'
 require 'dismaltony/directives/weather'
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
-require 'psych'
-require 'ParseyParse'
-require 'ParseyParse/cache'
-require 'pp'
 
 ParseyParse.configure do |conf|
   conf[:cache] = begin
