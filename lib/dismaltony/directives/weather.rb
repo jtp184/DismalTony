@@ -311,9 +311,8 @@ end
     add_param :icon
 
     add_criteria do |qry|
-      
       qry << must { |q| q.contains?(/weather/i, /temperature/i) }
-      qry << should { |q| q.root =~ /weather/i || q.root =~ /temperature/i}
+      qry << should { |q| q.root =~ /weather/i || q.root =~ /temperature/i }
     end
 
     WeatherCode = Struct.new('WeatherCode', :id, :flavor, :icon) do
