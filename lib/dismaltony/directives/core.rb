@@ -62,6 +62,7 @@ module DismalTony::Directives
 			qry << must { |q| q.contains?(/who/i, /what/i) }
 			qry << must { |q| q.contains?(/i/i, /my/i) }
 			qry << should { |q| q.contains?(/is/i, /are/i, /am/i)}
+			qry << should { |q| q.contains?(/phone|number/i, /name/i, /birthday/i, /email/i, ) }
 		end
 
 		def run
