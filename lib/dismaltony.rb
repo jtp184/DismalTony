@@ -43,6 +43,11 @@ module DismalTony
 			)
 	end
 
+	def self.vi=(vi)
+		raise TypeError, "Not a VIBase!" unless vi.is_a? DismalTony::VIBase
+		config[:vi] = vi
+	end
+
 	def self.call(*args)
 		return vi if args.empty?
 		return vi.(args[0]) if args.length == 1
