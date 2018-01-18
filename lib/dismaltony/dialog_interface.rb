@@ -4,16 +4,24 @@ require 'net/http'
 module DismalTony # :nodoc:
   # The basic class for outputting message content to the user.
   class DialogInterface
-    # Used to send the content of +_msg+ to the user via this interface.
-    # Must be overriden by child classes.
 
+    # The default formatting options as a hash
     def default_format
       {}
     end
 
+    # Used to send the content of +_msg+ to the user via this interface.
+    # Must be overriden by child classes.
     def send(_msg)
       raise 'Should be overriden by child classes'
     end
+  end
+
+  class NowhereInterface < DialogInterface
+    # Used for when no output is desired.
+
+    # Simply eats the message
+    def send(_msg); end
   end
 
   # An Interface for outputting to the console. Basically just a <tt>puts</tt> command with more steps.
@@ -26,7 +34,6 @@ module DismalTony # :nodoc:
     def default_format
       {:extra_space => true}
     end
-
   end
 
   # Used to facilitate Twilio SMS communication
