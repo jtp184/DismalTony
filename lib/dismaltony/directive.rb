@@ -40,14 +40,14 @@ module DismalTony # :nodoc:
     class << self
       attr_reader :name #:nodoc:
       attr_reader :group #:nodoc:
-      attr_accessor :parameters #:nodoc:
       attr_reader :match_criteria #:nodoc:
+      attr_reader :default_params
     end
 
     def initialize(qry, vi)
       @name = (self.class.name || '')
       @group = (self.class.group || 'none')
-      @parameters = (self.class.parameters || {})
+      @parameters = (self.class.default_params.clone || {})
       @match_criteria = (self.class.match_criteria || [] )
       @query = qry
       @vi = vi
@@ -96,58 +96,57 @@ module DismalTony # :nodoc:
           end 
         end
         return certainty / self.match_criteria.select { |pri, _c| pri != :could }.length.to_f
-      rescue ArgumentError
-        return nil
-      end
+    rescue ArgumentError
+      return nil
+    end
 
-      def self.test_matches(qry)
-        self.match_criteria.map do |pri, c| 
-          pat = /{.*}/
-          x = File.readlines(c.source_location[0])[c.source_location[1] - 1].slice(pat)
-          [pri, x, c.(qry)]
-        end
-      end
-
-      class << self
-        alias =~ matches?
-        alias from new
-      end
-
-      def self.set_name(param)
-        @name = param
-      end
-
-      def self.set_group(param)
-        @group = param
-      end    
-
-      def self.add_param(param, initial = nil)
-        @parameters ||= {}
-        @parameters[param.to_sym] = initial
-      end
-
-      def self.add_params(params)
-        @parameters ||= {}
-        params.each do |ki, va|
-          @parameters[ki] = va
-        end
-      end
-
-      def params
-        @parameters
-      end
-
-      def response
-        query.response
-      end
-
-      def run; end
-
-      def call(mtd = :run)
-        fin = self.method(mtd).call
-        raise "No response" unless fin.respond_to? :outgoing_message
-        @query.complete(self, fin)
-        self 
+    def self.test_matches(qry)
+      self.match_criteria.map do |pri, c| 
+        pat = /{.*}/
+        x = File.readlines(c.source_location[0])[c.source_location[1] - 1].slice(pat)
+        [pri, x, c.(qry)]
       end
     end
+
+    class << self
+      alias =~ matches?
+      alias from new
+    end
+
+    def self.set_name(param)
+      @name = param
+    end
+
+    def self.set_group(param)
+      @group = param
+    end    
+
+    def self.add_param(param, initial = nil)
+      @default_params ||= {}
+      @default_params[param.to_sym] = initial
+    end
+
+    def self.add_params(inputpar)
+      inputpar.each do |ki, va|
+        @default_params[ki] = va
+      end
+    end
+
+    def params
+      @parameters
+    end
+
+    def response
+      query.response
+    end
+
+    def run; end
+
+    def call(mtd = :run)
+      fin = self.method(mtd).call
+      raise "No response" unless fin.respond_to? :outgoing_message
+      @query.complete(self, fin)
+      self 
+    end
   end
+end
