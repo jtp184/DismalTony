@@ -73,56 +73,77 @@ module DismalTony # :nodoc:
       [:should, Proc.new(&block)]
     end
 
+    def self.could(&block)
+      [:could, Proc.new(&block)]
+    end
+
+    def self.keyword(&block)
+      [:keyword, Proc.new(&block)]
+    end
+
     def self.matches?(qry)
       return nil if self.match_criteria.empty?
-      return nil unless self.match_criteria.select { |pri, _c| pri == :must }.all? { |pri, crit| crit.(qry) }
-      return (self.match_criteria.select { |_pri, crit| crit.(qry) }).length / self.match_criteria.length.to_f
-    end
 
-    def self.test_matches(qry)
-      self.match_criteria.map { |pri, c| [pri, c.(qry)]}
-    end
+      certainty = 0.0
+      self.match_criteria.each do |prio, crit|
+        case prio
+        when :keyword
+          if crit.(qry) then certainty += 5 else raise ArgumentError end
+        when :must
+          if crit.(qry) then certainty += 1 else raise ArgumentError end
+          when :should, :could
+            certainty +=1 if crit.(qry)
+          end 
+        end
+        return certainty / self.match_criteria.select { |pri, _c| pri != :could }.length.to_f
+      rescue ArgumentError
+        return nil
+      end
 
-    class << self
-      alias =~ matches?
-      alias from new
-    end
+      def self.test_matches(qry)
+        self.match_criteria.map { |pri, c| [pri, c.(qry)]}
+      end
 
-    def self.set_name(param)
-      @name = param
-    end
+      class << self
+        alias =~ matches?
+        alias from new
+      end
 
-    def self.set_group(param)
-      @group = param
-    end    
+      def self.set_name(param)
+        @name = param
+      end
 
-    def self.add_param(param, initial = nil)
-      @parameters ||= {}
-      @parameters[param.to_sym] = initial
-    end
+      def self.set_group(param)
+        @group = param
+      end    
 
-    def self.add_params(params)
-      @parameters ||= {}
-      params.each do |ki, va|
-        @parameters[ki] = va
+      def self.add_param(param, initial = nil)
+        @parameters ||= {}
+        @parameters[param.to_sym] = initial
+      end
+
+      def self.add_params(params)
+        @parameters ||= {}
+        params.each do |ki, va|
+          @parameters[ki] = va
+        end
+      end
+
+      def params
+        @parameters
+      end
+
+      def response
+        query.response
+      end
+
+      def run; end
+
+      def call(mtd = :run)
+        fin = self.method(mtd).call
+        raise "No response" unless fin.respond_to? :outgoing_message
+        @query.complete(self, fin)
+        self 
       end
     end
-
-    def params
-      @parameters
-    end
-
-    def response
-      query.response
-    end
-
-    def run; end
-
-    def call(mtd = :run)
-      fin = self.method(mtd).call
-      raise "No response" unless fin.respond_to? :outgoing_message
-      @query.complete(self, fin)
-      self 
-    end
   end
-end
