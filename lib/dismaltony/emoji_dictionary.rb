@@ -80,7 +80,7 @@ module DismalTony # :nodoc:
         'mindblown' => '🤯',
         'moneybag' => '💰',
         'moneywing' => '💸',
-        'monocole' => '🧐',
+        'monocle' => '🧐',
         'moon' => '🌙',
         'moviecamera' => '📽',
         'nobell' => '🔕',
