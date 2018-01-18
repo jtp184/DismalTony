@@ -7,8 +7,11 @@ module DismalTony::Directives
 		add_param :sendmsg
 
 		add_criteria do |qry|
-			qry << must { |q| q.verb =~ /send/i || q.root =~ /text/i }
+			qry << keyword { |q| q =~ /text/i }
+			qry << should { |q| q.root =~ /text/i }
 			qry << should { |q| q.children_of(q.verb).any? { |w| w.pos == 'NUM' } }
+			qry << could { |q| q =~ /send/i }
+			qry << could { |q| q =~ /message/i }
 		end
 
 		def get_tel
@@ -62,7 +65,7 @@ module DismalTony::Directives
 			qry << must { |q| q.contains?(/who/i, /what/i) }
 			qry << must { |q| q.contains?(/i/i, /my/i) }
 			qry << should { |q| q.contains?(/is/i, /are/i, /am/i)}
-			qry << should { |q| q.contains?(/phone|number/i, /name/i, /birthday/i, /email/i, ) }
+			qry << could { |q| q.contains?(/phone|number/i, /name/i, /birthday/i, /email/i, ) }
 		end
 
 		def run
@@ -109,8 +112,8 @@ module DismalTony::Directives
 		set_group :debug
 
 		add_criteria do |qry|
-			qry << must { |q| q =~ /diagnostic/i }
-			qry << must { |q| q.verb.any_of?(/run/i, /execute/i, /perform/i) }
+			qry << keyword { |q| q =~ /diagnostic/i }
+			qry << must { |q| q.contains?(/run/i, /execute/i, /perform/i) }
 		end
 
 		def run

@@ -6,7 +6,7 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << must { |q| q.verb&.any_of?(/want/i, /like/i, /mix/i, /make/i, /pick/i, /choose/i) }
-      qry << must { |q| q.children_of(q.verb).any? { |c| c =~ /drink/i } }
+      qry << keyword { |q| q.children_of(q.verb).any? { |c| c =~ /drink/i } }
       qry << should { |q| q =~ /please/i }
     end
 

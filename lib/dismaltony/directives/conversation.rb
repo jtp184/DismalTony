@@ -35,7 +35,8 @@ module DismalTony::Directives
 		add_param :send_number
 
 		add_criteria do |qry|
-			qry << must { |q| q.contains?(/invit(e|ation)/i, /join/i, /send/i)}
+			qry << keyword { |q| q =~ /invit(e|ation)/i }
+			qry << must { |q| q =~ /send/i || q =~ /join/i }
 			qry << should { |q| !q['pos', 'NUM'].empty? }
 		end
 
