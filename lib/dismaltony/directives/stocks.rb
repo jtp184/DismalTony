@@ -71,14 +71,14 @@ module DismalTony::Directives
 				# Compared to highest record
 				if history.max == current
 					moj = ['star', 'rocket', '100'].sample
-					", currently at its 100-day peak."
+					", currently at its 100-day peak"
 				else
 					moj = ['barchart', 'chartup', 'checkbox'].sample
-					", with a 100-day peak of $#{history.max.price} on #{history.max.date}."
+					", with a 100-day peak of $#{history.max.price} on #{history.max.date}"
 				end
 			else
 				# Just the current price, no commentary
-				moj = ['moneywing', 'moneybag', 'monocle', 'tophat', ''].sample
+				moj = ['moneywing', 'moneybag', 'monocle', 'tophat', 'dollarsign'].sample
 				""
 			end
 

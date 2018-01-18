@@ -51,6 +51,7 @@ module DismalTony # :nodoc:
         'crystalball' => '🔮',
         'dice' => '🎲',
         'dog' => '🐶',
+        'dollarsign' => '💲',
         'egg' => '🍳',
         'envelope' => '✉️',
         'envelopearrow' => '📩',
