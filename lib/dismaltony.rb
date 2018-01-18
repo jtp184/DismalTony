@@ -1,6 +1,7 @@
 require 'dismaltony/version'
-require 'dismaltony/directive'
+require 'dismaltony/match_logic'
 require 'dismaltony/query'
+require 'dismaltony/directive'
 require 'dismaltony/query_resolver'
 require 'dismaltony/formatter'
 require 'dismaltony/emoji_dictionary'
@@ -15,6 +16,7 @@ require 'dismaltony/vi_base'
 module DismalTony
 
 	class NoDirectiveError < StandardError; end
+	class MatchLogicFailure < StandardError; end
 
 	@@config = {
 		data_store: nil,

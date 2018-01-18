@@ -42,7 +42,14 @@ module DismalTony # :nodoc:
       attr_reader :group #:nodoc:
       attr_reader :match_criteria #:nodoc:
       attr_reader :default_params
+
       @default_params = {}
+
+      DismalTony::MatchLogic.priorities.each do |label|
+        define_method(label.to_sym) do |&b|
+          DismalTony::MatchLogic[label].new(Proc.new(&b))
+        end
+      end
     end
 
     def initialize(qry, vi)
@@ -66,38 +73,21 @@ module DismalTony # :nodoc:
       @match_criteria += crit
     end
 
-    def self.must(&block)
-      [:must, Proc.new(&block)]
-    end
-
-    def self.should(&block)
-      [:should, Proc.new(&block)]
-    end
-
-    def self.could(&block)
-      [:could, Proc.new(&block)]
-    end
-
-    def self.keyword(&block)
-      [:keyword, Proc.new(&block)]
-    end
-
     def self.matches?(qry)
       return nil if self.match_criteria.empty?
 
       certainty = 0.0
-      self.match_criteria.each do |prio, crit|
-        case prio
-        when :keyword
-          if crit.(qry) then certainty += 5 else raise ArgumentError end
-        when :must
-          if crit.(qry) then certainty += 1 else raise ArgumentError end
-          when :should, :could
-            certainty +=1 if crit.(qry)
-          end 
+      self.match_criteria.each do |crit|
+        if crit.is_true?(qry)
+          crit.on_succeed
+          certainty += crit
+        else
+          crit.on_failure
+          certainty += crit.fail
         end
-        return certainty / self.match_criteria.select { |pri, _c| pri != :could }.length.to_f
-    rescue ArgumentError
+      end
+      certainty / self.match_criteria.select(&:penalty?).length.to_f
+    rescue MatchLogicFailure
       return nil
     end
 
