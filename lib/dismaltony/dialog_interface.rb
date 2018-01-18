@@ -75,8 +75,8 @@ module DismalTony # :nodoc:
     # Calls <tt>`say`</tt> on the message.
     # If the message is formatted, it prefaces +msg+ with the name of the emote
     def send(msg)
-      if msg =~ DismalTony::Formatter::Printer::OUTGOING
-        md = DismalTony::Formatter::Printer::OUTGOING.match msg
+      if msg =~ DismalTony::Formatter::OUTGOING
+        md = DismalTony::Formatter::OUTGOING.match msg
         emote = md['moji']
         text = md['message']
         `say #{DismalTony::EmojiDictionary.name(emote)}. #{text}`
