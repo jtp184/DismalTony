@@ -42,6 +42,7 @@ module DismalTony # :nodoc:
       attr_reader :group #:nodoc:
       attr_reader :match_criteria #:nodoc:
       attr_reader :default_params
+      @default_params = {}
     end
 
     def initialize(qry, vi)
