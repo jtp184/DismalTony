@@ -63,9 +63,9 @@ module DismalTony::Directives
 
 		add_criteria do |qry|
 			qry << must { |q| q.contains?(/who/i, /what/i) }
-			qry << must { |q| q.contains?(/i/i, /my/i) }
-			qry << should { |q| q.contains?(/is/i, /are/i, /am/i)}
-			qry << could { |q| q.contains?(/phone|number/i, /name/i, /birthday/i, /email/i, ) }
+			qry << must { |q| q.contains?(/\bi\b/i, /\bmy\b/i) }
+			qry << should { |q| q.contains?(/\bis\b/i, /\bare\b/i, /\bam\b/i)}
+			qry << could { |q| q.contains?(/phone|number/i, /\bname\b/i, /birthday/i, /\bemail\b/i, ) }
 		end
 
 		def run
