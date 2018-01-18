@@ -23,6 +23,8 @@ ParseyParse.configure do |conf|
   rescue
     ParseyParse::Cache.new
   end
+  
+  conf[:disable_tf] = !Dir.exists?(conf[:syntaxnet_path] + '/' + conf[:script_path])
 end
 
 @db = begin
