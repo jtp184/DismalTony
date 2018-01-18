@@ -61,19 +61,19 @@ module DismalTony::Directives
 				# Better / worse than yesterday
 				yesterday = history.select { |pr| pr.date === Date.today - 1 }.first
 				if current > yesterday
-					moj = ['chartup', 'thumbsup', 'fire']
+					moj = ['chartup', 'thumbsup', 'fire'].sample
 					", up from yesterday's $#{yesterday.price}"
 				else
-					moj = ['chartdown', 'raincloud', 'snail']
+					moj = ['chartdown', 'raincloud', 'snail'].sample
 					", down from yesterday's $#{yesterday.price}"
 				end
 			when 1
 				# Compared to highest record
 				if history.max == current
-					moj = ['star', 'rocket', '100']
+					moj = ['star', 'rocket', '100'].sample
 					", currently at its 100-day peak."
 				else
-					moj = ['barchart', 'chartup', 'checkbox']
+					moj = ['barchart', 'chartup', 'checkbox'].sample
 					", with a 100-day peak of $#{history.max.price} on #{history.max.date}."
 				end
 			else
