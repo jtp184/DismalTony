@@ -101,7 +101,11 @@ module DismalTony # :nodoc:
       end
 
       def self.test_matches(qry)
-        self.match_criteria.map { |pri, c| [pri, c.(qry)]}
+        self.match_criteria.map do |pri, c| 
+          pat = /{.*}/
+          x = File.readlines(c.source_location[0])[c.source_location[1] - 1].slice(pat)
+          [pri, x, c.(qry)]
+        end
       end
 
       class << self
