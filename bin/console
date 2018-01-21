@@ -19,7 +19,7 @@ require 'dismaltony/directives/weather'
 
 ParseyParse.configure do |conf|
   conf[:cache] = begin
-    ParseyParse::YAMLCache.load_from('./tmp/cache.yml')
+    ParseyParse::YAMLCache.load_from('tmp/cache.yml')
   rescue
     ParseyParse::Cache.new
   end
@@ -28,7 +28,7 @@ ParseyParse.configure do |conf|
 end
 
 @db = begin
-  DismalTony::YAMLStore.load_from('./tmp/tony.yml')
+  DismalTony::YAMLStore.load_from('tmp/tony.yml')
 rescue
   DismalTony::DataStore.new
 end
