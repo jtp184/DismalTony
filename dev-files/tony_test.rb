@@ -36,12 +36,15 @@ end
 
 # qp 'Hello', true
 
-@tony.('Hello')
+@tony.call('Hello')
 
+# @tony.handlers.each do |hand|
+#   (puts hand.patterns) if hand.respond_to? 'patterns'
+# end
 
 # @tony.('add test schedule event')
 # puts print @tony.scheduler.events
-# 3.times do 
+# 3.times do
 #   sleep 2
 #   @tony.('run all schedule events')
 #   puts print @tony.scheduler.events

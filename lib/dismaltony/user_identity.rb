@@ -14,15 +14,19 @@ module DismalTony # :nodoc:
     # * +:conversation_state+ - The ConversationState to use. Defaults to a blank, idle state.
     def initialize(**args)
       @user_data = (args[:user_data] || {})
-      @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(is_idle: true, user_identity: self))
+      @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(idle: true, user_identity: self))
+    end
+
+    def clone
+      Marshal::load(Marshal.dump(self))
     end
 
     # A Default user, in case none is provided. Has data for <tt>nickname, first_name, last_name</tt>.
     DEFAULT = DismalTony::UserIdentity.new(
       user_data: {
-        'nickname' => 'User',
-        'first_name' => 'Default',
-        'last_name' => 'User'
+        :nickname => 'User',
+        :first_name => 'Default',
+        :last_name => 'User'
       }
     )
 
@@ -32,27 +36,36 @@ module DismalTony # :nodoc:
     end
 
     def[]=(left, right) # :nodoc:
-      @user_data[left] = right
+      @user_data[left.to_sym] = right
     end
 
     # Used to access UserIdentity.user_data using +str+ as a key
     def[](str)
-      @user_data[str]
+      user_data[str.to_sym]
     end
 
     # Compares if these users have the same user_data hash
     def ==(other)
+      return nil unless other.respond_to?(:user_data)
       other.user_data == user_data
     end
 
     # Uses ConversationState#merge to non-overwritingly merge the +new_state+ into the existing state
     def modify_state(new_state)
-      @conversation_state.merge(new_state)
+      conversation_state.merge(new_state)
     end
 
     # Uses ConversationState#merge! to overwrite the existing state with the +new_state+
     def modify_state!(new_state)
-      @conversation_state.merge!(new_state)
+      conversation_state.merge!(new_state)
+    end
+
+    def modify_user_data(data)
+      @user_data.merge!(data)
+    end
+
+    def idle?
+      conversation_state.idle?
     end
   end
 end

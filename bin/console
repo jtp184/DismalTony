@@ -1,14 +1,60 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
+require 'psych'
+require 'pp'
 require 'dismaltony'
+require 'ParseyParse'
+require 'ParseyParse/cache'
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
+Dir.entries('lib/dismaltony/directives').select { |f| f =~ /(\w*)\.rb/i }.each do |f|
+  mod = /(\w*)\.rb/.match(f)[1]
+  require "dismaltony/directives/#{ mod }"
+end
+
+require 'dismaltony/directives/core'
+require 'dismaltony/directives/conversation'
+require 'dismaltony/directives/weather'
+
+
+ParseyParse.configure do |conf|
+  conf[:cache] = begin
+    ParseyParse::YAMLCache.load_from('tmp/cache.yml')
+  rescue
+    ParseyParse::Cache.new
+  end
+  
+  conf[:disable_tf] = !Dir.exists?(conf[:syntaxnet_path] + '/' + conf[:script_path])
+end
+
+@db = begin
+  DismalTony::YAMLStore.load_from('tmp/tony.yml')
+rescue
+  DismalTony::DataStore.new
+end
+
+DismalTony.vi = DismalTony::VIBase.new(
+  :data_store => @db,
+  :user => @db.users.first
+  )
+
+@last = nil
+
+def self.interactive(debug = false)
+  puts
+  loop do
+    print "[#{DismalTony::EmojiDictionary['laptop']}  ]: "
+    inp = gets.chomp
+    puts
+    res = @tony.(inp)
+    puts
+    @last = res if debug
+  end
+end
 
 # (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
+require 'pry'
+Pry.start
 
-require 'irb'
-IRB.start
+# require 'irb'
+# IRB.start

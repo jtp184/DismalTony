@@ -4,6 +4,12 @@ require 'net/http'
 module DismalTony # :nodoc:
   # The basic class for outputting message content to the user.
   class DialogInterface
+
+    # The default formatting options as a hash
+    def default_format
+      {}
+    end
+
     # Used to send the content of +_msg+ to the user via this interface.
     # Must be overriden by child classes.
     def send(_msg)
@@ -11,16 +17,22 @@ module DismalTony # :nodoc:
     end
   end
 
+  class NowhereInterface < DialogInterface
+    # Used for when no output is desired.
+
+    # Simply eats the message
+    def send(_msg); end
+  end
+
   # An Interface for outputting to the console. Basically just a <tt>puts</tt> command with more steps.
   class ConsoleInterface < DialogInterface
-    # Gives the interface access to the VI +virtual+
-    def initialize(virtual)
-      @vi = virtual
-    end
-
     # Sends +msg+ by calling <tt>puts</tt> on it.
     def send(msg)
       puts msg
+    end
+    
+    def default_format
+      {:extra_space => true}
     end
   end
 
@@ -30,7 +42,7 @@ module DismalTony # :nodoc:
     attr_reader :destination
 
     # Using +dest+ as its #destination, instanciates this Interface. Uses ENV vars for <tt>twilio_account_sid, twilio_auth_token</tt>
-    def initialize(dest = '')
+    def initialize(dest = nil)
       twilio_account_sid = ENV['twilio_account_sid']
       twilio_auth_token = ENV['twilio_auth_token']
       @client = Twilio::REST::Client.new twilio_account_sid, twilio_auth_token
@@ -40,11 +52,21 @@ module DismalTony # :nodoc:
     # Sends the message +msg+ to #destination, with a quick check to see if it's empty. Uses ENV var for <tt>twilio_phone_number</tt>
     def send(msg)
       return nil if msg =~ /^ *$/
-      @client.account.messages.create(
+      raise 'No Destination!' if @destination.nil?
+      @client.api.account.messages.create(
         from: ENV['twilio_phone_number'],
         to: destination,
         body: msg
-      )
+        )
+    end
+
+    def send_to(msg, num)
+      return nil if msg =~ /^ *$/
+      @client.api.account.messages.create(
+        from: ENV['twilio_phone_number'],
+        to: num,
+        body: msg
+        )
     end
   end
 
@@ -53,38 +75,13 @@ module DismalTony # :nodoc:
     # Calls <tt>`say`</tt> on the message.
     # If the message is formatted, it prefaces +msg+ with the name of the emote
     def send(msg)
-      if msg =~ DismalTony::Formatter::Printer::OUTGOING
-        md = DismalTony::Formatter::Printer::OUTGOING.match msg
+      if msg =~ DismalTony::Formatter::OUTGOING
+        md = DismalTony::Formatter::OUTGOING.match msg
         emote = md['moji']
         text = md['message']
         `say #{DismalTony::EmojiDictionary.name(emote)}. #{text}`
       else
         `say #{msg}`
-      end
-    end
-  end
-
-  # Used for sending as an HTTP request.
-  class NetworkInterface < DialogInterface
-    # The location, automatically converted to URI
-    attr_reader :location
-    # A hash containing any HTML form fields necessary, and their values
-    attr_reader :fields
-
-    # Initializes using the provided +opts+ for :location and :fields
-    def initialize(**opts)
-      @location = URI((opts[:location] || 'http://127.0.0.1/'))
-      @fields = (opts[:fields] || {})
-    end
-
-    # Sends the +msg+ string as the body in a POST request to the #location
-    def send(msg)
-      req = Net::HTTP::Post.new(@location)
-      @fields['body'] = msg
-      req.set_form_data(fields)
-
-      res = Net::HTTP.start(@location.hostname, @location.port) do |http|
-        http.request(req)
       end
     end
   end

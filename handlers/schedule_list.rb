@@ -1,9 +1,6 @@
 DismalTony.create_handler do
-  def handler_start
-    @handler_name = 'schedule-list'
-    @patterns = [/list\s(?:people)? ?(?:who)? ?(?:is|are) on (?<day>\w+) (?<event_key>\w+)/, /who\\sis\\sdoing\\s(?<day>\\w+)\\s(?<event_key>.+)\\?/]
-    @data = { 'day' => '', 'event_key' => '' }
-  end
+  @handler_name = 'schedule-list'
+  @patterns = [/list\s(?:people)? ?(?:who)? ?(?:is|are) on (?<day>\w+) (?<event_key>\w+)/, /who\\sis\\sdoing\\s(?<day>\\w+)\\s(?<event_key>.+)\\?/]
 
   def activate_handler!(query, _user)
     parse query

@@ -1,8 +1,6 @@
 DismalTony.create_handler do
-  def handler_start
-    @handler_name = 'cthulhu-character'
-    @patterns = [/generate a call of cthulhu character/i]
-  end
+  @handler_name = 'cthulhu-character'
+  @patterns = [/generate a call of cthulhu character/i]
 
   def activate_handler(_query, _user)
     "I'll generate a Call of Cthulhu character!"
@@ -52,7 +50,7 @@ DismalTony.create_handler do
                     '+3d6'
                   when (73..88)
                     '+4d6'
-                  end
+    end
 
     stats['hp'] = ((stats['con'] + stats['siz']) / 2).ceil
     stats['mp'] = stats['pow']
@@ -75,7 +73,7 @@ DismalTony.create_handler do
                        '$10,000'
                      when 10
                        '$20,000'
-                     end
+   end
     stats
-  end
+ end
 end

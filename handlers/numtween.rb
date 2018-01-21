@@ -1,8 +1,6 @@
 DismalTony.create_handler(DismalTony::QueryResult) do
-  def handler_start
-    @handler_name = 'numtween'
-    @patterns = [/print numbers between (?<start>\d+) and (?<end>\d+)/i]
-  end
+  @handler_name = 'numtween'
+  @patterns = [/print numbers between (?<start>\d+) and (?<end>\d+)/i]
 
   def apply_format(input)
     result_string = '~e:smile Okay! Here they are: '

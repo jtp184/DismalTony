@@ -1,9 +1,6 @@
 DismalTony.create_handler do
-  def handler_start
-    @handler_name = 'explain-self'
-    @patterns = []
-    @data = {}
-  end
+  @handler_name = 'explain-self'
+  @patterns = [/what (?:are you|is your purpose|are you for|are you designed to do|do you do)\??/i]
 
   def activate_handler(query, user); end
 
