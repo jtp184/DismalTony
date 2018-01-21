@@ -9,23 +9,19 @@ module DismalTony # :nodoc:
     end
 
     def self.all
-      self.constants.select { |sym| self.const_get(sym).is_a? Class}.map! { |sym| self.const_get(sym)}
+      self.constants.map { |c| self.const_get(c) }.select { |c| c <= DismalTony::Directive }
     end
 
-    def self.each
-      valids = self.constants.select { |sym| self.const_get(sym).is_a? Class}
-      valids.map! { |sym| self.const_get(sym)}
-      valids.each do |val|
-        yield val
-      end
+    def self.each(&blk)
+      self.all.each(&blk)
     end
     
     def self.in_group(the_group)
-      self.select { |dir| dir.group == the_group } 
+      self.all.select { |dir| dir.group == the_group } 
     end
     
     def self.[](param)
-      self.select { |dir| dir.name == param }.first
+      self.all.select { |dir| dir.name == param }.first
     end
   end
 
