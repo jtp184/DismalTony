@@ -14,8 +14,8 @@ module DismalTony # :nodoc:
     # Initializes an empty store, and merges +args+ with #opts
     def initialize(**args)
       @opts = {}
-      @opts.merge!(args) unless args.nil?
-      @users = []
+      @opts.merge!(args.fetch(:opts) { {} }) unless args.nil?
+      @users = opts.fetch(:users) { [] }
     end
 
     # Creates a new UserIdentity object with UserIdentity.user_data set to +opts+
@@ -77,6 +77,11 @@ module DismalTony # :nodoc:
     def save
       File.open(filepath, 'w+') { |f| f << Psych.dump(data_store) }
       self
+    end
+
+    # Forcibly reloads the store
+    def load
+      load_from(filepath)
     end
 
     # Checks the internal +datastore+ to see if it responds to +name+, and passes the +params+ along.
