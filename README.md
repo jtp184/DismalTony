@@ -41,6 +41,14 @@ cassie = DismalTony::VIBase.new(
     '+18437427464'
   )
 )
+
+# We can either set the module level VI to our new VI 
+# and always have the DismalTony.() syntax use cassie
+DismalTony.vi = cassie
+
+# Or use cassie on her own!
+cassie.('Hello, Cassie!')
+
 ```
 
 The VI consists of a name, a return_interface to reply across, its known Directives, and a DataStore to retain its memories. All of these pieces are modular, and designed to be interchanged to fit your workflow. 
