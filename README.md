@@ -88,7 +88,7 @@ module DismalTony::Directives
   end
 ```
 
-DismalTony relies on you have [ParseyParse](http://github.com/jtp184/parseyparse) setup. If it doesn't detect a configured SyntaxNet, it will automatically decide it can't parse anything. See that repo for more information on configuring.
+DismalTony relies on you having [ParseyParse](http://github.com/jtp184/parseyparse) setup. If it doesn't detect a configured SyntaxNet, it will automatically decide it can't parse anything. See that repo for more information on configuring.
 
 Due to ParseyParse being a dependency, MatchLogic queries can use the Natural Language Understanding properties to parse upon, such as finding parts of speech, inter-word dependencies, and roots of sentences.
 
