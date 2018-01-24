@@ -17,6 +17,7 @@ module DismalTony # :nodoc:
       @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(idle: true, user_identity: self))
     end
 
+    # Clones using the Marlshal dump / load trick.
     def clone
       Marshal::load(Marshal.dump(self))
     end
@@ -60,10 +61,12 @@ module DismalTony # :nodoc:
       conversation_state.merge!(new_state)
     end
 
+    # modifies the +user_data+ by using Hash#merge! with the new +data+
     def modify_user_data(data)
       @user_data.merge!(data)
     end
 
+    # Syntactic sugar for +conversation_state.idle?+
     def idle?
       conversation_state.idle?
     end

@@ -16,6 +16,7 @@ module DismalTony # :nodoc:
       @format = {}
     end
 
+    # Clones using the Marlshal dump / load trick.
     def clone
       Marshal::load(Marshal.dump(self))
     end
@@ -36,8 +37,9 @@ module DismalTony # :nodoc:
       new(rm, new_state)
     end
 
+    # Creates a response whose ConversationState redirects control flow. Passes on next_directive, next_method, data, and parse_next via the +opts+ hash.
     def self.then_do(**opts)
-      new_state = DismalTony::ConversationState.new(idle: false, next_directive: opts[:directive].name, next_method: (opts[:method] || :run), data: opts[:data], parse_next: !(opts[:parse_next] == false) )
+      new_state = DismalTony::ConversationState.new(idle: false, next_directive: opts[:directive].name, next_method: (opts[:method] || :run), data: opts[:data], parse_next: opts.fetch(:parse_next) { true } )
       new(opts[:message], new_state)
     end
 

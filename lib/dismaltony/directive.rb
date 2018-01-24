@@ -1,74 +1,53 @@
 module DismalTony # :nodoc:
-  # Respresents a response to an incoming query. 
-  # Handles providing match conditions as well as what to do when matched
-  # TODO: Separated Mixins that simplify common functions
-  
+
+  # The module that contains all the Directive classes. Self enumerates.
   module Directives
     class << self
       include Enumerable
     end
 
+    # Selects all inheritors of the Directive class that are defined as constants within this module.
     def self.all
       self.constants.map { |c| self.const_get(c) }.select { |c| c <= DismalTony::Directive }
     end
 
+    # Using #all, returns an each iterator which is passed the block +blk+
     def self.each(&blk)
       self.all.each(&blk)
     end
     
+    # Returns all Directives whose Directive#group variable is +the_group+
     def self.in_group(the_group)
       self.all.select { |dir| dir.group == the_group } 
     end
     
+    # Takes in the +param+ and returns the first Directive whose Directive#name is +param+
     def self.[](param)
       self.all.select { |dir| dir.name == param }.first
     end
   end
 
+  # Respresents a response to an incoming query. 
+  # Handles providing match conditions as well as what to do when matched
   class Directive
-    attr_reader :group
-    attr_reader :name
-    attr_reader :query
-    attr_accessor :parameters
-    attr_reader :match_criteria
-    attr_reader :vi
-
-    class << self
-      attr_reader :name #:nodoc:
-      attr_reader :group #:nodoc:
-      attr_reader :match_criteria #:nodoc:
-      attr_reader :default_params
-
-      @default_params = {}
-
-      DismalTony::MatchLogic.priorities.each do |label|
-        define_method(label.to_sym) do |&b|
-          DismalTony::MatchLogic[label].new(Proc.new(&b))
-        end
-      end
-    end
-
-    def initialize(qry, vi)
-      @name = (self.class.name || '')
-      @group = (self.class.group || 'none')
-      @parameters = (self.class.default_params.clone || {})
-      @match_criteria = (self.class.match_criteria || [] )
-      @query = qry
-      @vi = vi
-    end
-
+    # Returns Returns an Errored directive, using +qry+ and +vi+ to construct the new Directive
     def self.error(qry, vi)
       me = new(qry, vi)
       me.query.complete(self, HandledResponse.error)
     end
 
-    def self.add_criteria(&block)
+    # Yields the +criteria+ array, and uses the +block+ to add its results to
+    # +match_criteria+ afterwards, allowing you to add new MatchLogic objects using the DSL.
+    def self.add_criteria(&block) # :yields: criteria
       crit = []
       yield crit
       @match_criteria ||= []
       @match_criteria += crit
     end
 
+    # A core function which confirms if the Query +qry+ can be served by this directive.
+    # Iterates through the +match_criteria+, and tallies a certainty index. Some MatchCriteria 
+    # may throw a MatchLogicFailure error, which causes this function to return a nil
     def self.matches?(qry)
       return nil if self.match_criteria.empty?
 
@@ -87,6 +66,8 @@ module DismalTony # :nodoc:
       return nil
     end
 
+    # Takes in the Query +qry+ and verbosely checks it against the +match_criteria+ 
+    # including a string representation of the original code block.
     def self.test_matches(qry)
       self.match_criteria.map do |pri, c| 
         pat = /{.*}/
@@ -100,35 +81,94 @@ module DismalTony # :nodoc:
       alias from new
     end
 
+    # DSL function, sets the Directives +name+ to +param+
     def self.set_name(param)
       @name = param
     end
 
+    # DSL function, sets the Directives +group+ to +param+
     def self.set_group(param)
       @group = param
     end    
 
+    # DSL function, adds a new entry to the +parameters+ hash keyed by +param+ and given a value of +initial+.
     def self.add_param(param, initial = nil)
       @default_params ||= {}
       @default_params[param.to_sym] = initial
     end
 
+    # DSL function, takes each key-value pair in +inputpar+ and adds a new entry to 
+    # the +parameters+ hash keyed by +param+ and given a value of +initial+.
     def self.add_params(inputpar)
       inputpar.each do |ki, va|
         @default_params[ki] = va
       end
     end
+  end
 
-    def params
-      @parameters
+  class Directive
+
+    # The group this Directive belongs to. Can be used to selectively load some but not all Directives.
+    attr_reader :group
+    
+    # The name of the Directive, used to uniquely identify it.
+    attr_reader :name
+    
+    # the Query evaluated by this directive.
+    attr_reader :query
+    
+    # The hash of values captured and/or returned by this Directive.
+    attr_accessor :parameters
+    
+    # The MatchLogic criteria objects used to verify whether a Query matches or not.
+    attr_reader :match_criteria
+    
+    # The VI used to evaluate this Query.
+    attr_reader :vi
+
+    class << self
+      attr_reader :name #:nodoc:
+      attr_reader :group #:nodoc:
+      attr_reader :match_criteria #:nodoc:
+      # The default parameters set up by the class.
+      attr_reader :default_params
+
+      @default_params = {}
+
+      DismalTony::MatchLogicTypes.priorities.each do |label|
+        define_method(label.to_sym) do |&b|
+          DismalTony::MatchLogicTypes[label].new(Proc.new(&b))
+        end
+      end
     end
 
+    # Takes in the Query +qry+ and VIBase +vi+ and sets its values, 
+    # inheriting from class-instance variables when apropriate.
+    def initialize(qry, vi)
+      @name = (self.class.name || '')
+      @group = (self.class.group || 'none')
+      @parameters = (self.class.default_params.clone || {})
+      @match_criteria = (self.class.match_criteria || [] )
+      @query = qry
+      @vi = vi
+    end
+
+    # Searches the +parameters+ hash using +indx+
+    def [](indx)
+      @parameters[indx]
+    end
+
+    # Returns the response from this directive's +query+
     def response
       query.response
     end
 
+    # Overridden by child classes. The default method used by the 
+    # #call function to respond to a matched Query.
     def run; end
 
+    # Executes a method +mtd+ on this directive. Defaults to executing 
+    # the #run method for some syntactic sugar.
     def call(mtd = :run)
       fin = self.method(mtd).call
       raise "No response" unless fin.respond_to? :outgoing_message

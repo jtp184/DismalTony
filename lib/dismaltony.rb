@@ -13,25 +13,32 @@ require 'dismaltony/data_storage'
 require 'dismaltony/scheduler'
 require 'dismaltony/vi_base'
 
+# A Conversational Agent for task performance.
 module DismalTony
 
+	# Used when no Directive is found to satisfy the query
 	class NoDirectiveError < StandardError; end
+	# Signfies a failure of a MatchLogic object to match on a Query
 	class MatchLogicFailure < StandardError; end
 
+	# The hash of configuration data, including the default DataStore and VIBase
 	@@config = {
 		data_store: nil,
 		vi: nil,
 	}
 
-	def self.configure(&blk)
+	# Yields the +config+ varable to the block +blk+ so you can define settings.
+	def self.configure(&blk) # :yields: config
 		yield @@config
 		@@config
 	end
 
+	# Returns the configuration hash
 	def self.config
 		@@config
 	end
 
+	# Returns the VIBase in the config. Creates a basic one if none exists.
 	def self.vi
 		return config[:vi] if config[:vi]
 		data_store = if config[:data_store]
@@ -45,11 +52,14 @@ module DismalTony
 			)
 	end
 
+	# Overrides the VI inside the config with the one passed in. Very strict about typing.
 	def self.vi=(vi)
 		raise TypeError, "Not a VIBase!" unless vi.is_a? DismalTony::VIBase
 		config[:vi] = vi
 	end
 
+	# The main point of interaction. If +args+ is empty, it returns the same as #vi, 
+	# but otherwise passes the single string arg on to VIBase#call
 	def self.call(*args)
 		return vi if args.empty?
 		return vi.(args[0]) if args.length == 1
