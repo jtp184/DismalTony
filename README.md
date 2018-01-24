@@ -13,7 +13,7 @@ require 'dismaltony/directives/stocks'
 DismalTony.('How is AAPL stock doing today?')
 ```
 
-Read on if you're more interested in the nitty-gritty of VI Initialization, or skip ahead to **Writing a Handler**.
+Read on if you're more interested in the nitty-gritty of VI Initialization, or skip ahead to **Writing a Directive**.
 ## Basic VI
 A VI is the unit that handles queries and users. A Very basic VI could be initialized like so:
 ```ruby
