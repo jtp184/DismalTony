@@ -59,13 +59,15 @@ module DismalTony::Directives
 
     # a block that yields an array to add new match logic criteria to.
     add_criteria do |qry|
-      # the methods are generated from different MatchLogic classes which adjust how certain the VI is that it's correct in using this Directive
+      # the methods are generated from different MatchLogic classes 
+      # which adjust how certain the VI is that it's correct in using this Directive
       qry << must { |q| q.contains?(/hello/i) || q.contains?(/greetings/i) }
       qry << should { |q| !q['rel', 'discourse'].empty?}
       qry << should { |q| !q['xpos', 'UH'].empty?}
     end
 
-    # Every Directive has a run method, which does all of the work of taking in the query and necessarily returning a HandledResponse as a result.
+    # Every Directive has a run method, which does all of the work
+    # of taking in the query and necessarily returning a HandledResponse as a result.
     def run
       # Uses built in query method
       if query =~ /how are you/i
