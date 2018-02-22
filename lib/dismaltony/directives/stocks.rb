@@ -18,10 +18,10 @@ module DismalTony::Directives
 		end
 
 		def run
-			params[:stock_id] = /\b[A-Z]+\b/.match(query)[0]
-			prices = retrieve_data(symbol: params[:stock_id])
+			parameters[:stock_id] = /\b[A-Z]+\b/.match(query)[0]
+			prices = retrieve_data(symbol: parameters[:stock_id])
 			
-			params[:current_value] = prices.find { |p| p.date === Date.today }
+			parameters[:current_value] = prices.find { |p| p.date === Date.today }
 
 			answ, moj = price_comment(prices)
 
