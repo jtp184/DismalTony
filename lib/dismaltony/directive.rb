@@ -147,7 +147,7 @@ module DismalTony # :nodoc:
     def initialize(qry, vi)
       @name = (self.class.name || '')
       @group = (self.class.group || 'none')
-      @parameters = (self.class.default_params.clone || {})
+      @parameters = (self.class.default_params&.clone || {})
       @match_criteria = (self.class.match_criteria || [] )
       @query = qry
       @vi = vi
