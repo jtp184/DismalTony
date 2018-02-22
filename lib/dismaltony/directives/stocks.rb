@@ -27,7 +27,7 @@ module DismalTony::Directives
 
 			conv = "~e:#{moj} "
 			conv << ["The current", "Today's", "The", "Current"].sample
-			conv << " stock price for #{params[:stock_id]} is "
+			conv << " stock price for #{parameters[:stock_id]} is "
 			conv << answ << "."
 			DismalTony::HandledResponse.finish(conv)
 		end
