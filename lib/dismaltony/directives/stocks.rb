@@ -47,9 +47,9 @@ module DismalTony::Directives
 				self.close <=> Integer(other)
 			end
 
-			def to_s; self.price; end
+			def to_s; self.price.to_s; end
 
-			def to_str; self.price; end
+			def to_str; self.price.to_s; end
 		end
 
 		def price_comment(history)
