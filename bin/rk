@@ -1,0 +1,133 @@
+#!/usr/bin/env ruby
+
+require 'colorize'
+require 'optparse'
+require 'ostruct'
+require 'psych'
+
+OPTIONS = OpenStruct.new
+LOGGER = Struct.new('Logger', :quiet) do
+	def log(msg)
+		puts msg unless quiet
+	end
+end
+@logger = LOGGER.new(false)
+
+@opt = OptionParser.new do |opts|
+	opts.on('-q', '--quiet', 'Silences loggers') do |q|
+		@logger = LOGGER.new(true)
+	end
+	opts.on('-r', '--recursive', 'Treats the filepath argument as a folder and adds / deletes all its contents') do |r|
+		@recursive = true
+	end
+end.parse!
+
+def log(msg)
+	@logger.log(msg)
+end
+
+def load_options
+	if File.exists?('./tmp/.rk')
+		Psych.load(File.read('tmp/.rk')).each_pair do |k, v|
+			OPTIONS[k] = v
+		end
+	else
+	end
+	OPTIONS.files ||= []
+end
+
+def save_options
+	File.open('tmp/.rk','w+') { |fi| fi << Psych.dump(OPTIONS) }
+end
+
+def folder(fpath)
+	result = []
+	Dir.entries(fpath).reject { |x| x =~ /^\.+$/ }.each do |npath| 
+		these = if File.directory?(fpath + '/' + npath)
+			folder(fpath + '/' + npath)
+		else
+			if (fpath + npath) =~ /.\.rb/
+				[rfile(fpath + '/' + npath)]
+			else
+				[]
+			end
+		end
+		these.each { |g| result << g }
+	end
+	result
+end
+
+def reekport(input)
+	rp = `reek #{input.filepath.to_s}`
+	matcher = /(\d+) warnings?:/.match(rp)
+	if matcher
+		input.errors = 	matcher[1].to_i
+	else
+		input.errors = 0
+	end
+	rp
+end
+
+def prune
+	OPTIONS.files.uniq! { |i| i.filepath }
+end
+
+def rfile(path)
+	f = OpenStruct.new
+	f.filepath = path
+	f.errors = 0
+	f
+end
+
+def main
+	load_options
+	keyword = ARGV.first
+
+	case keyword
+	when /^a(?:dd)?$/
+		f = (@recursive ? folder(ARGV[1]): [rfile(ARGV[1])])
+		f.each { |g| OPTIONS.files << g }
+		OPTIONS.current_file ||= OPTIONS.files.first
+		f.each { |g| log "Added #{g.filepath.to_s.yellow}." }
+
+	when /^d(?:elete)?$/
+		del = (@recursive ? folder(ARGV[1]): [rfile(ARGV[1])]) || [OPTIONS.current_file]
+		del.each { |eel| OPTIONS.files.delete(eel) }
+		log "File#{del.one? ? '' : 's'} deleted".yellow if del
+	when /^l(?:ist)?$/
+		OPTIONS.files.each { |f| log "File: #{f.filepath.to_s.yellow}, Errors: #{f.errors.to_s.red}"}
+	when /^s(?:elect)?$/
+		f = OPTIONS.files.find { |f| f.filepath == ARGV[1]}
+		log "File #{ARGV[1].to_s.yellow}." if f.nil?
+		log "Added #{ARGV[1].to_s.yellow}."
+	when /^r(?:eek)?$/
+		rp = reekport(OPTIONS.current_file)
+		log rp
+	when /^n(:?ext)?$/
+		OPTIONS.current_file = OPTIONS.files[OPTIONS.files.index(OPTIONS.current_file) + 1]
+		log "Examining File #{OPTIONS.current_file.filepath.to_s.green}"
+	when /^p(:?rev(:?ious)?)?$/
+		OPTIONS.current_file = OPTIONS.files[OPTIONS.files.index(OPTIONS.current_file) - 1]
+		log "Examining File #{OPTIONS.current_file.filepath.to_s.green}"
+	when /^w(:?hich)?$/
+		log "#{OPTIONS.current_file.filepath}".green
+	when /^reek-all$/
+		OPTIONS.files.each do |fi|
+			reekport(fi)
+		end.each { |f| log "Reeked #{f.filepath.to_s.yellow}"}
+	when /^list-files$/
+		OPTIONS.files.each do |fi|
+			log fi.filepath
+		end
+	else
+		if File.exists?('./tmp/.rk')
+			log 'INVALID COMMAND'.red
+		else
+			log 'TRACKER CREATED'.green
+		end
+	end
+	prune
+	save_options
+end
+
+main
