@@ -12,10 +12,10 @@ module DismalTony # :nodoc:
     attr_reader :users
 
     # Initializes an empty store, and merges +args+ with #opts
-    def initialize(**args)
+    def initialize(**args={}
       @opts = {}
-      @opts.merge!(args.fetch(:opts) { {} }) unless args.nil?
-      @users = opts.fetch(:users) { [] }
+      @opts.merge!(args.fetch(:opts) { {} })
+      @users = args.fetch(:users) { [] }
     end
 
     # Creates a new UserIdentity object with UserIdentity.user_data set to +opts+
