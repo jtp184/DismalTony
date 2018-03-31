@@ -60,5 +60,10 @@ module DismalTony # :nodoc:
     def complete?
       completed_at && response
     end
+
+    # Implicit string conversion
+    def to_str
+      raw_text
+    end
   end
 end
