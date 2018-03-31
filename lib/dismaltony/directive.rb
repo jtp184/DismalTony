@@ -26,6 +26,8 @@ module DismalTony # :nodoc:
   end
 
   class Directive
+    include DismalTony::DirectiveHelpers::CoreHelpers
+    
     attr_reader :group
     attr_reader :name
     attr_reader :query
@@ -98,29 +100,6 @@ module DismalTony # :nodoc:
     class << self
       alias =~ matches?
       alias from new
-    end
-
-    def self.set_name(param)
-      @name = param
-    end
-
-    def self.set_group(param)
-      @group = param
-    end    
-
-    def self.add_param(param, initial = nil)
-      @default_params ||= {}
-      @default_params[param.to_sym] = initial
-    end
-
-    def self.add_params(inputpar)
-      inputpar.each do |ki, va|
-        @default_params[ki] = va
-      end
-    end
-
-    def params
-      @parameters
     end
 
     def response

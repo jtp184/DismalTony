@@ -1,6 +1,7 @@
 require 'dismaltony/version'
 require 'dismaltony/match_logic'
 require 'dismaltony/query'
+require 'dismaltony/directive_helpers'
 require 'dismaltony/directive'
 require 'dismaltony/query_resolver'
 require 'dismaltony/formatter'
