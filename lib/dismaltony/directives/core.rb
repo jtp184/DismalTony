@@ -125,7 +125,7 @@ module DismalTony::Directives
         return_string << "    Time: #{Time.now.strftime('%F %l:%M%P')}\n"
         return_string << "    VI: #{vi.name}\n"
         return_string << "    Version: #{DismalTony::VERSION}\n"
-        return_string << "    User: #{user['nickname']}\n"
+        return_string << "    User: #{vi.user['nickname']}\n"
         return_string << "    Directives: #{vi.directives.length}\n"
         DismalTony::HandledResponse.finish("~e:#{good_moj} #{return_string}")
       rescue
