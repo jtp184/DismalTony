@@ -81,6 +81,25 @@ module DismalTony # :nodoc:
       include HelperTemplate
 
       module ClassMethods
+        def add_synonyms(&blk)
+          new_syns = {}
+          yield new_syns
+          @synonyms.merge!(new_syns)
+        end
+
+        def synonyms
+          @synonyms ||= {
+            /^awesome$/i => %w[great excellent cool awesome splendid],
+            /^okay$/i => %w[okay great alright],
+            /^hello$/i => %w[hello hi greetings],
+            /^yes$/i => %w[yes affirmative definitely correct certainly],
+            /^no$/i => %w[no negative incorrect false],
+            /^update$/i => %w[updated changed modified revised altered edited adjusted],
+            /^updated$/i => %w[update change modify revise alter edit adjust],
+            /^add$/i => %w[added created],
+            /^added$/i => %w[add create]
+          }
+        end
       end
 
       module InstanceMethods
@@ -90,6 +109,20 @@ module DismalTony # :nodoc:
           else
             moj.sample
           end
+        end
+
+        def synonym_for(word)
+          resp = nil
+          synonyms.each do |reg, syns|
+            resp = word =~ reg ? syns.sample : nil
+            return resp if resp
+          end
+          word
+        end
+
+        def synonyms
+          @synonyms ||= self.class.synonyms
+          @synonyms
         end
       end
     end

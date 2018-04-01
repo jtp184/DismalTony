@@ -1,5 +1,7 @@
 module DismalTony::Directives
 	class GreetingDirective < DismalTony::Directive
+		include DismalTony::DirectiveHelpers::ConversationHelpers
+		
 		set_name :hello
 		set_group :conversation
 
@@ -13,16 +15,9 @@ module DismalTony::Directives
 			if query =~ /how are you/i
 				DismalTony::HandledResponse.finish("~e:thumbsup I'm doing well!")
 			else
-				DismalTony::HandledResponse.finish([
-					'~e:wave Hello!',
-					'~e:smile Greetings!',
-					'~e:rocket Hi!',
-					"~e:star Hello, #{query.user['nickname']}!",
-					'~e:snake Greetings!',
-					'~e:cat Hi!',
-					"~e:octo Greetings, #{query.user['nickname']}!",
-					'~e:spaceinvader Hello!'
-					].sample)
+				moj = random_emoji('wave','smile','rocket','star','snake','cat','octo','spaceinvader')
+				resp = %Q[#{ synonym_for('hello').capitalize }#{ ", " + query.user['nickname'] if ((0..100).to_a.sample < 75) }#{ ['!', '.'].sample }]
+				DismalTony::HandledResponse.finish("~e:#{moj} #{resp}")
 			end
 		end
 	end

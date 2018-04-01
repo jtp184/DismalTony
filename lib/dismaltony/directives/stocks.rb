@@ -5,6 +5,10 @@ require 'json'
 
 module DismalTony::Directives
   class GetStockPriceDirective < DismalTony::Directive
+    
+    include DismalTony::DirectiveHelpers::JSONAPIHelpers
+    include DismalTony::DirectiveHelpers::ConversationHelpers
+
     set_name :get_stock_price
     set_group :info
 
@@ -17,9 +21,16 @@ module DismalTony::Directives
       qry << could { |q| q =~ /prices?/i }
     end
 
+    set_api_url 'https://www.alphavantage.co/query'
+
+    set_api_defaults do |adef|
+      adef[:function] = 'TIME_SERIES_DAILY'
+      adef[:apikey] = ENV['alpha_vantage_key']
+    end
+
     def run
       parameters[:stock_id] =
-        /\b[A-Z]+\b/.match(query.raw_text)[0]
+      /\b[A-Z]+\b/.match(query.raw_text)[0]
       prices = retrieve_data(symbol: parameters[:stock_id])
 
       parameters[:current_value] = prices.find { |p| p.date === Date.today }
@@ -50,11 +61,11 @@ module DismalTony::Directives
 
       def to_s
         price.to_s
-   end
+      end
 
       def to_str
         price.to_s
-   end
+      end
     end
 
     def price_comment(history)
@@ -62,54 +73,39 @@ module DismalTony::Directives
       moj = ''
 
       comment = "$#{format('%.2f', current.price)}" << case [0, 1, 2, 3].sample
-                                                       when 0
-                                                         # Better / worse than yesterday
-                                                         yesterday = history.select { |pr| pr.date === Date.today - 1 }.first
-                                                         if current > yesterday
-                                                           moj = %w[chartup thumbsup fire].sample
-                                                           ", up from yesterday's $#{yesterday.price}"
-                                                         else
-                                                           moj = %w[chartdown raincloud snail].sample
-                                                           ", down from yesterday's $#{yesterday.price}"
-                                                         end
-                                                       when 1
-                                                         # Compared to highest record
-                                                         if history.max == current
-                                                           moj = %w[star rocket 100].sample
-                                                           ', currently at its 100-day peak'
-                                                         else
-                                                           moj = %w[barchart chartup checkbox].sample
-                                                           ", with a 100-day peak of $#{history.max.price} on #{history.max.date}"
-                                                         end
-                                                       else
-                                                         # Just the current price, no commentary
-                                                         moj = %w[moneywing moneybag monocle tophat dollarsign].sample
-                                                         ''
-      end
+      when 0
+         # Better / worse than yesterday
+         yesterday = history.select { |pr| pr.date === Date.today - 1 }.first
+         if current > yesterday
+           moj = random_emoji('chartup', 'thumbsup', 'fire')
+           ", up from yesterday's $#{yesterday.price}"
+         else
+           moj = random_emoji('chartdown', 'raincloud', 'snail')
+           ", down from yesterday's $#{yesterday.price}"
+         end
+       when 1
+         # Compared to highest record
+         if history.max == current
+           moj = random_emoji('star', 'rocket', '100')
+           ', currently at its 100-day peak'
+         else
+           moj = random_emoji('barchart', 'chartup', 'checkbox')
+           ", with a 100-day peak of $#{history.max.price} on #{history.max.date}"
+         end
+       else
+         # Just the current price, no commentary
+         moj = random_emoji('moneywing', 'moneybag', 'monocle', 'tophat', 'dollarsign')
+         ''
+       end
+       [comment, moj]
+     end
 
-      [comment, moj]
-    end
+     def retrieve_data(qpr)
+       parse_web_req(api_request(qpr))
+     end
 
-    def retrieve_data(qpr)
-      req = gen_web_req(qpr)
-      resp = Net::HTTP.get_response(req)
-      results = parse_web_req(resp)
-    end
-
-    def gen_web_req(qpr)
-      uri = URI('https://www.alphavantage.co/query')
-      req_params = {}
-
-      req_params[:function] = 'TIME_SERIES_DAILY'
-      req_params[:symbol] = qpr.fetch(:symbol) { raise ArgumentError, 'No Trading Symbol Provided' }
-      req_params[:apikey] = ENV['alpha_vantage_key']
-
-      uri.query = URI.encode_www_form(req_params)
-      uri
-    end
-
-    def parse_web_req(resp)
-      jsr = JSON.load(resp.body)
+     def parse_web_req(resp)
+      jsr = resp
       sym = jsr['Meta Data']['2. Symbol']
       slug = jsr.to_a[1].last
 
