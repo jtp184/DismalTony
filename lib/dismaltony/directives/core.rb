@@ -127,7 +127,7 @@ module DismalTony::Directives
         return_string << "    Version: #{DismalTony::VERSION}\n"
         return_string << "    User: #{vi.user['nickname']}\n"
         return_string << "    Directives: #{vi.directives.length}\n"
-        DismalTony::HandledResponse.finish("~e:#{good_moj} #{return_string}")
+        return DismalTony::HandledResponse.finish("~e:#{good_moj} #{return_string}")
       rescue
         bad_moj = random_emoji('cancel','caution', 'alarmbell', 'thumbsdown', 'thermometer', 'worried')
         return DismalTony::HandledResponse.finish("~e:#{bad_moj} Something went wrong!")
