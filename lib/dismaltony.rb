@@ -10,7 +10,7 @@ require 'dismaltony/handled_response'
 require 'dismaltony/conversation_state'
 require 'dismaltony/dialog_interface'
 require 'dismaltony/user_identity'
-require 'dismaltony/data_storage'
+require 'dismaltony/data_store'
 require 'dismaltony/scheduler'
 require 'dismaltony/vi_base'
 

@@ -157,5 +157,22 @@ module DismalTony # :nodoc:
         end
       end
     end
+
+    module StoreAndRetrieveHelpers
+      module ClassMethods
+
+      end
+
+      module InstanceMethods
+        def get_stored_data(ky)
+          self.vi.data_store.directive_data[self][ky]
+        end
+
+        def store_data(ky, v)
+          self.vi.data_store.store_data(directive: self, key: ky, value: v)
+        end
+      end
+    end
+
   end
 end
