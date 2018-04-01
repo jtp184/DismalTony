@@ -30,21 +30,7 @@ module DismalTony # :nodoc:
   # Respresents a response to an incoming query. 
   # Handles providing match conditions as well as what to do when matched
   class Directive
-    # Returns Returns an Errored directive, using +qry+ and +vi+ to construct the new Directive
-    def self.error(qry, vi)
-      me = new(qry, vi)
-      me.query.complete(self, HandledResponse.error)
-    end
-
-    # Yields the +criteria+ array, and uses the +block+ to add its results to
-    # +match_criteria+ afterwards, allowing you to add new MatchLogic objects using the DSL.
-    def self.add_criteria(&block) # :yields: criteria
-      crit = []
-      yield crit
-      @match_criteria ||= []
-      @match_criteria += crit
-    end
-
+    include DismalTony::DirectiveHelpers::CoreHelpers
     # A core function which confirms if the Query +qry+ can be served by this directive.
     # Iterates through the +match_criteria+, and tallies a certainty index. Some MatchCriteria 
     # may throw a MatchLogicFailure error, which causes this function to return a nil
@@ -79,30 +65,6 @@ module DismalTony # :nodoc:
     class << self
       alias =~ matches?
       alias from new
-    end
-
-    # DSL function, sets the Directives +name+ to +param+
-    def self.set_name(param)
-      @name = param
-    end
-
-    # DSL function, sets the Directives +group+ to +param+
-    def self.set_group(param)
-      @group = param
-    end    
-
-    # DSL function, adds a new entry to the +parameters+ hash keyed by +param+ and given a value of +initial+.
-    def self.add_param(param, initial = nil)
-      @default_params ||= {}
-      @default_params[param.to_sym] = initial
-    end
-
-    # DSL function, takes each key-value pair in +inputpar+ and adds a new entry to 
-    # the +parameters+ hash keyed by +param+ and given a value of +initial+.
-    def self.add_params(inputpar)
-      inputpar.each do |ki, va|
-        @default_params[ki] = va
-      end
     end
   end
 
@@ -174,6 +136,10 @@ module DismalTony # :nodoc:
       raise "No response" unless fin.respond_to? :outgoing_message
       @query.complete(self, fin)
       self 
+    end
+
+    def to_s
+      query.complete? ? query.response.to_s : super
     end
   end
 end
