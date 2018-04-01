@@ -40,7 +40,7 @@ module DismalTony # :nodoc:
     # Creates a response whose ConversationState redirects control flow. Passes on next_directive, next_method, data, and parse_next via the +opts+ hash.
     def self.then_do(**opts)
       new_state = DismalTony::ConversationState.new(idle: false, next_directive: opts[:directive].name, next_method: (opts[:method] || :run), data: opts[:data], parse_next: opts.fetch(:parse_next) { true })
-      new(opts.fetch(:message) { '' }, new_state)
+      new(opts[:message], new_state)
     end
 
     # Allows you to append formatting options +form+ to a Class Method created response easily.

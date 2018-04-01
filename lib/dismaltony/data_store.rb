@@ -62,7 +62,7 @@ module DismalTony # :nodoc:
     attr_reader :data_store
 
     # Args takes hooks for :filepath and :data_store, and autopopulates them if not present.
-    def initialize(**args)
+    def initialize(args={})
       @filepath = args.fetch(:filepath) { "./tony.yml" }
       @data_store = args.fetch(:data_store) { DataStore.new }
     end
