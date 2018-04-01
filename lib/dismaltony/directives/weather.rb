@@ -299,9 +299,11 @@ module DismalTony::Directives
   flavor: hurricane
   icon: "🌪"
 DOC
-end
+  end
 
   class WeatherReportDirective < DismalTony::Directive
+    include DismalTony::DirectiveHelpers::JSONAPIHelpers
+
     set_name :get_weather
     set_group :info
 
@@ -313,6 +315,13 @@ end
     add_criteria do |qry|
       qry << keyword { |q| q.contains?(/weather/i, /temperature/i) }
       qry << should { |q| q.root =~ /weather/i || q.root =~ /temperature/i }
+    end
+
+    set_api_url 'http://api.openweathermap.org/data/2.5/weather?'
+
+    set_api_defaults do |adef|
+      adef['APPID'] = ENV['open_weather_api_key']
+      adef['units'] = 'imperial'
     end
 
     WeatherCode = Struct.new('WeatherCode', :id, :flavor, :icon) do
@@ -343,19 +352,9 @@ end
     
     Psych.load(WeatherCodeYAML).each { |wc| WeatherCode << wc }
 
-    def api_req(opts)
-      web_addr = URI('http://api.openweathermap.org/data/2.5/weather?')
-      opts['APPID'] = ENV['open_weather_api_key']
-      opts['units'] = 'imperial'
-      opts['q'] = opts[:location]
-      opts.delete(:location)
-      web_addr.query = URI.encode_www_form(opts)
-      JSON.parse(Net::HTTP.get(web_addr))
-    end
 
     def retrieve_for(loc)
-      resp = api_req(location: loc)
-
+      resp = api_request('q' => loc)
 
       parameters[:location] = resp['name']
       parameters[:id_code] = resp['weather'].first['id']
