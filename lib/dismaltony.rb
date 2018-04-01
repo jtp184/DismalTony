@@ -34,6 +34,14 @@ module DismalTony
 		@@config
 	end
 
+	def self.last_result
+		@last_result				
+	end
+
+	def self.last_result=(new_one)
+		@last_result = new_one
+	end
+
 	# Returns the configuration hash
 	def self.config
 		@@config

@@ -60,19 +60,32 @@
       return_interface.send(DismalTony::Formatter.format(str, return_interface.default_format))
     end
 
+    # Simple utility function to combine the input HandledResponse and the
+    # default format on the return interface into a single options collection.
+    def apply_format(response)
+      return_interface.default_format.merge(response.format)
+    end
+
     # The interface method takes in a Query +q+ and uses the QueryResolver#call method to decide what to do with it.
     # Responsible for using the +return_interface+ to send back the text response.
     def call(q)
       result = QueryResolver.(q, self)
       response = result.response
-      if response.format.empty?
-        say response.outgoing_message
-      else
-        say_opts(return_interface, response.outgoing_message, return_interface.default_format.merge(response.format)) unless response.format[:silent]
-      end
+
       data_store.on_query(response)
       @user.modify_state!(response.conversation_state.stamp)
-      result      
+      DismalTony.last_result = result
+
+      if !response.format[:silent]
+        if response.format.empty?
+          say response.outgoing_message
+        else
+          say_opts(return_interface, response.outgoing_message, apply_format(response)) 
+        end
+        DismalTony::Formatter.format(response.to_s, apply_format(response))
+      else
+        ""
+      end
     end
   end
 end
