@@ -2,6 +2,7 @@ require 'json'
 require 'net/http'
 require 'open-uri'
 require 'uri'
+require 'ostruct'
 
 module DismalTony # :nodoc:
   # Umbrella module for all mixins for Directives
@@ -158,21 +159,57 @@ module DismalTony # :nodoc:
       end
     end
 
+    # Provides simpler access to DataStore#directive_data, and streamlines
+    # defining and creating structs to put in it.
     module StoreAndRetrieveHelpers
+      include HelperTemplate
       module ClassMethods
+        def define_data_struct(&blk)
+          @data_struct_template = blk.call
+        end
 
+        def data_struct_template
+          @data_struct_template
+        end
+
+        def data_struct_template=(newval)
+          @data_struct_template = newval
+        end
       end
 
       module InstanceMethods
-        def get_stored_data(ky)
-          self.vi.data_store.directive_data[self][ky]
+        def get_stored_data(*ky)
+          self.vi.data_store.directive_data.fetch(self.name, *ky)
         end
 
-        def store_data(ky, v)
-          self.vi.data_store.store_data(directive: self, key: ky, value: v)
+        def store_data(ky, v=nil, &block)
+          if block_given?
+            self.vi.data_store.store_data(directive: self.name, key: ky, value: data_struct(&block))
+          else
+            self.vi.data_store.store_data(directive: self.name, key: ky, value: v)
+          end
+        end
+
+        def data_struct(&blk)
+          ud_args = {}
+          yield ud_args
+          if data_struct_template.nil?
+            OpenStruct.new(ud_args)
+          else
+            args_list = data_struct_template.members.map { |a| ud_args[a] }
+            data_struct_template.new(*args_list)
+          end
+        end
+
+        def data_struct_template
+          @data_struct_template ||= self.class.data_struct_template
+          @data_struct_template
+        end
+
+        def data_struct_template=(newval)
+          @data_struct_template = newval
         end
       end
     end
-
   end
 end

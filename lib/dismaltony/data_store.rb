@@ -43,8 +43,9 @@ module DismalTony # :nodoc:
       @users.delete(user)
     end
 
-    def <<(slug)
+    def store_data(slug)
       dr, ky, vl = slug.fetch(:directive), slug.fetch(:key), slug.fetch(:value)
+      @directive_data[dr] ||= {}
       @directive_data[dr][ky] = vl
     rescue KeyError
       nil
