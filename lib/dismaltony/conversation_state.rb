@@ -17,7 +17,7 @@ module DismalTony # :nodoc:
     attr_reader :options
     # +args+ Options have no defaults by design, allowing values to be nil when necessary.
     # Specify values by using the attribute names as Symbols
-    def initialize(**args)
+    def initialize(args={})
       @options = {}
       @options[:last_recieved_time] = args.fetch(:last_recieved_time) { nil }
       @options[:idle] = args.fetch(:idle) { nil }
