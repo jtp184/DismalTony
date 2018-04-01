@@ -33,10 +33,12 @@ module DismalTony
     @@config
   end
 
+  # Retrieves the stored result of the last Directive evaluated
   def self.last_result
     @last_result
   end
 
+  # Stores the result of the last Directive evaluated
   def self.last_result=(new_one)
     @last_result = new_one
   end

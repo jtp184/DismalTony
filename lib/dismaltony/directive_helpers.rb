@@ -7,15 +7,18 @@ require 'ostruct'
 module DismalTony # :nodoc:
   # Umbrella module for all mixins for Directives
   module DirectiveHelpers
-    # Basic template , adds the inheritence methods
-    # through metaprogramming so that n-children inherit
-    # class methods
+    # Basic template , adds the inheritence methods through metaprogramming so 
+    # that n-children inherit class methods and instance methods apropriately.
     module HelperTemplate
+      # Special case, only includes the class methods here.
       def self.included(base)
         base.extend(ClassMethods)
       end
 
+      # Contains the Class methods of the helper, which are added on inclusion
       module ClassMethods
+        # Adds the inclusion method to the class this class is included on,
+        # So that its n-children inherit class methods
         def included(base)
           base.send(:include, const_get(:InstanceMethods))
           base.extend const_get(:ClassMethods)
@@ -27,6 +30,8 @@ module DismalTony # :nodoc:
     module CoreHelpers
       include HelperTemplate
 
+      # Basic helpers that make the Directives function
+      # Contains the Class methods of the helper, which are added on inclusion
       module ClassMethods
         # DSL function, sets the Directives +name+ to +param+
         def set_name(param)
@@ -68,10 +73,9 @@ module DismalTony # :nodoc:
         end
       end
 
+      # Basic helpers that make the Directives function
+      # Contains the Instance methods of the helper, which are added on inclusion
       module InstanceMethods
-        def params
-          @parameters
-        end
       end
     end
 
@@ -79,13 +83,17 @@ module DismalTony # :nodoc:
     module ConversationHelpers
       include HelperTemplate
 
+      # Utility functions to help construct responses easier.
+      # Contains the Class methods of the helper, which are added on inclusion
       module ClassMethods
-        def add_synonyms
+        # Takes in Hash<Regexp, Array<String>> and adds them to the synonyms
+        def add_synonyms # :yields: synonyms
           new_syns = {}
           yield new_syns
           @synonyms.merge!(new_syns)
         end
 
+        # The array of synonyms available for using #synonym_for
         def synonyms
           @synonyms ||= {
             /^awesome$/i => %w[great excellent cool awesome splendid],
@@ -101,7 +109,10 @@ module DismalTony # :nodoc:
         end
       end
 
+      # Utility functions to help construct responses easier.
+      # Contains the Instance methods of the helper, which are added on inclusion
       module InstanceMethods
+        # Chooses randomly from +moj+, or if no arguments are passed randomly from all emoji.
         def random_emoji(*moj)
           if moj.length.zero?
             DismalTony::EmojiDictionary.emoji_table.keys.sample
@@ -110,6 +121,7 @@ module DismalTony # :nodoc:
           end
         end
 
+        # Given a string, scans through the synonym array for any potential synonyms.
         def synonym_for(word)
           resp = nil
           synonyms.each do |reg, syns|
@@ -119,6 +131,7 @@ module DismalTony # :nodoc:
           word
         end
 
+        # Instance hook for the class method
         def synonyms
           @synonyms ||= self.class.synonyms
           @synonyms
@@ -130,48 +143,65 @@ module DismalTony # :nodoc:
     module JSONAPIHelpers
       include HelperTemplate
 
+      # Mixin for JSON-based web APIs.
+      # Contains the Class methods of the helper, which are added on inclusion
       module ClassMethods
+        # Takes in a block +blk+ and calculates it later to ensure late ENV access
         def set_api_defaults(&blk)
           @api_defaults_proc = blk
         end
 
+        # Retrieves the block from #set_api_defaults and calls it.
         def get_api_defaults
           res = {}
           @api_defaults_proc.call(res)
           res
         end
 
+        # Gets the api_defaults
         def api_defaults
           @api_defaults ||= get_api_defaults
         end
 
+        
+        # Sets the api_defaults
         def api_defaults=(newval)
           @api_defaults = newval
         end
 
+        # Gets the api_url
         def api_url
           @api_url
         end
 
+        # Sets the api_url
         def api_url=(newval)
           @api_url = newval
         end
 
+        # DSL method for setting the api_url
         def set_api_url(url)
           @api_url = url
         end
       end
 
+      # Mixin for JSON-based web APIs.
+      # Contains the Instance methods of the helper, which are added on inclusion
       module InstanceMethods
+        # Instance hook for the api_url
         def api_url
           @api_url ||= self.class.api_url
           @api_url
         end
 
+        # Sets the api_url
         def api_url=(new_value)
           @api_url = new_value
         end
 
+        # Generates an API request from the provided data to this mixin.
+        # Parses and returns the JSON body of a request, intelligently merging
+        # given arguments in +input_args+ and the #api_defaults
         def api_request(input_args)
           addr = URI(api_url)
           parms = input_args.clone
@@ -180,11 +210,13 @@ module DismalTony # :nodoc:
           JSON.parse(Net::HTTP.get(addr))
         end
 
+        # Instance hook for api_defaults
         def api_defaults
           @api_defaults ||= self.class.api_defaults
           @api_defaults
         end
 
+        # Sets api_defaults
         def api_defaults=(new_value)
           @api_defaults = new_value
         end
@@ -195,25 +227,38 @@ module DismalTony # :nodoc:
     # defining and creating structs to put in it.
     module StoreAndRetrieveHelpers
       include HelperTemplate
+
+      # Provides simpler access to DataStore#directive_data, and streamlines
+      # defining and creating structs to put in it.
+      # Contains the Class methods of the helper, which are added on inclusion
       module ClassMethods
+        # Takes in a block returning a Struct, where user schema is defined.
         def define_data_struct
           @data_struct_template = yield
         end
 
+        # Gets data_struct_template
         def data_struct_template
           @data_struct_template
         end
 
+        # Sets data_struct_template
         def data_struct_template=(newval)
           @data_struct_template = newval
         end
       end
 
+      # Provides simpler access to DataStore#directive_data, and streamlines
+      # defining and creating structs to put in it.
+      # Contains the Instance methods of the helper, which are added on inclusion
       module InstanceMethods
+        # Uses the Directive's name, and any passed values to dig into the directive data
         def get_stored_data(*ky)
-          vi.data_store.directive_data.fetch(name, *ky)
+          vi.data_store.directive_data.dig(name, *ky)
         end
 
+        # In this Directive's storage, stores +ky+ with a value of +v+.
+        # If a block is given, passes it to #data_struct and uses that as the value.
         def store_data(ky, v = nil, &block)
           if block_given?
             vi.data_store.store_data(directive: name, key: ky, value: data_struct(&block))
@@ -222,7 +267,9 @@ module DismalTony # :nodoc:
           end
         end
 
-        def data_struct
+        # Takes in arguments to create a new struct. If no #data_struct_template is defined,
+        # It creates an OpenStruct instead. Otherwise, correctly maps values to the struct.
+        def data_struct # :yields: arguments
           ud_args = {}
           yield ud_args
           if data_struct_template.nil?
@@ -233,11 +280,13 @@ module DismalTony # :nodoc:
           end
         end
 
+        # Instance hook for the data struct template
         def data_struct_template
           @data_struct_template ||= self.class.data_struct_template
           @data_struct_template
         end
 
+        # Sets the data struct template
         def data_struct_template=(newval)
           @data_struct_template = newval
         end

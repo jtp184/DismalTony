@@ -103,6 +103,7 @@ module DismalTony
       @@members.find { |m| m.new(nil).priority == srch }
     end
 
+    # Adds +input+ to members after doing a quick type check
     def self.<<(input)
       @@members << input if input <= DismalTony::MatchLogic
     end
@@ -150,6 +151,7 @@ module DismalTony
         @success_incr = 5
       end
 
+      # Raises a MatchLogicFailure if this does not match
       def on_failure
         raise MatchLogicFailure
       end

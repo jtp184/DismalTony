@@ -138,6 +138,7 @@ module DismalTony # :nodoc:
       self 
     end
 
+    # Returns the query's response if it's completed
     def to_s
       query.complete? ? query.response.to_s : super
     end

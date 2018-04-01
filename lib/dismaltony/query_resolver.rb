@@ -1,4 +1,7 @@
 module DismalTony
+  # The class that handles assembly of Query objects, and combining them with directives.
+  # This class is where the primary matching logic defined by the MatchLogic
+  # objects is executed, and Directive#run calls are made.
   module QueryResolver
     # The usual version of the matching function.
     # Takes in a +query+ and set of +directives+, and checks to see the matches.

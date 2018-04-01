@@ -43,6 +43,7 @@ module DismalTony # :nodoc:
       @users.delete(user)
     end
 
+    # Uses the hash +slug+ to insert a new value into the #directive_data hash
     def store_data(slug)
       dr, ky, vl = slug.fetch(:directive), slug.fetch(:key), slug.fetch(:value)
       @directive_data[dr] ||= {}

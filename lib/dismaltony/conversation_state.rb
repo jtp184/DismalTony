@@ -42,7 +42,7 @@ module DismalTony # :nodoc:
       @options.fetch(:parse_next)
     end
 
-    def method_missing(m_name, *args)
+    def method_missing(m_name, *args) # :nodoc:
       @options.fetch(m_name)
     rescue KeyError
       super
