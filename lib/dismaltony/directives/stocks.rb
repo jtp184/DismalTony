@@ -4,118 +4,123 @@ require 'net/http'
 require 'json'
 
 module DismalTony::Directives
-	class GetStockPriceDirective < DismalTony::Directive
-		set_name :get_stock_price
-		set_group :info
+  class GetStockPriceDirective < DismalTony::Directive
+    set_name :get_stock_price
+    set_group :info
 
-		add_param :stock_id
-		add_param :current_value
+    add_param :stock_id
+    add_param :current_value
 
-		add_criteria do |qry|
-			qry << keyword { |q| q =~ /stocks?/i }
-			qry << must { |q| q =~ /\b[A-Z]+\b/ }
-			qry << could { |q| q =~ /prices?/i }
-		end
+    add_criteria do |qry|
+      qry << keyword { |q| q =~ /stocks?/i }
+      qry << must { |q| q =~ /\b[A-Z]+\b/ }
+      qry << could { |q| q =~ /prices?/i }
+    end
 
-		def run
-			params[:stock_id] = /\b[A-Z]+\b/.match(query)[0]
-			prices = retrieve_data(symbol: params[:stock_id])
-			
-			params[:current_value] = prices.find { |p| p.date === Date.today }
+    def run
+      parameters[:stock_id] =
+        /\b[A-Z]+\b/.match(query.raw_text)[0]
+      prices = retrieve_data(symbol: parameters[:stock_id])
 
-			answ, moj = price_comment(prices)
+      parameters[:current_value] = prices.find { |p| p.date === Date.today }
 
-			conv = "~e:#{moj} "
-			conv << ["The current", "Today's", "The", "Current"].sample
-			conv << " stock price for #{params[:stock_id]} is "
-			conv << answ << "."
-			DismalTony::HandledResponse.finish(conv)
-		end
+      answ, moj = price_comment(prices)
 
-		private
+      conv = "~e:#{moj} "
+      conv << ['The current', "Today's", 'The', 'Current'].sample
+      conv << " stock price for #{parameters[:stock_id]} is "
+      conv << answ << '.'
+      DismalTony::HandledResponse.finish(conv)
+    end
 
-		StockPrice = Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
-			include Comparable
-			
-			def price
-				self.close || self.open
-			end
+    private
 
-			def <=>(other)
-				self.close <=> other.close
-			rescue NoMethodError
-				self.close <=> Integer(other)
-			end
+    StockPrice = Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
+      include Comparable
 
-			def to_s; self.price; end
+      def price
+        close || open
+      end
 
-			def to_str; self.price; end
-		end
+      def <=>(other)
+        close <=> other.close
+      rescue NoMethodError
+        close <=> Integer(other)
+      end
 
-		def price_comment(history)
-			current = history.select { |pr| pr.date === Date.today }.first
-			moj = ''
+      def to_s
+        price.to_s
+   end
 
-			comment = "$#{'%.2f' % current.price }" << case [0, 1, 2, 3].sample
-			when 0
-				# Better / worse than yesterday
-				yesterday = history.select { |pr| pr.date === Date.today - 1 }.first
-				if current > yesterday
-					moj = ['chartup', 'thumbsup', 'fire'].sample
-					", up from yesterday's $#{yesterday.price}"
-				else
-					moj = ['chartdown', 'raincloud', 'snail'].sample
-					", down from yesterday's $#{yesterday.price}"
-				end
-			when 1
-				# Compared to highest record
-				if history.max == current
-					moj = ['star', 'rocket', '100'].sample
-					", currently at its 100-day peak"
-				else
-					moj = ['barchart', 'chartup', 'checkbox'].sample
-					", with a 100-day peak of $#{history.max.price} on #{history.max.date}"
-				end
-			else
-				# Just the current price, no commentary
-				moj = ['moneywing', 'moneybag', 'monocle', 'tophat', 'dollarsign'].sample
-				""
-			end
+      def to_str
+        price.to_s
+   end
+    end
 
-			return comment, moj
-		end
+    def price_comment(history)
+      current = history.select { |pr| pr.date === Date.today }.first
+      moj = ''
 
-		def retrieve_data(qpr)
-			req = gen_web_req(qpr)
-			resp = Net::HTTP.get_response(req)
-			results = parse_web_req(resp)
-		end
+      comment = "$#{format('%.2f', current.price)}" << case [0, 1, 2, 3].sample
+                                                       when 0
+                                                         # Better / worse than yesterday
+                                                         yesterday = history.select { |pr| pr.date === Date.today - 1 }.first
+                                                         if current > yesterday
+                                                           moj = %w[chartup thumbsup fire].sample
+                                                           ", up from yesterday's $#{yesterday.price}"
+                                                         else
+                                                           moj = %w[chartdown raincloud snail].sample
+                                                           ", down from yesterday's $#{yesterday.price}"
+                                                         end
+                                                       when 1
+                                                         # Compared to highest record
+                                                         if history.max == current
+                                                           moj = %w[star rocket 100].sample
+                                                           ', currently at its 100-day peak'
+                                                         else
+                                                           moj = %w[barchart chartup checkbox].sample
+                                                           ", with a 100-day peak of $#{history.max.price} on #{history.max.date}"
+                                                         end
+                                                       else
+                                                         # Just the current price, no commentary
+                                                         moj = %w[moneywing moneybag monocle tophat dollarsign].sample
+                                                         ''
+      end
 
-		def gen_web_req(qpr)
-			uri = URI('https://www.alphavantage.co/query')
-			req_params = {}
+      [comment, moj]
+    end
 
-			req_params[:function] = 'TIME_SERIES_DAILY'
-			req_params[:symbol] = qpr.fetch(:symbol) { raise ArgumentError, "No Trading Symbol Provided" }
-			req_params[:apikey] = ENV['alpha_vantage_key']
+    def retrieve_data(qpr)
+      req = gen_web_req(qpr)
+      resp = Net::HTTP.get_response(req)
+      results = parse_web_req(resp)
+    end
 
-			uri.query = URI.encode_www_form(req_params)
-			uri
-		end
+    def gen_web_req(qpr)
+      uri = URI('https://www.alphavantage.co/query')
+      req_params = {}
 
-		def parse_web_req(resp)
-			jsr = JSON.load(resp.body)
-			sym = jsr['Meta Data']['2. Symbol']
-			slug = jsr.to_a[1].last
+      req_params[:function] = 'TIME_SERIES_DAILY'
+      req_params[:symbol] = qpr.fetch(:symbol) { raise ArgumentError, 'No Trading Symbol Provided' }
+      req_params[:apikey] = ENV['alpha_vantage_key']
 
-			results = []
+      uri.query = URI.encode_www_form(req_params)
+      uri
+    end
 
-			slug.each do |dat, prindx|
-				md = /(\d+)-(\d+)-(\d+)/.match dat
-				datum = Date.new(md[1].to_i, md[2].to_i, md[3].to_i)
-				results << StockPrice.new(sym, datum, *prindx.values.map(&:to_f))
-			end
-			results
-		end
-	end
+    def parse_web_req(resp)
+      jsr = JSON.load(resp.body)
+      sym = jsr['Meta Data']['2. Symbol']
+      slug = jsr.to_a[1].last
+
+      results = []
+
+      slug.each do |dat, prindx|
+        md = /(\d+)-(\d+)-(\d+)/.match dat
+        datum = Date.new(md[1].to_i, md[2].to_i, md[3].to_i)
+        results << StockPrice.new(sym, datum, *prindx.values.map(&:to_f))
+      end
+      results
+    end
+  end
 end

@@ -35,7 +35,7 @@ end
 
 DismalTony.vi = DismalTony::VIBase.new(
   :data_store => @db,
-  :user => @db.users.first
+  :user => @db.users&.first
   )
 
 @last = nil

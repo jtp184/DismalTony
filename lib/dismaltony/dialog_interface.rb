@@ -17,8 +17,8 @@ module DismalTony # :nodoc:
     end
   end
 
+  # Used for when no output is desired.
   class NowhereInterface < DialogInterface
-    # Used for when no output is desired.
 
     # Simply eats the message
     def send(_msg); end
@@ -60,6 +60,7 @@ module DismalTony # :nodoc:
         )
     end
 
+    # Overrides the stored +destination+ and sends +msg+ to the number +num+ instead
     def send_to(msg, num)
       return nil if msg =~ /^ *$/
       @client.api.account.messages.create(

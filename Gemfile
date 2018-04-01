@@ -14,7 +14,8 @@ group :development do
   gem 'hanna-nouveau', require: false
   gem 'pry', '~> 0.10.4'
   gem 'rdoc', require: false
-  gem 'gaming_dice', require: false
+  gem 'gaming_dice', git: 'https://github.com/jtp184/gaming_dice', 
+require: false
 end
 
 group :runtime do

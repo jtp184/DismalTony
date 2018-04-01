@@ -10,6 +10,7 @@
     attr_reader :directives
     # A DataStore object representing the VI's memory and userspace
     attr_reader :data_store
+    # The UserIdentity corresponding to the current user.
     attr_reader :user
     # the Scheduler object for executing timed tasks
     attr_reader :scheduler
@@ -19,6 +20,7 @@
     # * +:directives+ - The Array of directives. Defaults to the entire contents of the HandlerRegistry.
     # * +:data_store+ - The data store to use with this VI. Defaults to a generic DataStore object.
     # * +:return_interface+ - The interface to route conversation back through. Defaults to the ConsoleInterface.
+    # * +:user+ - the UserIdentity of who is using this VI
     def initialize(**opts)
       @name = (opts[:name].freeze || opts[:data_store]&.opts&.[](:vi_name) || 'Tony'.freeze)
       @return_interface = (opts[:return_interface] || DismalTony::ConsoleInterface.new)
@@ -32,6 +34,7 @@
       @user = (opts[:user] || @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT)
     end
 
+    # Takes the module level VI and duplicates it, overriding its values with ones from +opts+
     def self.inherit(**opts)
       DismalTony::VIBase.new(
         user: (opts[:user] || DismalTony.().user || DismalTony::UserIdentity::DEFAULT),
@@ -57,6 +60,8 @@
       return_interface.send(DismalTony::Formatter.format(str, return_interface.default_format))
     end
 
+    # The interface method takes in a Query +q+ and uses the QueryResolver#call method to decide what to do with it.
+    # Responsible for using the +return_interface+ to send back the text response.
     def call(q)
       result = QueryResolver.(q, self)
       response = result.response
