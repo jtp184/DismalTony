@@ -7,6 +7,7 @@ module DismalTony::Directives
   class GetStockPriceDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::EmojiHelpers
 
     set_name :get_stock_price
     set_group :info

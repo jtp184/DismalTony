@@ -112,15 +112,6 @@ module DismalTony # :nodoc:
       # Utility functions to help construct responses easier.
       # Contains the Instance methods of the helper, which are added on inclusion
       module InstanceMethods
-        # Chooses randomly from +moj+, or if no arguments are passed randomly from all emoji.
-        def random_emoji(*moj)
-          if moj.length.zero?
-            DismalTony::EmojiDictionary.emoji_table.keys.sample
-          else
-            moj.sample
-          end
-        end
-
         # Given a string, scans through the synonym array for any potential synonyms.
         def synonym_for(word)
           resp = nil
@@ -135,6 +126,37 @@ module DismalTony # :nodoc:
         def synonyms
           @synonyms ||= self.class.synonyms
           @synonyms
+        end
+      end
+    end
+
+    module EmojiHelpers
+      include HelperTemplate
+
+      module ClassMethods
+      end
+
+      module InstanceMethods
+        # Chooses randomly from +moj+, or if no arguments are passed randomly from all emoji.
+        def random_emoji(*moj)
+          if moj.length.zero?
+            DismalTony::EmojiDictionary.emoji_table.keys.sample
+          else
+            moj.sample
+          end
+        end
+
+        # Returns randomly from a predefined set of positiveemoji        
+        def positive_emoji
+          %w[100 checkbox star thumbsup rocket].sample
+        end
+        # Returns randomly from a predefined set of negative emoji
+        def negative_emoji
+          %w[cancel caution frown thumbsdown siren].sample
+        end
+        # Returns randomly from a predefined set of face emoji
+        def random_face_emoji
+          %w[cool goofy monocle sly smile think].sample
         end
       end
     end
@@ -289,6 +311,46 @@ module DismalTony # :nodoc:
         # Sets the data struct template
         def data_struct_template=(newval)
           @data_struct_template = newval
+        end
+      end
+    end
+
+    module DataRepresentationHelpers
+      include HelperTemplate
+
+      module ClassMethods
+        # Defines a default data representation
+        def define_data_representation
+          @data_representation = yield
+        end
+        # Gets data_representation
+        def data_representation
+          @data_representation
+        end
+
+        # Sets data_representation to +new_val+
+        def data_representation=(new_val)
+          @data_representation = new_val
+        end
+      end
+
+      module InstanceMethods
+        # Instance hook for data_representation
+        def data_representation
+          @data_representation ||= self.class.data_representation
+          @data_representation ||= parameters
+          @data_representation ||= OpenStruct.new
+          @data_representation
+        end
+
+        # Sets data_representation to +new_val+
+        def data_representation=(new_val)
+          @data_representation = new_val
+        end
+
+        # DSL method, overwrites data representation
+        def return_data(data)
+          @data_representation = data
         end
       end
     end

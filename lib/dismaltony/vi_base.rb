@@ -82,9 +82,12 @@
         else
           say_opts(return_interface, response.outgoing_message, apply_format(response)) 
         end
-        DismalTony::Formatter.format(response.to_s, apply_format(response))
+      end
+      
+      if result.respond_to?(:data_representation)
+        result.data_representation
       else
-        ""
+        DismalTony::Formatter.format(response.to_s, apply_format(response))
       end
     end
   end

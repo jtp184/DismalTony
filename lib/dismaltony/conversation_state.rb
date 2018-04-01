@@ -2,7 +2,7 @@ module DismalTony # :nodoc:
   # Represents the state of conversation, to allow for control flow in multi-stage handler resolution
   class ConversationState
     # The hash containing the options
-    # - :last_recieved_time
+    # - :last_received_time
     # -- A Time object referencing the last time this user queried the VI
     # - :idle
     # -- True/False as to whether the VI is in the middle of a chain of handlers
@@ -19,7 +19,7 @@ module DismalTony # :nodoc:
     # Specify values by using the attribute names as Symbols
     def initialize(args={})
       @options = {}
-      @options[:last_recieved_time] = args.fetch(:last_recieved_time) { nil }
+      @options[:last_received_time] = args.fetch(:last_received_time) { nil }
       @options[:idle] = args.fetch(:idle) { nil }
       @options[:next_directive] = args.fetch(:next_directive) { nil }
       @options[:next_method] = args.fetch(:next_method) { nil }
@@ -50,7 +50,7 @@ module DismalTony # :nodoc:
 
     # Combines the state of ConversationState +other+ in with this one safely, keeping existing values if +other+ has a nil
     def merge(other)
-      @options[:last_recieved_time] ||= other.last_recieved_time
+      @options[:last_received_time] ||= other.last_received_time
       @options[:idle] ||= other.idle
       @options[:next_directive] ||= other.next_directive
       @options[:next_method] ||= other.next_method
@@ -60,7 +60,7 @@ module DismalTony # :nodoc:
 
     # Combines the state of ConversationState +other+ in with this one destructively, overwriting existing values
     def merge!(other)
-      @options[:last_recieved_time] = other.last_recieved_time
+      @options[:last_received_time] = other.last_received_time
       @options[:idle] = other.idle
       @options[:next_directive] = other.next_directive
       @options[:next_method] = other.next_method
@@ -68,9 +68,9 @@ module DismalTony # :nodoc:
       @options[:parse_next] = other.parse_next
     end
 
-    # Updates +last_recieved_time+ with a current timestamp
+    # Updates +last_received_time+ with a current timestamp
     def stamp
-      @options[:last_recieved_time] = Time.now
+      @options[:last_received_time] = Time.now
       self
     end
   end

@@ -2,6 +2,7 @@ require 'gaming_dice'
 
 module DismalTony::Directives
   class DiceRollDirective < DismalTony::Directive
+    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     set_name :diceroll
     set_group :fun
 
@@ -23,7 +24,7 @@ module DismalTony::Directives
 
       resp = '~e:dice '
       resp << "Okay! The result#{rolls.length == 1 ? ' is' : 's are'}: #{result_string}."
-
+      return_data(parameters[:result])
       DismalTony::HandledResponse.finish(resp)
     end
   end

@@ -1,5 +1,8 @@
+require 'duration'
+
 module DismalTony::Directives
   class SendTextMessageDirective < DismalTony::Directive
+    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     set_name :send_text
     set_group :core
     
@@ -58,6 +61,9 @@ module DismalTony::Directives
                       end
 
   class UserInfoDirective < DismalTony::Directive
+    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
+    include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::EmojiHelpers
     set_name :whoami
     set_group :info
 
@@ -70,11 +76,11 @@ module DismalTony::Directives
 
     def run
       if query =~ /who am i/i
-        moj = ['think','magnifyingglass','crystalball','smile'].sample
+        moj = random_emoji('think','magnifyingglass','crystalball','smile')
+        return_data(query.user)
         DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.")
       elsif query =~ /what('| i)?s my/i
         seek = query.children_of(query.root).select { |w| w.rel == 'nsubj' }&.first
-
         moj = case seek.to_s
         when /phone/i, /number/i
           'phone'
@@ -87,18 +93,21 @@ module DismalTony::Directives
         when /email/i
           'envelope'
         else
-          ['magnifyingglass', 'key'].sample
+          random_emoji('magnifyingglass', 'key')
         end
 
-        return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.") if (seek.to_s == 'name')
-        return DismalTony::HandledResponse.finish("~e:#{moj} You are #{Duration.new(Time.now - j[:birthday]).weeks / 52} years old, #{query.user[:nickname]}!") if (seek.to_s == 'age')
+        return_data("#{query.user[:first_name]} #{query.user[:last_name]}") and return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.") if (seek.to_s == 'name')
+        age_in_years = Duration.new(Time.now - query.user[:birthday]).weeks / 52
+        return_data(age_in_years) and return DismalTony::HandledResponse.finish("~e:#{moj} You are #{age_in_years} years old, #{query.user[:nickname]}!") if (seek.to_s == 'age')
 
         ky = seek.to_s.to_sym
         ky = :phone if ky == :number
 
         if query.user[ky]
+          return_data(query.user[ky])
           DismalTony::HandledResponse.finish("~e:#{moj} Your #{seek.to_s} is #{query.user[ky]}")
         else
+          return_data(nil)
           DismalTony::HandledResponse.finish("~e:frown I'm sorry, I don't know your #{seek.to_s}")
         end
       else
@@ -109,6 +118,7 @@ module DismalTony::Directives
 
   class SelfDiagnosticDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::EmojiHelpers
     
     set_name :selfdiagnostic
     set_group :debug

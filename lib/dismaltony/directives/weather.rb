@@ -303,6 +303,7 @@ DOC
 
   class WeatherReportDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
+    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
 
     set_name :get_weather
     set_group :info
@@ -372,7 +373,7 @@ DOC
     def run
       parameters[:location] = query['xpos', 'NNP'].join(' ')
       req = retrieve_for(parameters[:location])
-
+      return_data(req)
       if query.contains?(/temperature/i)
         DismalTony::HandledResponse.finish("~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}")
       else

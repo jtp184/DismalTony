@@ -1,6 +1,7 @@
 module DismalTony::Directives
   class GreetingDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::EmojiHelpers
 
     set_name :hello
     set_group :conversation
