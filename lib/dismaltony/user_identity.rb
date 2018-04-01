@@ -19,15 +19,15 @@ module DismalTony # :nodoc:
 
     # Clones using the Marlshal dump / load trick.
     def clone
-      Marshal::load(Marshal.dump(self))
+      Marshal.load(Marshal.dump(self))
     end
 
     # A Default user, in case none is provided. Has data for <tt>nickname, first_name, last_name</tt>.
     DEFAULT = DismalTony::UserIdentity.new(
       user_data: {
-        :nickname => 'User',
-        :first_name => 'Default',
-        :last_name => 'User'
+        nickname: 'User',
+        first_name: 'Default',
+        last_name: 'User'
       }
     )
 

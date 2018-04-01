@@ -4,7 +4,6 @@ require 'net/http'
 module DismalTony # :nodoc:
   # The basic class for outputting message content to the user.
   class DialogInterface
-
     # The default formatting options as a hash
     def default_format
       {}
@@ -19,7 +18,6 @@ module DismalTony # :nodoc:
 
   # Used for when no output is desired.
   class NowhereInterface < DialogInterface
-
     # Simply eats the message
     def send(_msg); end
   end
@@ -30,9 +28,9 @@ module DismalTony # :nodoc:
     def send(msg)
       puts msg
     end
-    
+
     def default_format
-      {:extra_space => true}
+      { extra_space: true }
     end
   end
 
@@ -57,7 +55,7 @@ module DismalTony # :nodoc:
         from: ENV['twilio_phone_number'],
         to: destination,
         body: msg
-        )
+      )
     end
 
     # Overrides the stored +destination+ and sends +msg+ to the number +num+ instead
@@ -67,7 +65,7 @@ module DismalTony # :nodoc:
         from: ENV['twilio_phone_number'],
         to: num,
         body: msg
-        )
+      )
     end
   end
 

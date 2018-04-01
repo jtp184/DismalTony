@@ -6,8 +6,8 @@ require 'ostruct'
 
 module DismalTony # :nodoc:
   # Umbrella module for all mixins for Directives
-  module DirectiveHelpers 
-    # Basic template , adds the inheritence methods 
+  module DirectiveHelpers
+    # Basic template , adds the inheritence methods
     # through metaprogramming so that n-children inherit
     # class methods
     module HelperTemplate
@@ -17,8 +17,8 @@ module DismalTony # :nodoc:
 
       module ClassMethods
         def included(base)
-          base.send(:include, self.const_get(:InstanceMethods))
-          base.extend self.const_get(:ClassMethods)
+          base.send(:include, const_get(:InstanceMethods))
+          base.extend const_get(:ClassMethods)
         end
       end
     end
@@ -36,8 +36,7 @@ module DismalTony # :nodoc:
         # DSL function, sets the Directives +group+ to +param+
         def set_group(param)
           @group = param
-        end    
-
+        end
 
         # DSL function, adds a new entry to the +parameters+ hash keyed by +param+ and given a value of +initial+.
         def add_param(param, initial = nil)
@@ -45,7 +44,7 @@ module DismalTony # :nodoc:
           @default_params[param.to_sym] = initial
         end
 
-        # DSL function, takes each key-value pair in +inputpar+ and adds a new entry to 
+        # DSL function, takes each key-value pair in +inputpar+ and adds a new entry to
         # the +parameters+ hash keyed by +param+ and given a value of +initial+.
         def add_params(inputpar)
           inputpar.each do |ki, va|
@@ -55,7 +54,7 @@ module DismalTony # :nodoc:
 
         # Yields the +criteria+ array, and uses the +block+ to add its results to
         # +match_criteria+ afterwards, allowing you to add new MatchLogic objects using the DSL.
-        def add_criteria(&block)
+        def add_criteria
           crit = []
           yield crit
           @match_criteria ||= []
@@ -81,7 +80,7 @@ module DismalTony # :nodoc:
       include HelperTemplate
 
       module ClassMethods
-        def add_synonyms(&blk)
+        def add_synonyms
           new_syns = {}
           yield new_syns
           @synonyms.merge!(new_syns)
@@ -197,8 +196,8 @@ module DismalTony # :nodoc:
     module StoreAndRetrieveHelpers
       include HelperTemplate
       module ClassMethods
-        def define_data_struct(&blk)
-          @data_struct_template = blk.call
+        def define_data_struct
+          @data_struct_template = yield
         end
 
         def data_struct_template
@@ -212,18 +211,18 @@ module DismalTony # :nodoc:
 
       module InstanceMethods
         def get_stored_data(*ky)
-          self.vi.data_store.directive_data.fetch(self.name, *ky)
+          vi.data_store.directive_data.fetch(name, *ky)
         end
 
-        def store_data(ky, v=nil, &block)
+        def store_data(ky, v = nil, &block)
           if block_given?
-            self.vi.data_store.store_data(directive: self.name, key: ky, value: data_struct(&block))
+            vi.data_store.store_data(directive: name, key: ky, value: data_struct(&block))
           else
-            self.vi.data_store.store_data(directive: self.name, key: ky, value: v)
+            vi.data_store.store_data(directive: name, key: ky, value: v)
           end
         end
 
-        def data_struct(&blk)
+        def data_struct
           ud_args = {}
           yield ud_args
           if data_struct_template.nil?

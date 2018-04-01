@@ -5,7 +5,6 @@ require 'json'
 
 module DismalTony::Directives
   class GetStockPriceDirective < DismalTony::Directive
-    
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::ConversationHelpers
 
@@ -30,7 +29,7 @@ module DismalTony::Directives
 
     def run
       parameters[:stock_id] =
-      /\b[A-Z]+\b/.match(query.raw_text)[0]
+        /\b[A-Z]+\b/.match(query.raw_text)[0]
       prices = retrieve_data(symbol: parameters[:stock_id])
 
       parameters[:current_value] = prices.find { |p| p.date === Date.today }
@@ -73,38 +72,38 @@ module DismalTony::Directives
       moj = ''
 
       comment = "$#{format('%.2f', current.price)}" << case [0, 1, 2, 3].sample
-      when 0
-         # Better / worse than yesterday
-         yesterday = history.select { |pr| pr.date === Date.today - 1 }.first
-         if current > yesterday
-           moj = random_emoji('chartup', 'thumbsup', 'fire')
-           ", up from yesterday's $#{yesterday.price}"
-         else
-           moj = random_emoji('chartdown', 'raincloud', 'snail')
-           ", down from yesterday's $#{yesterday.price}"
-         end
-       when 1
-         # Compared to highest record
-         if history.max == current
-           moj = random_emoji('star', 'rocket', '100')
-           ', currently at its 100-day peak'
-         else
-           moj = random_emoji('barchart', 'chartup', 'checkbox')
-           ", with a 100-day peak of $#{history.max.price} on #{history.max.date}"
-         end
-       else
-         # Just the current price, no commentary
-         moj = random_emoji('moneywing', 'moneybag', 'monocle', 'tophat', 'dollarsign')
-         ''
+                                                       when 0
+                                                         # Better / worse than yesterday
+                                                         yesterday = history.select { |pr| pr.date === Date.today - 1 }.first
+                                                         if current > yesterday
+                                                           moj = random_emoji('chartup', 'thumbsup', 'fire')
+                                                           ", up from yesterday's $#{yesterday.price}"
+                                                         else
+                                                           moj = random_emoji('chartdown', 'raincloud', 'snail')
+                                                           ", down from yesterday's $#{yesterday.price}"
+                                                         end
+                                                       when 1
+                                                         # Compared to highest record
+                                                         if history.max == current
+                                                           moj = random_emoji('star', 'rocket', '100')
+                                                           ', currently at its 100-day peak'
+                                                         else
+                                                           moj = random_emoji('barchart', 'chartup', 'checkbox')
+                                                           ", with a 100-day peak of $#{history.max.price} on #{history.max.date}"
+                                                         end
+                                                       else
+                                                         # Just the current price, no commentary
+                                                         moj = random_emoji('moneywing', 'moneybag', 'monocle', 'tophat', 'dollarsign')
+                                                         ''
        end
-       [comment, moj]
+      [comment, moj]
      end
 
-     def retrieve_data(qpr)
-       parse_web_req(api_request(qpr))
-     end
+    def retrieve_data(qpr)
+      parse_web_req(api_request(qpr))
+    end
 
-     def parse_web_req(resp)
+    def parse_web_req(resp)
       jsr = resp
       sym = jsr['Meta Data']['2. Symbol']
       slug = jsr.to_a[1].last
@@ -117,6 +116,6 @@ module DismalTony::Directives
         results << StockPrice.new(sym, datum, *prindx.values.map(&:to_f))
       end
       results
-    end
+   end
   end
 end

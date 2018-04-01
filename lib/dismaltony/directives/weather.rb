@@ -4,7 +4,7 @@ require 'open-uri'
 
 module DismalTony::Directives
   class WeatherReportDirective < DismalTony::Directive
-    WeatherCodeYAML = <<DOC
+    WeatherCodeYAML = <<DOC.freeze
 ---
 - !ruby/struct:Struct::WeatherCode
   id: 200
@@ -345,13 +345,11 @@ DOC
       end
 
       def self.find(byid)
-        @@codes.find { |v| v.id == byid}
+        @@codes.find { |v| v.id == byid }
       end
-
     end
-    
-    Psych.load(WeatherCodeYAML).each { |wc| WeatherCode << wc }
 
+    Psych.load(WeatherCodeYAML).each { |wc| WeatherCode << wc }
 
     def retrieve_for(loc)
       resp = api_request('q' => loc)
@@ -367,7 +365,7 @@ DOC
         city_name: parameters[:location],
         weather: wc,
         temp_min: resp['main']['temp_min'],
-        temp_max: resp['main']['temp_max'],
+        temp_max: resp['main']['temp_max']
       }
     end
 

@@ -1,7 +1,6 @@
 module DismalTony # :nodoc:
   # Responsible for taking strings and formatting them according to project guidelines
   class Formatter
-
     # Options for the format
     attr_reader :opts
 
@@ -24,7 +23,7 @@ module DismalTony # :nodoc:
 
       em = get_icon(em)
       em = opts[:use_icon] if opts[:use_icon]
-      
+
       result = Formatter.add_icon(result, em) unless opts[:icon] == false
       result = extra_space(result) if opts[:extra_space]
       result
@@ -40,10 +39,10 @@ module DismalTony # :nodoc:
       "[#{emo}]: #{str}"
     end
 
-    # Uses String#gsub to pad +str+ with extra space before a closing 
+    # Uses String#gsub to pad +str+ with extra space before a closing
     # square bracket, allowing the default text output to work in terminal.
     def self.extra_space(str)
-      str.gsub(/]:/, "  ]:")
+      str.gsub(/]:/, '  ]:')
     end
   end
 end

@@ -23,13 +23,13 @@ module DismalTony # :nodoc:
       @options[:idle] = args.fetch(:idle) { nil }
       @options[:next_directive] = args.fetch(:next_directive) { nil }
       @options[:next_method] = args.fetch(:next_method) { nil }
-      @options[:data] = args.fetch(:data) { nil  }
+      @options[:data] = args.fetch(:data) { nil }
       @options[:parse_next] = args.fetch(:parse_next) { nil }
     end
 
     # Clones using the Marlshal dump / load trick.
     def clone
-      Marshal::load(Marshal.dump(self))
+      Marshal.load(Marshal.dump(self))
     end
 
     # Syntactic sugar for #idle
@@ -37,17 +37,15 @@ module DismalTony # :nodoc:
       @options.fetch(:idle)
     end
 
-    # Syntactic sugar for #parse_next 
+    # Syntactic sugar for #parse_next
     def parse_next?
       @options.fetch(:parse_next)
     end
 
     def method_missing(m_name, *args)
-      begin
-        @options.fetch(m_name)
-      rescue KeyError
-        super
-      end
+      @options.fetch(m_name)
+    rescue KeyError
+      super
     end
 
     # Combines the state of ConversationState +other+ in with this one safely, keeping existing values if +other+ has a nil
