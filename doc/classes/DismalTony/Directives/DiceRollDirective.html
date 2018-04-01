@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::Directives::DiceRollDirective</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>class</span>
+DismalTony::Directives::DiceRollDirective
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../files/lib/dismaltony/directives/dice_rb.html">lib/dismaltony/directives/dice.rb</a>
+</li>
+</ol>
+<div class='parent'>
+Superclass:
+<strong><a href="../Directive.html">Directive</a></strong>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'></div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-run">run</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-run'>
+<a name='method-i-run'></a>
+<div class='synopsis'>
+<span class='name'>run</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/dice.rb, line 15</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">rolls</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>.<span class="ruby-identifier">scan</span>(<span class="ruby-regexp">/(((a |\d+)d(\d+)(e)?(\+\d+|\-\d+)?)( \&amp; | \+ )*)/i</span>)&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:result</span>] = <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-constant">GamingDice</span>.<span class="ruby-identifier">roll</span>(<span class="ruby-identifier">r</span>[<span class="ruby-value">0</span>]) }&#x000A;  <span class="ruby-identifier">result_string</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;                    <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">first</span>&#x000A;                  <span class="ruby-keyword">else</span>&#x000A;                    <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39;, &#39;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-string">&#39;~e:dice &#39;</span>&#x000A;  <span class="ruby-identifier">resp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Okay! The result#{rolls.length == 1 ? &#39; is&#39; : &#39;s are&#39;}: #{result_string}.&quot;</span>&#x000A;&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">resp</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

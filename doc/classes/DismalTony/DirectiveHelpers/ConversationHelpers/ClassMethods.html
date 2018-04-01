@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::DirectiveHelpers::ConversationHelpers::ClassMethods</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::DirectiveHelpers::ConversationHelpers::ClassMethods
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>Utility functions to help construct responses easier. Contains the Class
+methods of the helper, which are added on inclusion</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-add_synonyms">add_synonyms</a></li>
+<li><a href="#method-i-synonyms">synonyms</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-add_synonyms'>
+<a name='method-i-add_synonyms'></a>
+<div class='synopsis'>
+<span class='name'>add_synonyms</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in Hash&lt;Regexp, Array&lt;String&gt;&gt; and adds them to the
+synonyms</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-add_synonyms-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-add_synonyms-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 90</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_synonyms</span> <span class="ruby-comment"># :yields: synonyms</span>&#x000A;  <span class="ruby-identifier">new_syns</span> = {}&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">new_syns</span>&#x000A;  <span class="ruby-ivar">@synonyms</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">new_syns</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-synonyms'>
+<a name='method-i-synonyms'></a>
+<div class='synopsis'>
+<span class='name'>synonyms</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>The array of synonyms available for using synonym_for</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-synonyms-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-synonyms-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 97</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span> <span class="ruby-operator">||=</span> {&#x000A;    <span class="ruby-regexp">/^awesome$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[great excellent cool awesome splendid]</span>,&#x000A;    <span class="ruby-regexp">/^okay$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[okay great alright]</span>,&#x000A;    <span class="ruby-regexp">/^hello$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[hello hi greetings]</span>,&#x000A;    <span class="ruby-regexp">/^yes$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[yes affirmative definitely correct certainly]</span>,&#x000A;    <span class="ruby-regexp">/^no$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[no negative incorrect false]</span>,&#x000A;    <span class="ruby-regexp">/^update$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[updated changed modified revised altered edited adjusted]</span>,&#x000A;    <span class="ruby-regexp">/^updated$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[update change modify revise alter edit adjust]</span>,&#x000A;    <span class="ruby-regexp">/^add$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[added created]</span>,&#x000A;    <span class="ruby-regexp">/^added$/i</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">%w[add create]</span>&#x000A;  }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

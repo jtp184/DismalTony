@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::Directives::GetStockPriceDirective</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>class</span>
+DismalTony::Directives::GetStockPriceDirective
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../files/lib/dismaltony/directives/stocks_rb.html">lib/dismaltony/directives/stocks.rb</a>
+</li>
+</ol>
+<div class='parent'>
+Superclass:
+<strong><a href="../Directive.html">Directive</a></strong>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'></div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-run">run</a></li>
+</ol>
+</div>
+<div id='context'>
+<div id='includes'>
+<h2>Included modules</h2>
+<ol>
+<li><a href="../DirectiveHelpers/JSONAPIHelpers.html">DismalTony::DirectiveHelpers::JSONAPIHelpers</a></li>
+<li><a href="../DirectiveHelpers/ConversationHelpers.html">DismalTony::DirectiveHelpers::ConversationHelpers</a></li>
+</ol>
+</div>
+</div>
+<div id='section'>
+<div id='constants-list'>
+<h2>Constants</h2>
+<div class='name-list'>
+<table summary='Constants'>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>StockPrice</td>
+<td>=</td>
+<td class='context-item-value'>Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
+include Comparable
+
+def price
+close || open
+end
+
+def <=>(other)
+close <=> other.close
+rescue NoMethodError
+close <=> Integer(other)
+end
+
+def to_s
+price.to_s
+end
+
+def to_str
+price.to_s
+end
+end</td>
+<td>&nbsp;</td>
+<td class='context-item-desc'></td>
+</tr>
+</table>
+</div>
+</div>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-run'>
+<a name='method-i-run'></a>
+<div class='synopsis'>
+<span class='name'>run</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 30</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:stock_id</span>] =&#x000A;    <span class="ruby-regexp">/\b[A-Z]+\b/</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>)[<span class="ruby-value">0</span>]&#x000A;  <span class="ruby-identifier">prices</span> = <span class="ruby-identifier">retrieve_data</span>(<span class="ruby-value">symbol:</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:stock_id</span>])&#x000A;&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:current_value</span>] = <span class="ruby-identifier">prices</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">p</span><span class="ruby-operator">|</span> <span class="ruby-identifier">p</span>.<span class="ruby-identifier">date</span> <span class="ruby-operator">===</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span> }&#x000A;&#x000A;  <span class="ruby-identifier">answ</span>, <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">price_comment</span>(<span class="ruby-identifier">prices</span>)&#x000A;&#x000A;  <span class="ruby-identifier">conv</span> = <span class="ruby-node">&quot;~e:#{moj} &quot;</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;The current&#39;</span>, <span class="ruby-string">&quot;Today&#39;s&quot;</span>, <span class="ruby-string">&#39;The&#39;</span>, <span class="ruby-string">&#39;Current&#39;</span>].<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; stock price for #{parameters[:stock_id]} is &quot;</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">answ</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&#39;.&#39;</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">conv</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

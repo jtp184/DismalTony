@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::MatchLogicTypes</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::MatchLogicTypes
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../files/lib/dismaltony/match_logic_rb.html">lib/dismaltony/match_logic.rb</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>The various types of <a href="MatchLogic.html">MatchLogic</a> objects are
+stored here.</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Class</h3>
+<ol>
+<li><a href="#method-c-3C-3C"><<</a></li>
+<li><a href="#method-c-5B-5D">[]</a></li>
+<li><a href="#method-c-all">all</a></li>
+<li><a href="#method-c-count">count</a></li>
+<li><a href="#method-c-count_nopenalty">count_nopenalty</a></li>
+<li><a href="#method-c-each">each</a></li>
+<li><a href="#method-c-priorities">priorities</a></li>
+</ol>
+</div>
+<div id='context'>
+<div id='includes'>
+<h2>Included modules</h2>
+<ol>
+<li>Enumerable</li>
+</ol>
+</div>
+</div>
+<div id='class-list'>
+<h2>Classes and Modules</h2>
+<ol>
+<li><a href="MatchLogicTypes/CouldBe.html">DismalTony::MatchLogicTypes::CouldBe</a></li>
+<li><a href="MatchLogicTypes/DoesNot.html">DismalTony::MatchLogicTypes::DoesNot</a></li>
+<li><a href="MatchLogicTypes/IsKeyword.html">DismalTony::MatchLogicTypes::IsKeyword</a></li>
+<li><a href="MatchLogicTypes/MustBe.html">DismalTony::MatchLogicTypes::MustBe</a></li>
+<li><a href="MatchLogicTypes/ShouldBe.html">DismalTony::MatchLogicTypes::ShouldBe</a></li>
+</ol>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-3C-3C'>
+<a name='method-c-3C-3C'></a>
+<div class='synopsis'>
+<span class='name'><<</span>
+<span class='arguments'>(input)</span>
+
+</div>
+<div class='description'>
+
+<p>Adds <code>input</code> to members after doing a quick type check</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-3C-3C-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-3C-3C-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 107</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">&lt;&lt;</span>(<span class="ruby-identifier">input</span>)&#x000A;  <span class="ruby-identifier">@@members</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">input</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">input</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">MatchLogic</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-5B-5D'>
+<a name='method-c-5B-5D'></a>
+<div class='synopsis'>
+<span class='name'>[]</span>
+<span class='arguments'>(srch)</span>
+
+</div>
+<div class='description'>
+
+<p>Searches <code>members</code> for an element whose <code>priority</code>
+matches <code>srch</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-5B-5D-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-5B-5D-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 102</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">[]</span>(<span class="ruby-identifier">srch</span>)&#x000A;  <span class="ruby-identifier">@@members</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">nil</span>).<span class="ruby-identifier">priority</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">srch</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-all'>
+<a name='method-c-all'></a>
+<div class='synopsis'>
+<span class='name'>all</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Yields the <code>members</code> array</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-all-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-all-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 76</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>&#x000A;  <span class="ruby-identifier">@@members</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-count'>
+<a name='method-c-count'></a>
+<div class='synopsis'>
+<span class='name'>count</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Counts the number of <a href="MatchLogic.html">MatchLogic</a> subclasses.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-count-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-count-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 86</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">count</span>&#x000A;  <span class="ruby-identifier">@@members</span>.<span class="ruby-identifier">count</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-count_nopenalty'>
+<a name='method-c-count_nopenalty'></a>
+<div class='synopsis'>
+<span class='name'>count_nopenalty</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Counts the number of <a href="MatchLogic.html">MatchLogic</a> subclasses,
+excluding those which don&#39;t count against the match result if failed</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-count_nopenalty-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-count_nopenalty-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 92</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">count_nopenalty</span>&#x000A;  <span class="ruby-identifier">@@members</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:no_penalty?</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-each'>
+<a name='method-c-each'></a>
+<div class='synopsis'>
+<span class='name'>each</span>
+<span class='arguments'>(&blk)</span>
+
+</div>
+<div class='description'>
+
+<p>Yields each of the elements of the <code>members</code> array to the block
+<code>blk</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-each-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-each-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 81</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;  <span class="ruby-identifier">@@members</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-priorities'>
+<a name='method-c-priorities'></a>
+<div class='synopsis'>
+<span class='name'>priorities</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Yields all of the different priority keys used by all <a
+href="MatchLogic.html">MatchLogic</a> subclasses.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-priorities-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-priorities-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 97</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">priorities</span>&#x000A;  <span class="ruby-identifier">@@members</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">m</span><span class="ruby-operator">|</span> <span class="ruby-identifier">m</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword">nil</span>).<span class="ruby-identifier">priority</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

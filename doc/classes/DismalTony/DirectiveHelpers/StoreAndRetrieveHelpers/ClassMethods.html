@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::DirectiveHelpers::StoreAndRetrieveHelpers::ClassMethods</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::DirectiveHelpers::StoreAndRetrieveHelpers::ClassMethods
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>Provides simpler access to <a
+href="../../DataStore.html#attribute-i-directive_data">DismalTony::DataStore#directive_data</a>,
+and streamlines defining and creating structs to put in it. Contains the
+Class methods of the helper, which are added on inclusion</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-data_struct_template">data_struct_template</a></li>
+<li><a href="#method-i-data_struct_template-3D">data_struct_template=</a></li>
+<li><a href="#method-i-define_data_struct">define_data_struct</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-data_struct_template'>
+<a name='method-i-data_struct_template'></a>
+<div class='synopsis'>
+<span class='name'>data_struct_template</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Gets <a
+href="ClassMethods.html#method-i-data_struct_template">#data_struct_template</a></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_struct_template-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-data_struct_template-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 241</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-data_struct_template-3D'>
+<a name='method-i-data_struct_template-3D'></a>
+<div class='synopsis'>
+<span class='name'>data_struct_template=</span>
+<span class='arguments'>(newval)</span>
+
+</div>
+<div class='description'>
+
+<p>Sets <a
+href="ClassMethods.html#method-i-data_struct_template">#data_struct_template</a></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_struct_template-3D-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-data_struct_template-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 246</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template=</span>(<span class="ruby-identifier">newval</span>)&#x000A;  <span class="ruby-ivar">@data_struct_template</span> = <span class="ruby-identifier">newval</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-define_data_struct'>
+<a name='method-i-define_data_struct'></a>
+<div class='synopsis'>
+<span class='name'>define_data_struct</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in a block returning a Struct, where user schema is defined.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-define_data_struct-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-define_data_struct-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 236</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">define_data_struct</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span> = <span class="ruby-keyword">yield</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>
