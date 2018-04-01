@@ -90,7 +90,7 @@ module DismalTony # :nodoc:
         def add_synonyms # :yields: synonyms
           new_syns = {}
           yield new_syns
-          @synonyms.merge!(new_syns)
+          synonyms.merge!(new_syns)
         end
 
         # The array of synonyms available for using #synonym_for

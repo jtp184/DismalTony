@@ -376,7 +376,7 @@ DOC
       if query.contains?(/temperature/i)
         DismalTony::HandledResponse.finish("~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}")
       else
-        DismalTony::HandledResponse.finish("The current weather in #{req[:city_name]} is #{req[:weather].flavor}").with_format(use_icon: req[:weather].icon)
+        DismalTony::HandledResponse.finish("The current weather in #{req[:city_name]} is #{req[:weather].flavor}.").with_format(use_icon: req[:weather].icon)
       end
     end
   end

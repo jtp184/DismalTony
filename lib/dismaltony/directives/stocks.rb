@@ -20,6 +20,10 @@ module DismalTony::Directives
       qry << could { |q| q =~ /prices?/i }
     end
 
+    add_synonyms do |make|
+      make[/today's/i] = ['the current', "today's", 'the', 'current']
+    end
+
     set_api_url 'https://www.alphavantage.co/query'
 
     set_api_defaults do |adef|
@@ -37,7 +41,7 @@ module DismalTony::Directives
       answ, moj = price_comment(prices)
 
       conv = "~e:#{moj} "
-      conv << ['The current', "Today's", 'The', 'Current'].sample
+      conv << synonym_for("today's").capitalize
       conv << " stock price for #{parameters[:stock_id]} is "
       conv << answ << '.'
       DismalTony::HandledResponse.finish(conv)
