@@ -1,4 +1,4 @@
-Sun, 01 Apr 2018 18:33:52 -0700
+Sun, 01 Apr 2018 18:58:49 -0700
 lib/dismaltony.rb	Sun, 01 Apr 2018 13:24:25 -0700
 lib/dismaltony/directives/core.rb	Sun, 01 Apr 2018 16:40:44 -0700
 lib/dismaltony/directives/dice.rb	Sun, 01 Apr 2018 15:56:51 -0700
@@ -16,9 +16,8 @@ lib/dismaltony/handled_response.rb	Sun, 01 Apr 2018 13:54:15 -0700
 lib/dismaltony/dialog_interface.rb	Sun, 01 Apr 2018 13:24:25 -0700
 lib/dismaltony/user_identity.rb	Sun, 01 Apr 2018 13:24:25 -0700
 lib/dismaltony/version.rb	Sun, 01 Apr 2018 18:25:34 -0700
-lib/dismaltony/directive_helpers.rb	Sun, 01 Apr 2018 16:46:48 -0700
+lib/dismaltony/directive_helpers.rb	Sun, 01 Apr 2018 18:58:22 -0700
 lib/dismaltony/query.rb	Sat, 31 Mar 2018 17:20:25 -0700
 lib/dismaltony/match_logic.rb	Sun, 01 Apr 2018 13:24:25 -0700
 lib/dismaltony/data_store.rb	Sun, 01 Apr 2018 13:59:26 -0700
 lib/dismaltony/formatter.rb	Sun, 01 Apr 2018 13:24:25 -0700
-README.rdoc	Sun, 01 Apr 2018 13:24:25 -0700

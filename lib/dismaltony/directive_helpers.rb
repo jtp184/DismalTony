@@ -130,12 +130,12 @@ module DismalTony # :nodoc:
       end
     end
 
+    # Assists with emoji selection
     module EmojiHelpers
       include HelperTemplate
 
-      module ClassMethods
-      end
-
+      # Assists with emoji selection
+      # Contains the Instance methods of the helper, which are added on inclusion
       module InstanceMethods
         # Chooses randomly from +moj+, or if no arguments are passed randomly from all emoji.
         def random_emoji(*moj)
@@ -315,9 +315,12 @@ module DismalTony # :nodoc:
       end
     end
 
+    # Provides a mechanism to return rich values from responses
     module DataRepresentationHelpers
       include HelperTemplate
 
+      # Provides a mechanism to return rich values from responses
+      # Contains the Class methods of the helper, which are added on inclusion
       module ClassMethods
         # Defines a default data representation
         def define_data_representation
@@ -334,6 +337,8 @@ module DismalTony # :nodoc:
         end
       end
 
+      # Provides a mechanism to return rich values from responses
+      # Contains the Instance methods of the helper, which are added on inclusion
       module InstanceMethods
         # Instance hook for data_representation
         def data_representation
