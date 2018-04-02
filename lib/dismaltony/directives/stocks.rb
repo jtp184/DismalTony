@@ -73,13 +73,13 @@ module DismalTony::Directives
     end
 
     def price_comment(history)
-      current = history.select { |pr| pr.date === Date.today }.first
+      current = history.sort_by { |pr| pr.date }.last
       moj = ''
 
       comment = "$#{format('%.2f', current.price)}" << case [0, 1, 2, 3].sample
                                                        when 0
                                                          # Better / worse than yesterday
-                                                         yesterday = history.select { |pr| pr.date === Date.today - 1 }.first
+                                                         yesterday = history.sort_by { |pr| pr.date }.reverse[1]
                                                          if current > yesterday
                                                            moj = random_emoji('chartup', 'thumbsup', 'fire')
                                                            ", up from yesterday's $#{yesterday.price}"
