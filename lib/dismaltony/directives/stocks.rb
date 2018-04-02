@@ -2,11 +2,13 @@ require 'uri'
 require 'date'
 require 'net/http'
 require 'json'
+require 'ostruct'
 
 module DismalTony::Directives
   class GetStockPriceDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
 
     set_name :get_stock_price
@@ -37,7 +39,13 @@ module DismalTony::Directives
         /\b[A-Z]+\b/.match(query.raw_text)[0]
       prices = retrieve_data(symbol: parameters[:stock_id])
 
-      parameters[:current_value] = prices.find { |p| p.date === Date.today }
+      parameters[:current_value] = prices.sort_by { |pr| pr.date }.last
+
+      return_data(OpenStruct.new)
+
+      data_representation.value = parameters[:current_value]
+      data_representation.price = parameters[:current_value].price
+      data_representation.symbol = parameters[:stock_id]
 
       answ, moj = price_comment(prices)
 
