@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::Directives::SelfDiagnosticDirective</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>class</span>
+DismalTony::Directives::SelfDiagnosticDirective
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../files/lib/dismaltony/directives/core_rb.html">lib/dismaltony/directives/core.rb</a>
+</li>
+</ol>
+<div class='parent'>
+Superclass:
+<strong><a href="../Directive.html">Directive</a></strong>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'></div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-run">run</a></li>
+</ol>
+</div>
+<div id='context'>
+<div id='includes'>
+<h2>Included modules</h2>
+<ol>
+<li><a href="../DirectiveHelpers/ConversationHelpers.html">DismalTony::DirectiveHelpers::ConversationHelpers</a></li>
+<li><a href="../DirectiveHelpers/EmojiHelpers.html">DismalTony::DirectiveHelpers::EmojiHelpers</a></li>
+</ol>
+</div>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-run'>
+<a name='method-i-run'></a>
+<div class='synopsis'>
+<span class='name'>run</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/core.rb, line 131</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-keyword">begin</span>&#x000A;    <span class="ruby-identifier">good_moj</span> = <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;tophat&#39;</span>, <span class="ruby-string">&#39;thumbsup&#39;</span>, <span class="ruby-string">&#39;star&#39;</span>, <span class="ruby-string">&#39;checkbox&#39;</span>, <span class="ruby-string">&#39;chartup&#39;</span>) <span class="ruby-keyword">if</span> <span class="ruby-constant">ParseyParse</span>.<span class="ruby-identifier">run_parser</span>(<span class="ruby-string">&#39;Diagnostic successful&#39;</span>)&#x000A;    <span class="ruby-identifier">return_string</span> = <span class="ruby-string">&quot;Diagnostic Successful!\n\n&quot;</span>&#x000A;    <span class="ruby-identifier">return_string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;    Time: #{Time.now.strftime(&#39;%F %l:%M%P&#39;)}\n&quot;</span>&#x000A;    <span class="ruby-identifier">return_string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;    VI: #{vi.name}\n&quot;</span>&#x000A;    <span class="ruby-identifier">return_string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;    Version: #{DismalTony::VERSION}\n&quot;</span>&#x000A;    <span class="ruby-identifier">return_string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;    User: #{vi.user[&#39;nickname&#39;]}\n&quot;</span>&#x000A;    <span class="ruby-identifier">return_string</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;    Directives: #{vi.directives.length}\n&quot;</span>&#x000A;    <span class="ruby-keyword">return</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{good_moj} #{return_string}&quot;</span>)&#x000A;  <span class="ruby-keyword">rescue</span>&#x000A;    <span class="ruby-identifier">bad_moj</span> = <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;cancel&#39;</span>,<span class="ruby-string">&#39;caution&#39;</span>, <span class="ruby-string">&#39;alarmbell&#39;</span>, <span class="ruby-string">&#39;thumbsdown&#39;</span>, <span class="ruby-string">&#39;thermometer&#39;</span>, <span class="ruby-string">&#39;worried&#39;</span>)&#x000A;    <span class="ruby-keyword">return</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{bad_moj} Something went wrong!&quot;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

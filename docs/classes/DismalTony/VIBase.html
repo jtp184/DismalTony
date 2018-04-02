@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::VIBase</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>class</span>
+DismalTony::VIBase
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../files/lib/dismaltony/vi_base_rb.html">lib/dismaltony/vi_base.rb</a>
+</li>
+</ol>
+<div class='parent'>
+Superclass:
+<strong>Object</strong>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>The essential class. A VI, or Virtual Intelligence, forms the basis for the
+<a href="../DismalTony.html">DismalTony</a> gem, and is your conversational
+agents for handling queries</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Class</h3>
+<ol>
+<li><a href="#method-c-inherit">inherit</a></li>
+<li><a href="#method-c-new">new</a></li>
+</ol>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-apply_format">apply_format</a></li>
+<li><a href="#method-i-call">call</a></li>
+<li><a href="#attribute-i-data_store">data_store</a></li>
+<li><a href="#attribute-i-directives">directives</a></li>
+<li><a href="#attribute-i-name">name</a></li>
+<li><a href="#attribute-i-return_interface">return_interface</a></li>
+<li><a href="#method-i-say">say</a></li>
+<li><a href="#method-i-say_opts">say_opts</a></li>
+<li><a href="#method-i-say_through">say_through</a></li>
+<li><a href="#attribute-i-scheduler">scheduler</a></li>
+<li><a href="#attribute-i-user">user</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='attribute-list'>
+<h2 class='section-bar'>Attributes</h2>
+<div class='name-list'>
+<table>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-data_store'>data_store</a>
+</td>
+<td class='context-item-value'>[R]</td>
+<td class='context-item-desc'>
+<p>A <a href="DataStore.html">DataStore</a> object representing the VI&#39;s
+memory and userspace</p>
+</td>
+</tr>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-directives'>directives</a>
+</td>
+<td class='context-item-value'>[R]</td>
+<td class='context-item-desc'>
+<p>An Array of QueryHandler objects that the VI can use</p>
+</td>
+</tr>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-name'>name</a>
+</td>
+<td class='context-item-value'>[R]</td>
+<td class='context-item-desc'>
+<p>The name of the Intelligence</p>
+</td>
+</tr>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-return_interface'>return_interface</a>
+</td>
+<td class='context-item-value'>[R]</td>
+<td class='context-item-desc'>
+<p>A <a href="DialogInterface.html">DialogInterface</a> object representing
+where to route the VI&#39;s speech</p>
+</td>
+</tr>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-scheduler'>scheduler</a>
+</td>
+<td class='context-item-value'>[R]</td>
+<td class='context-item-desc'>
+<p>the <a href="Scheduler.html">Scheduler</a> object for executing timed tasks</p>
+</td>
+</tr>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-user'>user</a>
+</td>
+<td class='context-item-value'>[R]</td>
+<td class='context-item-desc'>
+<p>The <a href="UserIdentity.html">UserIdentity</a> corresponding to the
+current user.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div id='methods'>
+<h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-inherit'>
+<a name='method-c-inherit'></a>
+<div class='synopsis'>
+<span class='name'>inherit</span>
+<span class='arguments'>(**opts)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes the module level VI and duplicates it, overriding its values with
+ones from <code>opts</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-inherit-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-inherit-source'><span class="ruby-comment"># File lib/dismaltony/vi_base.rb, line 38</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">inherit</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">opts</span>)&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">VIBase</span>.<span class="ruby-identifier">new</span>(&#x000A;    <span class="ruby-value">user:</span> (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:user</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span>.().<span class="ruby-identifier">user</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">UserIdentity</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT</span>),&#x000A;    <span class="ruby-value">name:</span> (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:name</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span>.().<span class="ruby-identifier">name</span>),&#x000A;    <span class="ruby-value">return_interface:</span> (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:return_interface</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span>.().<span class="ruby-identifier">return_interface</span>),&#x000A;    <span class="ruby-value">directives:</span> (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:directives</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span>.().<span class="ruby-identifier">directives</span>),&#x000A;    <span class="ruby-value">data_store:</span> (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:data_store</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span>.().<span class="ruby-identifier">data_store</span>)&#x000A;    )&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-new'>
+<a name='method-c-new'></a>
+<div class='synopsis'>
+<span class='name'>new</span>
+<span class='arguments'>(**opts)</span>
+
+</div>
+<div class='description'>
+
+<p>Options for <code>opts</code></p>
+<ul><li>
+<p><code>:name</code> - The name for the VI. Defaults to &#39;Tony&#39;</p>
+</li><li>
+<p><code>:directives</code> - The Array of directives. Defaults to the entire
+contents of the HandlerRegistry.</p>
+</li><li>
+<p><code>:data_store</code> - The data store to use with this VI. Defaults to
+a generic <a href="DataStore.html">DataStore</a> object.</p>
+</li><li>
+<p><code>:return_interface</code> - The interface to route conversation back
+through. Defaults to the <a
+href="ConsoleInterface.html">ConsoleInterface</a>.</p>
+</li><li>
+<p><code>:user</code> - the <a href="UserIdentity.html">UserIdentity</a> of
+who is using this VI</p>
+</li></ul>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-new-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/vi_base.rb, line 24</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">opts</span>)&#x000A;  <span class="ruby-ivar">@name</span> = (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:name</span>].<span class="ruby-identifier">freeze</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:data_store</span>]&amp;.<span class="ruby-identifier">opts</span>&amp;.<span class="ruby-identifier">[]</span>(<span class="ruby-value">:vi_name</span>) <span class="ruby-operator">||</span> <span class="ruby-string">&#39;Tony&#39;</span>.<span class="ruby-identifier">freeze</span>)&#x000A;  <span class="ruby-ivar">@return_interface</span> = (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:return_interface</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">ConsoleInterface</span>.<span class="ruby-identifier">new</span>)&#x000A;  <span class="ruby-ivar">@directives</span> = (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:directives</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Directives</span>.<span class="ruby-identifier">all</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:data_store</span>]&#x000A;    <span class="ruby-identifier">opts</span>[<span class="ruby-value">:data_store</span>].<span class="ruby-identifier">opts</span>[<span class="ruby-value">:vi_name</span>] = <span class="ruby-ivar">@name</span>&#x000A;    <span class="ruby-ivar">@data_store</span> = <span class="ruby-identifier">opts</span>[<span class="ruby-value">:data_store</span>]&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-ivar">@data_store</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">DataStore</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">vi_name:</span> <span class="ruby-identifier">name</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-ivar">@user</span> = (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:user</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@data_store</span>&amp;.<span class="ruby-identifier">users</span>&amp;.<span class="ruby-identifier">first</span> <span class="ruby-operator">||</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">UserIdentity</span><span class="ruby-operator">::</span><span class="ruby-constant">DEFAULT</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-apply_format'>
+<a name='method-i-apply_format'></a>
+<div class='synopsis'>
+<span class='name'>apply_format</span>
+<span class='arguments'>(response)</span>
+
+</div>
+<div class='description'>
+
+<p>Simple utility function to combine the input <a
+href="HandledResponse.html">HandledResponse</a> and the default format on
+the return interface into a single options collection.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-apply_format-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-apply_format-source'><span class="ruby-comment"># File lib/dismaltony/vi_base.rb, line 65</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">apply_format</span>(<span class="ruby-identifier">response</span>)&#x000A;  <span class="ruby-identifier">return_interface</span>.<span class="ruby-identifier">default_format</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">response</span>.<span class="ruby-identifier">format</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-call'>
+<a name='method-i-call'></a>
+<div class='synopsis'>
+<span class='name'>call</span>
+<span class='arguments'>(q)</span>
+
+</div>
+<div class='description'>
+
+<p>The interface method takes in a <a href="Query.html">Query</a>
+<code>q</code> and uses the QueryResolver#call method to decide what to do
+with it. Responsible for using the <code>return_interface</code> to send
+back the text response.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-call-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-call-source'><span class="ruby-comment"># File lib/dismaltony/vi_base.rb, line 71</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-identifier">q</span>)&#x000A;  <span class="ruby-identifier">result</span> = <span class="ruby-constant">QueryResolver</span>.(<span class="ruby-identifier">q</span>, <span class="ruby-keyword">self</span>)&#x000A;  <span class="ruby-identifier">response</span> = <span class="ruby-identifier">result</span>.<span class="ruby-identifier">response</span>&#x000A;&#x000A;  <span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">on_query</span>(<span class="ruby-identifier">response</span>)&#x000A;  <span class="ruby-ivar">@user</span>.<span class="ruby-identifier">modify_state!</span>(<span class="ruby-identifier">response</span>.<span class="ruby-identifier">conversation_state</span>.<span class="ruby-identifier">stamp</span>)&#x000A;  <span class="ruby-constant">DismalTony</span>.<span class="ruby-identifier">last_result</span> = <span class="ruby-identifier">result</span>&#x000A;&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">response</span>.<span class="ruby-identifier">format</span>[<span class="ruby-value">:silent</span>]&#x000A;    <span class="ruby-keyword">if</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">format</span>.<span class="ruby-identifier">empty?</span>&#x000A;      <span class="ruby-identifier">say</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">outgoing_message</span>&#x000A;    <span class="ruby-keyword">else</span>&#x000A;      <span class="ruby-identifier">say_opts</span>(<span class="ruby-identifier">return_interface</span>, <span class="ruby-identifier">response</span>.<span class="ruby-identifier">outgoing_message</span>, <span class="ruby-identifier">apply_format</span>(<span class="ruby-identifier">response</span>)) &#x000A;    <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  &#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">result</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:data_representation</span>)&#x000A;    <span class="ruby-identifier">result</span>.<span class="ruby-identifier">data_representation</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span>.<span class="ruby-identifier">format</span>(<span class="ruby-identifier">response</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-identifier">apply_format</span>(<span class="ruby-identifier">response</span>))&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-say'>
+<a name='method-i-say'></a>
+<div class='synopsis'>
+<span class='name'>say</span>
+<span class='arguments'>(str)</span>
+
+</div>
+<div class='description'>
+
+<p>Simplest dialog function. Sends the message <code>str</code> back through
+<a href="VIBase.html#attribute-i-return_interface">#return_interface</a></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-say-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-say-source'><span class="ruby-comment"># File lib/dismaltony/vi_base.rb, line 59</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">say</span>(<span class="ruby-identifier">str</span>)&#x000A;  <span class="ruby-identifier">return_interface</span>.<span class="ruby-identifier">send</span>(<span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span>.<span class="ruby-identifier">format</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">return_interface</span>.<span class="ruby-identifier">default_format</span>))&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-say_opts'>
+<a name='method-i-say_opts'></a>
+<div class='synopsis'>
+<span class='name'>say_opts</span>
+<span class='arguments'>(interface, str, opts)</span>
+
+</div>
+<div class='description'>
+
+<p>Sends the message <code>str</code> back through the <a
+href="DialogInterface.html">DialogInterface</a> <code>interface</code>,
+after calling <a
+href="Formatter.html#method-c-format">DismalTony::Formatter.format</a> on
+it, with the options <code>opts</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-say_opts-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-say_opts-source'><span class="ruby-comment"># File lib/dismaltony/vi_base.rb, line 54</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">say_opts</span>(<span class="ruby-identifier">interface</span>, <span class="ruby-identifier">str</span>, <span class="ruby-identifier">opts</span>)&#x000A;  <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">send</span>(<span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span>.<span class="ruby-identifier">format</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">opts</span>))&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-say_through'>
+<a name='method-i-say_through'></a>
+<div class='synopsis'>
+<span class='name'>say_through</span>
+<span class='arguments'>(interface, str)</span>
+
+</div>
+<div class='description'>
+
+<p>Sends the message <code>str</code> back through the <a
+href="DialogInterface.html">DialogInterface</a> <code>interface</code>,
+after calling <a
+href="Formatter.html#method-c-format">DismalTony::Formatter.format</a> on
+it.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-say_through-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-say_through-source'><span class="ruby-comment"># File lib/dismaltony/vi_base.rb, line 49</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">say_through</span>(<span class="ruby-identifier">interface</span>, <span class="ruby-identifier">str</span>)&#x000A;  <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">send</span>(<span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span>.<span class="ruby-identifier">format</span>(<span class="ruby-identifier">str</span>, <span class="ruby-identifier">interface</span>.<span class="ruby-identifier">default_format</span>))&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

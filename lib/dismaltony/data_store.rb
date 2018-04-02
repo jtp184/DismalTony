@@ -10,12 +10,15 @@ module DismalTony # :nodoc:
     attr_accessor :opts
     # an Array of UserIdentity objects that make up the userspace.
     attr_reader :users
+    # A Hash that stores settings and records for directives
+    attr_reader :directive_data
 
-    # Initializes an empty store, and merges +args+ with #opts
+    # Initializes an empty store, and extracts data from +args+
     def initialize(args={})
       @opts = {}
       @opts.merge!(args.fetch(:opts) { {} })
       @users = args.fetch(:users) { [] }
+      @directive_data = args.fetch(:directive_data) { Hash.new({}) }
     end
 
     # Creates a new UserIdentity object with UserIdentity.user_data set to +opts+
@@ -31,13 +34,22 @@ module DismalTony # :nodoc:
     def on_query(_handled); end
 
     # Syntactic sugar. Selects users for whom +block+ returns true
-    def select(&block)
+    def select_user(&block)
       @users.select(&block)
     end
 
     # Calls <tt>#reject!</tt> on +user+
     def delete_user(user)
       @users.delete(user)
+    end
+
+    # Uses the hash +slug+ to insert a new value into the #directive_data hash
+    def store_data(slug)
+      dr, ky, vl = slug.fetch(:directive), slug.fetch(:key), slug.fetch(:value)
+      @directive_data[dr] ||= {}
+      @directive_data[dr][ky] = vl
+    rescue KeyError
+      nil
     end
   end
 
@@ -50,7 +62,7 @@ module DismalTony # :nodoc:
     attr_reader :data_store
 
     # Args takes hooks for :filepath and :data_store, and autopopulates them if not present.
-    def initialize(**args)
+    def initialize(args={})
       @filepath = args.fetch(:filepath) { "./tony.yml" }
       @data_store = args.fetch(:data_store) { DataStore.new }
     end

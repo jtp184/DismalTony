@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::MacSpeechInterface</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>class</span>
+DismalTony::MacSpeechInterface
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../files/lib/dismaltony/dialog_interface_rb.html">lib/dismaltony/dialog_interface.rb</a>
+</li>
+</ol>
+<div class='parent'>
+Superclass:
+<strong><a href="DialogInterface.html">DialogInterface</a></strong>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>Used for outputting to speech using the <code>`say`</code> command under
+MacOS</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-send">send</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-send'>
+<a name='method-i-send'></a>
+<div class='synopsis'>
+<span class='name'>send</span>
+<span class='arguments'>(msg)</span>
+
+</div>
+<div class='description'>
+
+<p>Calls <code>`say`</code> on the message. If the message is formatted, it
+prefaces <code>msg</code> with the name of the emote</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-send-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-send-source'><span class="ruby-comment"># File lib/dismaltony/dialog_interface.rb, line 76</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">send</span>(<span class="ruby-identifier">msg</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">msg</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span><span class="ruby-operator">::</span><span class="ruby-constant">OUTGOING</span>&#x000A;    <span class="ruby-identifier">md</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span><span class="ruby-operator">::</span><span class="ruby-constant">OUTGOING</span>.<span class="ruby-identifier">match</span> <span class="ruby-identifier">msg</span>&#x000A;    <span class="ruby-identifier">emote</span> = <span class="ruby-identifier">md</span>[<span class="ruby-string">&#39;moji&#39;</span>]&#x000A;    <span class="ruby-identifier">text</span> = <span class="ruby-identifier">md</span>[<span class="ruby-string">&#39;message&#39;</span>]&#x000A;    <span class="ruby-node">`say #{DismalTony::EmojiDictionary.name(emote)}. #{text}`</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-node">`say #{msg}`</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>
