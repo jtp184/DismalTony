@@ -68,7 +68,7 @@ synonyms</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-add_synonyms-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-add_synonyms-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 90</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_synonyms</span> <span class="ruby-comment"># :yields: synonyms</span>&#x000A;  <span class="ruby-identifier">new_syns</span> = {}&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">new_syns</span>&#x000A;  <span class="ruby-ivar">@synonyms</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">new_syns</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-add_synonyms-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 90</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_synonyms</span> <span class="ruby-comment"># :yields: synonyms</span>&#x000A;  <span class="ruby-identifier">new_syns</span> = {}&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">new_syns</span>&#x000A;  <span class="ruby-identifier">synonyms</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">new_syns</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-synonyms'>

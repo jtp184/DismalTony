@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>README.rdoc</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='file' id='wrapper'>
+<div class='header'>
+<h1 class='name'>README.rdoc
+</h1>
+<div class='paths'>
+README.rdoc
+</div>
+<div class='last-update'>
+Last Update:
+<span class='datetime'>2018-04-01 13:24:25 -0700</span>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p># Dismal Tony</p>
+
+<p>Dismal Tony is a gem I created that forms the framework for a system by
+which you can script human-language commands into actions with the Ruby
+programming language, using a Conversational Agent (called a “VI”, or
+Virtual Intelligence).</p>
+
+<p>This Gem sets up a set of defaults, and a methodology that allows you to
+easily drop new commands into your workflow, and have the VI execute them
+easily. I designed it to be friendly and fun to engage with, while at the
+same time supporting all of Ruby&#39;s programming capability, to allow it
+to handle complex tasks with ease.</p>
+
+<p>## Quickstart The built-in VI will be created with any loaded Directives
+already loaded, so after loading any extra directives, simply posit a
+command “`ruby require &#39;dismaltony/directives/stocks&#39;</p>
+
+<p><a href="../classes/DismalTony.html">DismalTony</a>.(&#39;How is AAPL stock
+doing today?&#39;) “`</p>
+
+<p>Read on if you&#39;re more interested in the nitty-gritty of VI
+Initialization, or skip ahead to **Writing a Directive**. ## Basic VI A VI
+is the unit that handles queries and users. A Very basic VI could be
+initialized like so: “`ruby tony = <a
+href="../classes/DismalTony/VIBase.html#method-c-new">DismalTony::VIBase.new</a>
+“` We could then attempt to send a text query to the VI using the call
+alias “`ruby result = tony.(“Hello”) “` If you don&#39;t specify an
+identity, a default identity is used. This is generally good enough for any
+query that doesn&#39;t require user-specific information (e.g. checking the
+weather, saying hello).</p>
+
+<p>If the VI Doesn&#39;t understand the query, it will reply with a generic
+error message. “` [🙁]: I&#39;m sorry, I didn&#39;t understand that! “`</p>
+
+<p>We can also configure our VI more extensively</p>
+
+<p>“`ruby cassie = <a
+href="../classes/DismalTony/VIBase.html#method-c-new">DismalTony::VIBase.new</a>(</p>
+
+<pre>:data_store =&gt; DismalTony::YAMLStore.load_from(&#39;./store.yml&#39;),&#x000A;:name =&gt; &quot;Cassie&quot;,&#x000A;:directives =&gt; DismalTony::Directives.in_group(&#39;work&#39;),&#x000A;:return_interface =&gt; DismalTony::SMSInterface.new(&#x000A;  &#39;+18437427464&#39;&#x000A;)</pre>
+
+<p>)</p>
+
+<p># We can either set the module level VI to our new VI  # and always have
+the <a href="../classes/DismalTony.html">DismalTony</a>.() syntax use
+cassie <a href="../classes/DismalTony.html#method-c-vi">DismalTony.vi</a> =
+cassie</p>
+
+<p># Or use cassie on her own! cassie.(&#39;Hello, Cassie!&#39;)</p>
+
+<p>“`</p>
+
+<p>The VI consists of a name, a return_interface to reply across, its known
+Directives, and a DataStore to retain its memories. All of these pieces are
+modular, and designed to be interchanged to fit your workflow.</p>
+
+<p>## Writing a Directive</p>
+
+<p>Directives are classes that you define in blocks, either one to a file or
+as many in one file as you&#39;d like, dynamically or in static files that
+can be loaded in. Here is an example, the built in greeting Directive.
+“`ruby module <a
+href="../classes/DismalTony/Directives.html">DismalTony::Directives</a></p>
+
+<pre class="ruby"><span class="ruby-keyword">class</span> <span class="ruby-constant">GreetingDirective</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Directive</span>&#x000A;  <span class="ruby-comment"># Sets the name of the directive. Must be unique.</span>&#x000A;  <span class="ruby-identifier">set_name</span> <span class="ruby-value">:hello</span>&#x000A;  <span class="ruby-comment"># Sets the group of the directive</span>&#x000A;  <span class="ruby-identifier">set_group</span> <span class="ruby-value">:conversation</span>&#x000A;&#x000A;  <span class="ruby-comment"># a block that yields an array to add new match logic criteria to.</span>&#x000A;  <span class="ruby-identifier">add_criteria</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">qry</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-comment"># the methods are generated from different MatchLogic classes</span>&#x000A;    <span class="ruby-comment"># which adjust how certain the VI is that it&#39;s correct in using this Directive</span>&#x000A;    <span class="ruby-identifier">qry</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">must</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">q</span><span class="ruby-operator">|</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">contains?</span>(<span class="ruby-regexp">/hello/i</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">q</span>.<span class="ruby-identifier">contains?</span>(<span class="ruby-regexp">/greetings/i</span>) }&#x000A;    <span class="ruby-identifier">qry</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">should</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">q</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span><span class="ruby-identifier">q</span>[<span class="ruby-string">&#39;rel&#39;</span>, <span class="ruby-string">&#39;discourse&#39;</span>].<span class="ruby-identifier">empty?</span>}&#x000A;    <span class="ruby-identifier">qry</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">should</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">q</span><span class="ruby-operator">|</span> <span class="ruby-operator">!</span><span class="ruby-identifier">q</span>[<span class="ruby-string">&#39;xpos&#39;</span>, <span class="ruby-string">&#39;UH&#39;</span>].<span class="ruby-identifier">empty?</span>}&#x000A;  <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-comment"># Every Directive has a run method, which does all of the work</span>&#x000A;  <span class="ruby-comment"># of taking in the query and necessarily returning a HandledResponse as a result.</span>&#x000A;  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;    <span class="ruby-comment"># Uses built in query method</span>&#x000A;    <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/how are you/i</span>&#x000A;      <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:thumbsup I&#39;m doing well!&quot;</span>)&#x000A;    <span class="ruby-keyword">else</span>&#x000A;      <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>([&#x000A;        <span class="ruby-string">&#39;~e:wave Hello!&#39;</span>,&#x000A;        <span class="ruby-string">&#39;~e:smile Greetings!&#39;</span>,&#x000A;        <span class="ruby-string">&#39;~e:rocket Hi!&#39;</span>,&#x000A;        <span class="ruby-node">&quot;~e:star Hello, #{query.user[&#39;nickname&#39;]}!&quot;</span>,&#x000A;        <span class="ruby-string">&#39;~e:snake Greetings!&#39;</span>,&#x000A;        <span class="ruby-string">&#39;~e:cat Hi!&#39;</span>,&#x000A;        <span class="ruby-node">&quot;~e:octo Greetings, #{query.user[&#39;nickname&#39;]}!&quot;</span>,&#x000A;        <span class="ruby-string">&#39;~e:spaceinvader Hello!&#39;</span>&#x000A;        ].<span class="ruby-identifier">sample</span>)&#x000A;    <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+
+<p>“`</p>
+
+<p><a href="../classes/DismalTony.html">DismalTony</a> relies on you having
+[ParseyParse](<a
+href="http://github.com/jtp184/parseyparse">github.com/jtp184/parseyparse</a>)
+setup. If it doesn&#39;t detect a configured SyntaxNet, it will
+automatically decide it can&#39;t parse anything. See that repo for more
+information on configuring.</p>
+
+<p>Due to ParseyParse being a dependency, MatchLogic queries can use the
+Natural Language Understanding properties to parse upon, such as finding
+parts of speech, inter-word dependencies, and roots of sentences.</p>
+
+<p>## Storing Data The <a href="../classes/DismalTony.html">DismalTony</a>
+system allows you to store your users and user-data (necessary for
+multi-stage handlers) in different ways.</p>
+
+<p>### Methods The DataStore classes follow basic CRUD concepts “`ruby store =
+<a
+href="../classes/DismalTony/DataStore.html#method-c-new">DismalTony::DataStore.new</a></p>
+
+<p>usr = store.new_user # =&gt; &lt;DismalTony::UserIdentity&gt;</p>
+
+<p>ax = store.select { |u| <a href="'first_name'">u</a> = “Aximili”}</p>
+
+<p>store.delete_user(ax) # Same as running store.users.delete “` Additionally,
+most Data Stores provide a `.save` or `.save(user)` function</p>
+
+<p>### Subclasses</p>
+
+<p>#### DataStore The base Datastore class is a non-persistent Data Store that
+functions fine in a REPL, but doesn&#39;t save anything. If you don&#39;t
+specify a data store to use, this is the default.</p>
+
+<p>#### YAMLStore The LocalStore class exports the user space as a YAML
+document. “`ruby # One that doesn&#39;t exist
+DismalTony::LocalStore.create_at(&#39;./store.yml&#39;)</p>
+
+<p># One that does! DismalTony::LocalStore.load_from(&#39;./store.yml&#39;) “`
+If provided with a filepath during initialization, it will either create
+and load, or load that file. You can also call `.load` to load from the
+file specified by `local_store.filepath`.</p>
+
+<p>The LocalStore saves after every Query, but can be manually saved with
+`.save` which saves to its filepath variable.</p>
+</div>
+<div id='context'>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

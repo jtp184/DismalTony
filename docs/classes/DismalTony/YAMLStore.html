@@ -136,7 +136,7 @@ href="YAMLStore.html">YAMLStore</a>.</p>
 <a name='method-c-new'></a>
 <div class='synopsis'>
 <span class='name'>new</span>
-<span class='arguments'>(**args)</span>
+<span class='arguments'>(args={})</span>
 
 </div>
 <div class='description'>
@@ -149,7 +149,7 @@ not present.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-new-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 65</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">args</span>)&#x000A;  <span class="ruby-ivar">@filepath</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:filepath</span>) { <span class="ruby-string">&quot;./tony.yml&quot;</span> }&#x000A;  <span class="ruby-ivar">@data_store</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:data_store</span>) { <span class="ruby-constant">DataStore</span>.<span class="ruby-identifier">new</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 65</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">args</span>={})&#x000A;  <span class="ruby-ivar">@filepath</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:filepath</span>) { <span class="ruby-string">&quot;./tony.yml&quot;</span> }&#x000A;  <span class="ruby-ivar">@data_store</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:data_store</span>) { <span class="ruby-constant">DataStore</span>.<span class="ruby-identifier">new</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <h2>Public Instance methods</h2>

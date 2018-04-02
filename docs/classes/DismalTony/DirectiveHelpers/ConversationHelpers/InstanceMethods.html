@@ -42,7 +42,6 @@ methods of the helper, which are added on inclusion</p>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
-<li><a href="#method-i-random_emoji">random_emoji</a></li>
 <li><a href="#method-i-synonym_for">synonym_for</a></li>
 <li><a href="#method-i-synonyms">synonyms</a></li>
 </ol>
@@ -52,26 +51,6 @@ methods of the helper, which are added on inclusion</p>
 <div id='section'>
 <div id='methods'>
 <h2>Public Instance methods</h2>
-<div class='method public-instance' id='method-method-i-random_emoji'>
-<a name='method-i-random_emoji'></a>
-<div class='synopsis'>
-<span class='name'>random_emoji</span>
-<span class='arguments'>(*moj)</span>
-
-</div>
-<div class='description'>
-
-<p>Chooses randomly from <code>moj</code>, or if no arguments are passed
-randomly from all emoji.</p>
-
-</div>
-<div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-random_emoji-source&#39;); return false'>
-[show source]
-</a>
-<pre id='method-i-random_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 116</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">random_emoji</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">moj</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">moj</span>.<span class="ruby-identifier">length</span>.<span class="ruby-identifier">zero?</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">EmojiDictionary</span>.<span class="ruby-identifier">emoji_table</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">moj</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
-</div>
-</div>
 <div class='method public-instance' id='method-method-i-synonym_for'>
 <a name='method-i-synonym_for'></a>
 <div class='synopsis'>
@@ -88,7 +67,7 @@ randomly from all emoji.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-synonym_for-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-synonym_for-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 125</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonym_for</span>(<span class="ruby-identifier">word</span>)&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-keyword">nil</span>&#x000A;  <span class="ruby-identifier">synonyms</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">reg</span>, <span class="ruby-identifier">syns</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">resp</span> = <span class="ruby-identifier">word</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">reg</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">syns</span>.<span class="ruby-identifier">sample</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>&#x000A;    <span class="ruby-keyword">return</span> <span class="ruby-identifier">resp</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">resp</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">word</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-synonym_for-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 116</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonym_for</span>(<span class="ruby-identifier">word</span>)&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-keyword">nil</span>&#x000A;  <span class="ruby-identifier">synonyms</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">reg</span>, <span class="ruby-identifier">syns</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">resp</span> = <span class="ruby-identifier">word</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">reg</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">syns</span>.<span class="ruby-identifier">sample</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>&#x000A;    <span class="ruby-keyword">return</span> <span class="ruby-identifier">resp</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">resp</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">word</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-synonyms'>
@@ -107,7 +86,7 @@ randomly from all emoji.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-synonyms-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-synonyms-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 135</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-synonyms-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 126</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>
