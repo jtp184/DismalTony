@@ -7,7 +7,7 @@ module DismalTony::Directives
     set_group :conversation
 
     add_criteria do |qry|
-      qry << must { |q| q.contains?(/hello/i) || q.contains?(/greetings/i) }
+      qry << must { |q| q.contains?(/hello/i, /\bhi\b/i, /greetings/i) }
       qry << should { |q| !q['rel', 'discourse'].empty? }
       qry << should { |q| !q['xpos', 'UH'].empty? }
     end
