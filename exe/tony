@@ -46,13 +46,18 @@ module DismalTony
 			opts.on('-r', '--remote=ADDR', 'choose a URL to post hooks to instead of locally running') do |r|
 				__[:remote_addr] = URI(r)
 			end
+
+			opts.on('-s', '--syntaxnet=PATH', 'the path for the Syntaxnet scripts') do |s|
+				__[:syntaxnet_path] = s
+			end
 		end.parse!
 
 		def self.configure_parsey
 			khash = parsey_cache? ? ParseyParse::YAMLCache.load_from(__[:parsey_cache]) : ParseyParse::Cache.new
 			ParseyParse.configure do |conf|
 				conf[:cache] = khash
-				conf[:disable_tf] = !Dir.exists?(conf[:syntaxnet_path] + '/' + conf[:script_path])
+				conf[:syntaxnet_path] = __[:syntaxnet_path] if __[:syntaxnet_path]
+				conf[:disable_tf] = !File.exists?(conf[:syntaxnet_path] + '/' + conf[:script_path])
 			end
 		end
 
@@ -99,8 +104,12 @@ module DismalTony
 				if check_interactive_options(inp)
 
 				else
-					res = DismalTony.(inp)
-					@last_evaluated = res if debug
+					begin
+						res = DismalTony.(inp)
+						@last_evaluated = res if debug
+					rescue ParseyParse::TensorFlowDisabledError
+						DismalTony.().say("~e:frown I'm sorry, I can only answer preloaded queries")
+					end
 				end
 				puts
 			end
