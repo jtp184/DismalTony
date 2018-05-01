@@ -80,8 +80,8 @@ module DismalTony::Directives
         return_data(query.user)
         DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.")
       elsif query =~ /what('| i)?s my/i
-        seek = query.children_of(query.root).select { |w| w.rel == 'nsubj' }&.first
-        moj = case seek.to_s
+        seek = query.children_of(query.root).select { |w| w.rel == 'nsubj' }&.first.to_s.downcase
+        moj = case seek
         when /phone/i, /number/i
           'phone'
         when /name/i
@@ -96,19 +96,19 @@ module DismalTony::Directives
           random_emoji('magnifyingglass', 'key')
         end
 
-        return_data("#{query.user[:first_name]} #{query.user[:last_name]}") and return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.") if (seek.to_s == 'name')
+        return_data("#{query.user[:first_name]} #{query.user[:last_name]}") and return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.") if (seek == 'name')
         age_in_years = Duration.new(Time.now - query.user[:birthday]).weeks / 52
-        return_data(age_in_years) and return DismalTony::HandledResponse.finish("~e:#{moj} You are #{age_in_years} years old, #{query.user[:nickname]}!") if (seek.to_s == 'age')
+        return_data(age_in_years) and return DismalTony::HandledResponse.finish("~e:#{moj} You are #{age_in_years} years old, #{query.user[:nickname]}!") if (seek == 'age')
 
-        ky = seek.to_s.to_sym
+        ky = seek.gsub(" ", "_").to_sym
         ky = :phone if ky == :number
 
         if query.user[ky]
           return_data(query.user[ky])
-          DismalTony::HandledResponse.finish("~e:#{moj} Your #{seek.to_s} is #{query.user[ky]}")
+          DismalTony::HandledResponse.finish("~e:#{moj} Your #{seek} is #{query.user[ky]}")
         else
           return_data(nil)
-          DismalTony::HandledResponse.finish("~e:frown I'm sorry, I don't know your #{seek.to_s}")
+          DismalTony::HandledResponse.finish("~e:frown I'm sorry, I don't know your #{seek}")
         end
       else
         DismalTony::HandledResponse.finish("~e:frown I'm not quite sure how to answer that.")
