@@ -38,9 +38,10 @@ Gem::Specification.new do |spec|
   # spec.add_development_dependency 'sinatra'
 
   # Runtime Dependencies
-  spec.add_runtime_dependency 'json'
-  spec.add_runtime_dependency 'psych'
-  spec.add_runtime_dependency 'twilio-ruby'
-  spec.add_runtime_dependency 'duration'
   spec.add_runtime_dependency 'ParseyParse'
+  spec.add_runtime_dependency 'twilio-ruby'
+  spec.add_runtime_dependency 'colorize'
+  spec.add_runtime_dependency 'psych'
+  spec.add_runtime_dependency 'json'
+  spec.add_runtime_dependency 'duration'
 end
