@@ -104,7 +104,8 @@ module DismalTony # :nodoc:
             /^update$/i => %w[updated changed modified revised altered edited adjusted],
             /^updated$/i => %w[update change modify revise alter edit adjust],
             /^add$/i => %w[added created],
-            /^added$/i => %w[add create]
+            /^added$/i => %w[add create],
+            /^what|how$/i => %[how what]
           }
         end
       end
@@ -247,7 +248,7 @@ module DismalTony # :nodoc:
 
     # Provides simpler access to DataStore#directive_data, and streamlines
     # defining and creating structs to put in it.
-    module StoreAndRetrieveHelpers
+    module DataStructHelpers
       include HelperTemplate
 
       # Provides simpler access to DataStore#directive_data, and streamlines

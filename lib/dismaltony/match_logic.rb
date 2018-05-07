@@ -7,19 +7,19 @@ module DismalTony
     # The Proc representing the condition to compare the Query against.
     attr_accessor :predicate
     # A value to change the certainty factor by when this match succeeds.
-    attr_reader :succeeds_incr
+    attr_reader :success_incr
     # A value to change the certainty factor by when this match fails.
     attr_reader :fails_incr
     # Whether this logic type should be counted or abstained from counting when evaluating matching criteria.
     attr_reader :penalty
 
     # Takes in a predicate +pre+ which is a Proc object of arity 1 representing the condition to check against.
-    # Subclasses can override values such as the +priority+, +succeeds_incr+, and +fails_incr+, and +penalty+ status.
+    # success_incr+, and +penalty+ status.
     # Otherwise, they default to :matches, 1, 0, and true respectively.
     def initialize(pre)
       @predicate = pre
       @priority = :matches
-      @succeeds_incr = 1
+      @success_incr = 1
       @fails_incr = 0
       @penalty = true
     end
@@ -29,14 +29,14 @@ module DismalTony
       DismalTony::MatchLogicTypes << subclass
     end
 
-    # Adds +succeeds_incr+ to +other+ and returns the result
+    # Adds +success_incr+ to +other+ and returns the result
     def +(other)
-      @succeeds_incr + other
+      @success_incr + other
     end
 
-    # Returns the proper format of an Array of +other+ and +succeeds_incr+ converted to float
+    # Returns the proper fails_incr+ converted to float
     def coerce(other)
-      [other, @succeeds_incr.to_f]
+      [other, @success_incr.to_f]
     end
 
     # returns the fail value instead of the success value.
@@ -162,7 +162,7 @@ module DismalTony
       def initialize(pre) # :nodoc:
         super(pre)
         @priority = :doesnt
-        @succeeds_incr = 0
+        @success_incr = 0
         @fails_incr = 1
       end
 
