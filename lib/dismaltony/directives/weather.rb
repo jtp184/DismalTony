@@ -300,10 +300,12 @@ module DismalTony::Directives
   icon: "🌪"
 DOC
   end
-
+end
+module DismalTony::Directives
   class WeatherReportDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
+    include DismalTony::DirectiveHelpers::DataStructHelpers
 
     set_name :get_weather
     set_group :info
@@ -321,11 +323,12 @@ DOC
     set_api_url 'http://api.openweathermap.org/data/2.5/weather?'
 
     set_api_defaults do |adef|
-      adef['APPID'] = ENV['open_weather_api_key']
-      adef['units'] = 'imperial'
+      adef[:APPID] = ENV['open_weather_api_key']
+      adef[:units] = 'imperial'
     end
 
-    WeatherCode = Struct.new('WeatherCode', :id, :flavor, :icon) do
+    define_data_struct do
+      Struct.new('WeatherCode', :id, :flavor, :icon) do
       include Enumerable
       @@codes = []
 
@@ -348,9 +351,10 @@ DOC
       def self.find(byid)
         @@codes.find { |v| v.id == byid }
       end
+      end
     end
 
-    Psych.load(WeatherCodeYAML).each { |wc| WeatherCode << wc }
+    Psych.load(WeatherCodeYAML).each { |wc| data_struct_template << wc }
 
     def retrieve_for(loc)
       resp = api_request('q' => loc)
@@ -358,7 +362,7 @@ DOC
       parameters[:location] = resp['name']
       parameters[:id_code] = resp['weather'].first['id']
 
-      wc = WeatherCode.find(parameters[:id_code])
+      wc = data_struct_template.find(parameters[:id_code])
 
       parameters[:flavor] = wc.flavor
       parameters[:icon] = wc.icon
@@ -371,7 +375,7 @@ DOC
     end
 
     def run
-      parameters[:location] = query['xpos', 'NNP'].join(' ')
+      parameters[:location] = query['xpos', 'NNP'].map(&:capitalize).join(' ')
       req = retrieve_for(parameters[:location])
       return_data(req)
       if query.contains?(/temperature/i)
