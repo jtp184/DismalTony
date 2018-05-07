@@ -7,9 +7,9 @@ module DismalTony::Directives
     set_group :info
 
     add_criteria do |qry|
-      qry << must { |q| q.contains?(/who/i, /what/i) }
+      qry << must { |q| q.contains?(/who/i, /what(?:'s)?/i) }
       qry << must { |q| q.contains?(/\bi\b/i, /\bmy\b/i) }
-      qry << should { |q| q.contains?(/\bis\b/i, /\bare\b/i, /\bam\b/i)}
+      qry << could { |q| q.contains?(/\bis\b/i, /\bare\b/i, /\bam\b/i)}
       qry << could { |q| q.contains?(/phone|number/i, /\bname\b/i, /birthday/i, /\bemail\b/i) }
     end
 
@@ -66,8 +66,8 @@ module DismalTony::Directives
     add_criteria do |qry|
       qry << must { |q| q.contains?(/what/i) }
       qry << must { |q| !Array(q.xpos 'NNP').empty? }
-      qry << should { |q| q.contains?(/\bis\b/i)}
       qry << could { |q| q.contains?(/phone|number/i, /\bname\b/i, /birthday/i, /\bemail\b/i) }
+      qry << doesnt { |q| q.contains?(/weather/i, /stocks/i) }
     end
 
     def user_for(text_check)
@@ -101,13 +101,13 @@ module DismalTony::Directives
 
         return_data("#{u[:first_name]} #{u[:last_name]}") and return DismalTony::HandledResponse.finish("~e:#{moj} Their name is #{u[:nickname]}.") if (seek =~ /\bname\b/)
         age_in_years = Duration.new(Time.now - u[:birthday]).weeks / 52
-        return_data(age_in_years) and return DismalTony::HandledResponse.finish("~e:#{moj} They are #{age_in_years} years old#{(rand < 0.5) ? (', ' + query.user[:nickname]) : nil}") if seek == 'age'
+        return_data(age_in_years) and return DismalTony::HandledResponse.finish("~e:#{moj} They are #{age_in_years} years old#{(rand < 0.5) ? (', ' + query.user[:nickname]) : nil}.") if seek == 'age'
 
         ky = seek.gsub(" ", "_").to_sym
         ky = :phone if ky == :number
 
         if query.user[ky]
-          return_data(query.user[ky])
+          return_data(u[ky])
           DismalTony::HandledResponse.finish("~e:#{moj} Their #{seek} is #{u[ky]}")
         else
           return_data(nil)
