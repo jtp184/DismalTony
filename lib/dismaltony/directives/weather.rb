@@ -358,6 +358,7 @@ module DismalTony::Directives
 
     def retrieve_for(loc)
       resp = api_request('q' => loc)
+      raise ArgumentError if resp['weather']&.first.nil?
 
       parameters[:location] = resp['name']
       parameters[:id_code] = resp['weather'].first['id']
@@ -375,8 +376,12 @@ module DismalTony::Directives
     end
 
     def run
-      parameters[:location] = query['xpos', 'NNP'].map(&:capitalize).join(' ')
-      req = retrieve_for(parameters[:location])
+      parameters[:location] = query['xpos', 'NNP'].map { |c| c.to_s.capitalize }.join(' ')
+      begin
+        req = retrieve_for(parameters[:location])
+      rescue ArgumentError
+        return DismalTony::HandledResponse.finish("~e:frown I'm sorry, I didn't comperhend the location. Try just the city.")
+      end
       return_data(req)
       if query.contains?(/temperature/i)
         DismalTony::HandledResponse.finish("~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}")
