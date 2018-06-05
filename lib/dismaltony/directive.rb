@@ -55,10 +55,10 @@ module DismalTony # :nodoc:
     # Takes in the Query +qry+ and verbosely checks it against the +match_criteria+ 
     # including a string representation of the original code block.
     def self.test_matches(qry)
-      self.match_criteria.map do |pri, c| 
+      self.match_criteria.map do |crit| 
         pat = /{.*}/
-        x = File.readlines(c.source_location[0])[c.source_location[1] - 1].slice(pat)
-        [pri, x, c.(qry)]
+        x = File.readlines(crit.predicate.source_location[0])[crit.predicate.source_location[1] - 1].slice(pat)
+        [crit.priority, x, crit.predicate.(qry)]
       end
     end
 
