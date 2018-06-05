@@ -101,11 +101,11 @@ module DismalTony # :nodoc:
             /^hello$/i => %w[hello hi greetings],
             /^yes$/i => %w[yes affirmative definitely correct certainly],
             /^no$/i => %w[no negative incorrect false],
-            /^update$/i => %w[updated changed modified revised altered edited adjusted],
-            /^updated$/i => %w[update change modify revise alter edit adjust],
-            /^add$/i => %w[added created],
-            /^added$/i => %w[add create],
-            /^what|how$/i => %[how what]
+            /^update$/i => %w[update change modify revise alter edit adjust],
+            /^updated$/i => %w[updated changed modified revised altered edited adjusted],
+            /^add$/i => %w[add create],
+            /^added$/i => %w[added created],
+            /^what|how$/i => %w[how what]
           }
         end
       end
