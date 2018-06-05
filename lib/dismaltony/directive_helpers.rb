@@ -159,6 +159,10 @@ module DismalTony # :nodoc:
         def random_face_emoji
           %w[cool goofy monocle sly smile think].sample
         end
+        # Returns randomly from a predefined set of time emoji
+        def time_emoji
+          %w[clock hourglass alarmclock stopwatch watch].sample
+        end
       end
     end
 
