@@ -94,8 +94,8 @@ module DismalTony::Directives
 
     	asking_for[:traffic_time] = query.contains?(/^time$/i, /^bad$/i, /^time$/i, /^long$/i)
     	asking_for[:distance] = query.contains?(/^distance$/i, /^far$/i, /^between$/i)
-    	asking_for[:directions] = query =~ /how do i get to/i || query.contains?(/^directions$/i)
-  		asking_for[:step_by_step] = query =~ /give me/i || query =~ /help me/i || query.contains?(/navigate/i)
+    	asking_for[:directions] = query =~ /give me/i || query.contains?(/^directions$/i)
+  		asking_for[:step_by_step] = query =~ /how do i get to/i || query.contains?(/navigate/i)
 
   		parameters[:info_type] = asking_for.find { |k, v| v }
 
