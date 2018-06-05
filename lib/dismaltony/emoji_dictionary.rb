@@ -31,7 +31,6 @@ module DismalTony # :nodoc:
         'brain' => '🧠',
         'burger' => '🍔',
         'bus' => '🚌',
-        'bus' => '🚌',
         'calendar' => '📅',
         'camera' => '📷',
         'cancel' => '🚫',
