@@ -14,7 +14,7 @@ module DismalTony::DirectiveHelpers
         @data_struct_template ||= Struct.new('GoogleMapsRoute', :distance, :duration, :start_address, :end_address, :steps, :raw) do
           def step_list
             outp = ''
-            steps.each_with_index do |slug, ix|
+            steps.each_with_index do |_slug, ix|
               outp << "#{ix + 1}) " << step_string[ix] << "\n"
             end
             outp
@@ -92,7 +92,38 @@ module DismalTony::Directives
       qry << could { |q| q =~ /how do i get/i }
     end
 
+    add_synonyms do |make|
+      make[/^none$/i] = ['very light', 'quite low', 'very low', 'pretty good']
+      make[/^low$/i] = ['low', 'not bad', 'light']
+      make[/^medium$/i] = ['okay', 'not too bad', 'fine', 'decent']
+      make[/^high$/i] = ['somewhat heavy', 'a bit dense', 'a bit clogged', 'heavy', 'high', 'dense']
+      make[/^very high$/i] = ['backed up', 'very heavy', 'very high', 'highly dense', 'significant']
+    end
+
     def run
+      x = determine_intent
+      return x unless parameters[:info_type]
+
+      check_for_start_and_end
+
+      y = confirm_start_and_end
+      confirmed = y.shift
+
+      resp = if confirmed
+               data_rep, r = choose_response
+
+               return_data(data_rep)
+               r
+             else
+               y.shift
+      end
+
+      resp
+    end
+
+    private
+
+    def determine_intent
       asking_for = {}
 
       asking_for[:traffic_time] = query.contains?(/^time$/i, /^bad$/i, /^time$/i, /^long$/i, /^traffic$/i)
@@ -102,23 +133,12 @@ module DismalTony::Directives
 
       parameters[:info_type] = asking_for.find { |_k, v| v }.first
 
-      check_for_start_and_end
-      x = confirm_start_and_end
-      confirmed = x.shift
-
-      resp = if confirmed
-        data_rep, r = choose_response
-
-        return_data(data_rep)
-        r
+      if parameters[:info_type].nil?
+        DismalTony::HandledResponse.finish("~e:frown I'm sorry, I couldn't figure out what maps function you wanted. Try talking about directions, traffic, or distance")
       else
-        x.shift
+        parameters[:info_type]
       end
-
-      return resp
     end
-
-    private
 
     def confirm_start_and_end
       unresolved = []
@@ -137,15 +157,18 @@ module DismalTony::Directives
 
       if parameters[:start_address] && parameters[:end_address]
         unresolved << true
-      end 
+      end
 
-      return unresolved
+      unresolved
     end
 
     def check_for_start_and_end
       m = query.to_str.match(/(?:from|between) (.*) (?:to|and) (.*)/i)
       s = m[1].gsub(/[\?\.\,\!]/, '')
       e = m[2].gsub(/[\?\.\,\!]/, '')
+
+      s = check_shortcut(s) if s.count(' ') == 0
+      e = check_shortcut(e) if e.count(' ') == 0
 
       parameters[:start_address] ||= s
       parameters[:end_address] ||= e
@@ -211,15 +234,15 @@ module DismalTony::Directives
 
       badness_string = case badness
                        when :none
-                         ['very light', 'quite low', 'very low', 'pretty good'].sample
+                         synonym_for 'none'
                        when :low
-                         ['low', 'not bad', 'light'].sample
+                         synonym_for 'low'
                        when :medium
-                         ['okay', 'not too bad', 'fine', 'decent'].sample
+                         synonym_for 'medium'
                        when :high
-                         ['somewhat heavy', 'a bit dense', 'a bit clogged', 'heavy', 'high', 'dense'].sample
+                         synonym_for 'high'
                        when :very_high
-                         ['backed up', 'very heavy', 'very high', 'highly dense', 'significant'].sample
+                         synonym_for 'very high'
                        else
                          'harrowing'
       end
