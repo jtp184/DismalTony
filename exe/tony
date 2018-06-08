@@ -14,7 +14,6 @@ require 'dismaltony'
 
 require 'dismaltony/directives/core'
 require 'dismaltony/directives/conversation'
-require 'dismaltony/directives/weather'
 
 module DismalTony
 	module CLI

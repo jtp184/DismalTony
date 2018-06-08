@@ -18,6 +18,7 @@ group :development do
 require: false
   gem 'google_maps_service', require: false
   gem 'ruby-units', require: false
+  gem 'duration', require: false
 end
 
 group :runtime do
