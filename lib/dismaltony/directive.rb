@@ -133,7 +133,7 @@ module DismalTony # :nodoc:
     # the #run method for some syntactic sugar.
     def call(mtd = :run)
       fin = self.method(mtd).call
-      raise "No response" unless fin.respond_to? :outgoing_message
+      raise "No response (#{fin.inspect})" unless fin.respond_to? :outgoing_message
       @query.complete(self, fin)
       self 
     end
