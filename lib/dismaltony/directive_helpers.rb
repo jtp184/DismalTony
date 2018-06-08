@@ -283,7 +283,7 @@ module DismalTony # :nodoc:
       module InstanceMethods
         # Uses the Directive's name, and any passed values to dig into the directive data
         def get_stored_data(*ky)
-          vi.data_store.directive_data.dig(name, *ky)
+          vi.data_store.read_data(name, *ky)
         end
 
         # In this Directive's storage, stores +ky+ with a value of +v+.

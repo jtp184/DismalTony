@@ -26,7 +26,7 @@
       @return_interface = (opts[:return_interface] || DismalTony::ConsoleInterface.new)
       @directives = (opts[:directives] || DismalTony::Directives.all)
       if opts[:data_store]
-        opts[:data_store].opts[:vi_name] = @name
+        opts[:data_store].set_opt(:vi_name, @name)
         @data_store = opts[:data_store]
       else
         @data_store = DismalTony::DataStore.new(vi_name: name)
@@ -72,7 +72,6 @@
       result = QueryResolver.(q, self)
       response = result.response
 
-      data_store.on_query(response)
       @user.modify_state!(response.conversation_state.stamp)
       DismalTony.last_result = result
 
@@ -84,11 +83,16 @@
         end
       end
       
-      if result.respond_to?(:data_representation)
-        result.data_representation
+      dr = nil
+
+      final_result = if result.respond_to?(:data_representation)
+        dr = result.data_representation
       else
         DismalTony::Formatter.format(response.to_s, apply_format(response))
       end
+
+      data_store.on_query(response: response, user: @user, data: dr)
+      final_result
     end
   end
 end
