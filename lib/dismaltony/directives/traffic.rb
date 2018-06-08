@@ -23,7 +23,7 @@ module DismalTony::DirectiveHelpers
 
           def step_string(n)
             i = steps[n][:html_instructions].clone
-            i.gsub!(/<div\b[^>]*>(.*?)<\/div>/i) { Regexp.last_match(2) }
+            i.gsub!(/<div\b[^>]*>(.*?)<\/div>/i) { "\n" + Regexp.last_match(2) }
             i.gsub!(/<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)<\/\1>/i) { Regexp.last_match(2) }
             i
           end
