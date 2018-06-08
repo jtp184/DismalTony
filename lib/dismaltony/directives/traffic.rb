@@ -16,15 +16,14 @@ module DismalTony::DirectiveHelpers
           def step_list
             outp = ''
             steps.each_with_index do |_slug, ix|
-              outp << "#{ix + 1}) " << step_string[ix] << "\n"
+              outp << "#{ix + 1}) " << step_string(ix) << "\n"
             end
             outp
           end
 
           def step_string(n)
             i = steps[n][:html_instructions].clone
-            i.gsub!(/<div\b[^>]*>(.*?)<\/div>/i) { "\n" + Regexp.last_match(2) }
-            i.gsub!(/<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)<\/\1>/i) { Regexp.last_match(2) }
+            i.gsub!(/<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)<\/\1>/i) { %Q|#{"\n\n" if Regexp.last_match(1) == 'div'}#{Regexp.last_match(2)}| }
             i
           end
         end
