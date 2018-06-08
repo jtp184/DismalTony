@@ -51,12 +51,28 @@ module DismalTony # :nodoc:
     def send(msg)
       return nil if msg =~ /^ *$/
       raise 'No Destination!' if @destination.nil?
-      @client.api.account.messages.create(
-        from: ENV['twilio_phone_number'],
-        to: destination,
-        body: msg
-      )
-    end
+      if(msg.chars.length < 1600)
+        @client.api.account.messages.create(
+          from: ENV['twilio_phone_number'],
+          to: destination,
+          body: msg
+          )
+      else
+        count_it = (msg.chars.length / 1600) + 1
+        si, ei = 0, 1600
+
+        count_it.times do
+         @client.api.account.messages.create(
+          from: ENV['twilio_phone_number'],
+          to: destination,
+          body: msg[si..ei]
+          ) 
+         si += 1600
+         ei += 1600
+       end
+
+     end
+   end
 
     # Overrides the stored +destination+ and sends +msg+ to the number +num+ instead
     def send_to(msg, num)
@@ -65,7 +81,7 @@ module DismalTony # :nodoc:
         from: ENV['twilio_phone_number'],
         to: num,
         body: msg
-      )
+        )
     end
   end
 
