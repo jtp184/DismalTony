@@ -1,5 +1,6 @@
 require 'google_maps_service'
 require 'ruby-units'
+require 'duration'
 
 module DismalTony::DirectiveHelpers
   module GoogleMapsServiceHelpers
