@@ -17,7 +17,7 @@ module DismalTony # :nodoc:
       @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(idle: true, user_identity: self))
       
       possible = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a
-      @user_data[:uuid] = (0..24).each_with_object([]) { |_n, i| i << possible.sample }.join
+      @user_data[:uuid] ||= (0..24).each_with_object([]) { |_n, i| i << possible.sample }.join
     end
 
     # Clones using the Marlshal dump / load trick.
