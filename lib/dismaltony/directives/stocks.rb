@@ -39,7 +39,7 @@ module DismalTony::Directives
         /\b[A-Z]+\b/.match(query.raw_text)[0]
       prices = retrieve_data(symbol: parameters[:stock_id])
 
-      parameters[:current_value] = prices.sort_by { |pr| pr.date }.last
+      parameters[:current_value] = prices.sort_by(&:date).last
 
       return_data(OpenStruct.new)
 
@@ -81,13 +81,13 @@ module DismalTony::Directives
     end
 
     def price_comment(history)
-      current = history.sort_by { |pr| pr.date }.last
+      current = history.sort_by(&:date).last
       moj = ''
 
       comment = "$#{format('%.2f', current.price)}" << case [0, 1, 2, 3].sample
                                                        when 0
                                                          # Better / worse than yesterday
-                                                         yesterday = history.sort_by { |pr| pr.date }.reverse[1]
+                                                         yesterday = history.sort_by(&:date).reverse[1]
                                                          if current > yesterday
                                                            moj = random_emoji('chartup', 'thumbsup', 'fire')
                                                            ", up from yesterday's $#{yesterday.price}"

@@ -7,7 +7,7 @@ require 'ostruct'
 module DismalTony # :nodoc:
   # Umbrella module for all mixins for Directives
   module DirectiveHelpers
-    # Basic template , adds the inheritence methods through metaprogramming so 
+    # Basic template , adds the inheritence methods through metaprogramming so
     # that n-children inherit class methods and instance methods apropriately.
     module HelperTemplate
       # Special case, only includes the class methods here.
@@ -147,21 +147,24 @@ module DismalTony # :nodoc:
           end
         end
 
-        # Returns randomly from a predefined set of positiveemoji        
+        # Returns randomly from a predefined set of positiveemoji
         def positive_emoji
           %w[100 checkbox star thumbsup rocket].sample
         end
+
         # Returns randomly from a predefined set of negative emoji
         def negative_emoji
           %w[cancel caution frown thumbsdown siren].sample
         end
+
         # Returns randomly from a predefined set of face emoji
         def random_face_emoji
           %w[cool goofy monocle sly smile think].sample
         end
+
         # Returns randomly from a predefined set of time emoji
         def time_emoji
-          %w[clock hourglass alarmclock stopwatch watch].sample
+          %w[clockface hourglass alarmclock stopwatch watch].sample
         end
       end
     end
@@ -190,7 +193,6 @@ module DismalTony # :nodoc:
           @api_defaults ||= get_api_defaults
         end
 
-        
         # Sets the api_defaults
         def api_defaults=(newval)
           @api_defaults = newval
@@ -331,6 +333,7 @@ module DismalTony # :nodoc:
         def define_data_representation
           @data_representation = yield
         end
+
         # Gets data_representation
         def data_representation
           @data_representation
