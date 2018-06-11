@@ -216,27 +216,21 @@ module DismalTony # :nodoc:
 
     def serialize_out(model)
       hfields = {}
-      puts hfields.inspect
       hfields['conversation_state'] = Psych.dump(model.conversation_state)
-      puts hfields.inspect
       model.user_data.each do |hkey, hval|
         hfields[hkey.to_s] = Psych.dump(hval)
       end
       hfields['uuid'] = Psych.load(hfields['uuid'])
-      puts hfields.inspect
       hfields
     end
 
     def serialize_in(redis_hash)
       h = redis_hash.clone
-      puts h.inspect
       h.transform_keys!(&:to_sym)
-      puts h.inspect
       h.transform_values! { |v| Psych.load v }
-      puts h.inspect
       cs = h.delete(:conversation_state)
-      puts cs.inspect
-      DismalTony::UserIdentity.new(user_data: h, conversation_state: cs)
+      uid = DismalTony::UserIdentity.new(user_data: h, conversation_state: cs)
+      uid
     end
 
     def directive_key(dk)
@@ -244,7 +238,7 @@ module DismalTony # :nodoc:
     end
 
     def user_key(either)
-      "DismalTony:UserIdentity:#{either[:uuid]}"
+      "DismalTony:UserIdentity:#{either[:uuid] || either['uuid']}"
     end
   end
 end
