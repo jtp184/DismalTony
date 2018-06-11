@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers::InstanceMethods</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers::InstanceMethods
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../../files/lib/dismaltony/directives/traffic_rb.html">lib/dismaltony/directives/traffic.rb</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'></div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-gmaps_client">gmaps_client</a></li>
+<li><a href="#method-i-gmaps_directions">gmaps_directions</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-gmaps_client'>
+<a name='method-i-gmaps_client'></a>
+<div class='synopsis'>
+<span class='name'>gmaps_client</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-gmaps_client-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-gmaps_client-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 34</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gmaps_client</span>&#x000A;  <span class="ruby-ivar">@gmaps_client</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">gmaps_client</span>&#x000A;  <span class="ruby-ivar">@gmaps_client</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-gmaps_directions'>
+<a name='method-i-gmaps_directions'></a>
+<div class='synopsis'>
+<span class='name'>gmaps_directions</span>
+<span class='arguments'>(opts = {})</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-gmaps_directions-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-gmaps_directions-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 39</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gmaps_directions</span>(<span class="ruby-identifier">opts</span> = {})&#x000A;  <span class="ruby-identifier">req</span> = <span class="ruby-identifier">gmaps_client</span>.<span class="ruby-identifier">directions</span>(&#x000A;    <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:start_address</span>),&#x000A;    <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:end_address</span>),&#x000A;    <span class="ruby-value">mode:</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:mode</span>) { <span class="ruby-string">&#39;driving&#39;</span> },&#x000A;    <span class="ruby-value">alternatives:</span> <span class="ruby-keyword">false</span>&#x000A;  ).<span class="ruby-identifier">first</span>&#x000A;  <span class="ruby-identifier">legs</span> = <span class="ruby-identifier">req</span>[<span class="ruby-value">:legs</span>].<span class="ruby-identifier">first</span>&#x000A;&#x000A;  <span class="ruby-identifier">ds_args</span> = []&#x000A;&#x000A;  <span class="ruby-identifier">ds_args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Unit</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;#{legs[:distance][:value]}m&quot;</span>)&#x000A;  <span class="ruby-identifier">ds_args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Duration</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">second:</span> <span class="ruby-identifier">legs</span>[<span class="ruby-value">:duration</span>][<span class="ruby-value">:value</span>])&#x000A;  <span class="ruby-identifier">ds_args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">legs</span>[<span class="ruby-value">:start_address</span>]&#x000A;  <span class="ruby-identifier">ds_args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">legs</span>[<span class="ruby-value">:end_address</span>]&#x000A;  <span class="ruby-identifier">ds_args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">legs</span>[<span class="ruby-value">:steps</span>]&#x000A;  <span class="ruby-identifier">ds_args</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">req</span>&#x000A;&#x000A;  <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ds_args</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

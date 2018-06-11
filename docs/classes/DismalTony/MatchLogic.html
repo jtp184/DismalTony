@@ -65,7 +65,7 @@ used to create it.</p>
 <li><a href="#method-i-penalty-3F">penalty?</a></li>
 <li><a href="#attribute-i-predicate">predicate</a></li>
 <li><a href="#attribute-i-priority">priority</a></li>
-<li><a href="#attribute-i-succeeds_incr">succeeds_incr</a></li>
+<li><a href="#attribute-i-success_incr">success_incr</a></li>
 </ol>
 </div>
 <div id='context'>
@@ -116,7 +116,7 @@ href="MatchLogic.html">MatchLogic</a>, stored as a symbol</p>
 </tr>
 <tr class='top-aligned-row context-row'>
 <td class='context-item-name'>
-<a name='attribute-i-succeeds_incr'>succeeds_incr</a>
+<a name='attribute-i-success_incr'>success_incr</a>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
@@ -158,17 +158,17 @@ the <code>members</code> array.</p>
 <div class='description'>
 
 <p>Takes in a predicate <code>pre</code> which is a Proc object of arity 1
-representing the condition to check against. Subclasses can override values
-such as the <code>priority</code>, <code>succeeds_incr</code>, and
-<code>fails_incr</code>, and <code>penalty</code> status. Otherwise, they
-default to :matches, 1, 0, and true respectively.</p>
+representing the condition to check against. <a
+href="MatchLogic.html#attribute-i-success_incr">#success_incr</a>+, and
+<code>penalty</code> status. Otherwise, they default to :matches, 1, 0, and
+true respectively.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-new-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 19</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">pre</span>)&#x000A;  <span class="ruby-ivar">@predicate</span> = <span class="ruby-identifier">pre</span>&#x000A;  <span class="ruby-ivar">@priority</span> = <span class="ruby-value">:matches</span>&#x000A;  <span class="ruby-ivar">@succeeds_incr</span> = <span class="ruby-value">1</span>&#x000A;  <span class="ruby-ivar">@fails_incr</span> = <span class="ruby-value">0</span>&#x000A;  <span class="ruby-ivar">@penalty</span> = <span class="ruby-keyword">true</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 19</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">pre</span>)&#x000A;  <span class="ruby-ivar">@predicate</span> = <span class="ruby-identifier">pre</span>&#x000A;  <span class="ruby-ivar">@priority</span> = <span class="ruby-value">:matches</span>&#x000A;  <span class="ruby-ivar">@success_incr</span> = <span class="ruby-value">1</span>&#x000A;  <span class="ruby-ivar">@fails_incr</span> = <span class="ruby-value">0</span>&#x000A;  <span class="ruby-ivar">@penalty</span> = <span class="ruby-keyword">true</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <h2>Public Instance methods</h2>
@@ -181,15 +181,14 @@ default to :matches, 1, 0, and true respectively.</p>
 </div>
 <div class='description'>
 
-<p>Adds <code>succeeds_incr</code> to <code>other</code> and returns the
-result</p>
+<p>Adds <code>success_incr</code> to <code>other</code> and returns the result</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-2B-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-2B-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 33</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)&#x000A;  <span class="ruby-ivar">@succeeds_incr</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-2B-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 33</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">+</span>(<span class="ruby-identifier">other</span>)&#x000A;  <span class="ruby-ivar">@success_incr</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">other</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-coerce'>
@@ -201,15 +200,16 @@ result</p>
 </div>
 <div class='description'>
 
-<p>Returns the proper format of an Array of <code>other</code> and
-<code>succeeds_incr</code> converted to float</p>
+<p>Returns the proper <a
+href="MatchLogic.html#attribute-i-fails_incr">#fails_incr</a>+ converted to
+float</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-coerce-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-coerce-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 38</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">coerce</span>(<span class="ruby-identifier">other</span>)&#x000A;  [<span class="ruby-identifier">other</span>, <span class="ruby-ivar">@succeeds_incr</span>.<span class="ruby-identifier">to_f</span>]&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-coerce-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 38</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">coerce</span>(<span class="ruby-identifier">other</span>)&#x000A;  [<span class="ruby-identifier">other</span>, <span class="ruby-ivar">@success_incr</span>.<span class="ruby-identifier">to_f</span>]&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-fail'>

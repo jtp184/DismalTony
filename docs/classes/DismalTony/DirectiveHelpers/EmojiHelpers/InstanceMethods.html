@@ -46,6 +46,7 @@ which are added on inclusion</p>
 <li><a href="#method-i-positive_emoji">positive_emoji</a></li>
 <li><a href="#method-i-random_emoji">random_emoji</a></li>
 <li><a href="#method-i-random_face_emoji">random_face_emoji</a></li>
+<li><a href="#method-i-time_emoji">time_emoji</a></li>
 </ol>
 </div>
 <div id='context'>
@@ -69,7 +70,7 @@ which are added on inclusion</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-negative_emoji-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-negative_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 154</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">negative_emoji</span>&#x000A;  <span class="ruby-node">%w[cancel caution frown thumbsdown siren]</span>.<span class="ruby-identifier">sample</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-negative_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 156</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">negative_emoji</span>&#x000A;  <span class="ruby-node">%w[cancel caution frown thumbsdown siren]</span>.<span class="ruby-identifier">sample</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-positive_emoji'>
@@ -88,7 +89,7 @@ which are added on inclusion</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-positive_emoji-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-positive_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 150</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">positive_emoji</span>&#x000A;  <span class="ruby-node">%w[100 checkbox star thumbsup rocket]</span>.<span class="ruby-identifier">sample</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-positive_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 151</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">positive_emoji</span>&#x000A;  <span class="ruby-node">%w[100 checkbox star thumbsup rocket]</span>.<span class="ruby-identifier">sample</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-random_emoji'>
@@ -108,7 +109,7 @@ randomly from all emoji.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-random_emoji-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-random_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 141</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">random_emoji</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">moj</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">moj</span>.<span class="ruby-identifier">length</span>.<span class="ruby-identifier">zero?</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">EmojiDictionary</span>.<span class="ruby-identifier">emoji_table</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">moj</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-random_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 142</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">random_emoji</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">moj</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">moj</span>.<span class="ruby-identifier">length</span>.<span class="ruby-identifier">zero?</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">EmojiDictionary</span>.<span class="ruby-identifier">emoji_table</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">moj</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-random_face_emoji'>
@@ -127,7 +128,26 @@ randomly from all emoji.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-random_face_emoji-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-random_face_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 158</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">random_face_emoji</span>&#x000A;  <span class="ruby-node">%w[cool goofy monocle sly smile think]</span>.<span class="ruby-identifier">sample</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-random_face_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 161</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">random_face_emoji</span>&#x000A;  <span class="ruby-node">%w[cool goofy monocle sly smile think]</span>.<span class="ruby-identifier">sample</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-time_emoji'>
+<a name='method-i-time_emoji'></a>
+<div class='synopsis'>
+<span class='name'>time_emoji</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Returns randomly from a predefined set of time emoji</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-time_emoji-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-time_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 166</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">time_emoji</span>&#x000A;  <span class="ruby-node">%w[clockface hourglass alarmclock stopwatch watch]</span>.<span class="ruby-identifier">sample</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

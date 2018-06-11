@@ -41,6 +41,14 @@ Superclass:
 <div id='description'></div>
 <div id='method-list'>
 <h2>Methods</h2>
+<h3>Public Class</h3>
+<ol>
+<li><a href="#method-c-3C-3C"><<</a></li>
+<li><a href="#method-c-5B-5D">[]</a></li>
+<li><a href="#method-c-all">all</a></li>
+<li><a href="#method-c-each">each</a></li>
+<li><a href="#method-c-find">find</a></li>
+</ol>
 <h3>Public Instance</h3>
 <ol>
 <li><a href="#method-i-retrieve_for">retrieve_for</a></li>
@@ -53,6 +61,8 @@ Superclass:
 <ol>
 <li><a href="../DirectiveHelpers/JSONAPIHelpers.html">DismalTony::DirectiveHelpers::JSONAPIHelpers</a></li>
 <li><a href="../DirectiveHelpers/DataRepresentationHelpers.html">DismalTony::DirectiveHelpers::DataRepresentationHelpers</a></li>
+<li><a href="../DirectiveHelpers/DataStructHelpers.html">DismalTony::DirectiveHelpers::DataStructHelpers</a></li>
+<li>Enumerable</li>
 </ol>
 </div>
 </div>
@@ -61,36 +71,6 @@ Superclass:
 <h2>Constants</h2>
 <div class='name-list'>
 <table summary='Constants'>
-<tr class='top-aligned-row context-row'>
-<td class='context-item-name'>WeatherCode</td>
-<td>=</td>
-<td class='context-item-value'>Struct.new('WeatherCode', :id, :flavor, :icon) do
-include Enumerable
-@@codes = []
-
-def self.[](param)
-@@codes[param]
-end
-
-def self.<<(member)
-@@codes << member
-end
-
-def self.each
-@@codes.each { |c| yield c }
-end
-
-def self.all
-@@codes
-end
-
-def self.find(byid)
-@@codes.find { |v| v.id == byid }
-end
-end</td>
-<td>&nbsp;</td>
-<td class='context-item-desc'></td>
-</tr>
 <tr class='top-aligned-row context-row'>
 <td class='context-item-name'>WeatherCodeYAML</td>
 <td>=</td>
@@ -102,6 +82,92 @@ end</td>
 </div>
 </div>
 <div id='methods'>
+<h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-3C-3C'>
+<a name='method-c-3C-3C'></a>
+<div class='synopsis'>
+<span class='name'><<</span>
+<span class='arguments'>(member)</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-3C-3C-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-3C-3C-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 339</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">&lt;&lt;</span>(<span class="ruby-identifier">member</span>)&#x000A;  <span class="ruby-identifier">@@codes</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">member</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-5B-5D'>
+<a name='method-c-5B-5D'></a>
+<div class='synopsis'>
+<span class='name'>[]</span>
+<span class='arguments'>(param)</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-5B-5D-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-5B-5D-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 335</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">[]</span>(<span class="ruby-identifier">param</span>)&#x000A;  <span class="ruby-identifier">@@codes</span>[<span class="ruby-identifier">param</span>]&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-all'>
+<a name='method-c-all'></a>
+<div class='synopsis'>
+<span class='name'>all</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-all-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-all-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 347</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>&#x000A;  <span class="ruby-identifier">@@codes</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-each'>
+<a name='method-c-each'></a>
+<div class='synopsis'>
+<span class='name'>each</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-each-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-each-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 343</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">each</span>&#x000A;  <span class="ruby-identifier">@@codes</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword">yield</span> <span class="ruby-identifier">c</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-find'>
+<a name='method-c-find'></a>
+<div class='synopsis'>
+<span class='name'>find</span>
+<span class='arguments'>(byid)</span>
+
+</div>
+<div class='description'>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-find-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-find-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 351</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">byid</span>)&#x000A;  <span class="ruby-identifier">@@codes</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">byid</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
 <h2>Public Instance methods</h2>
 <div class='method public-instance' id='method-method-i-retrieve_for'>
 <a name='method-i-retrieve_for'></a>
@@ -117,7 +183,7 @@ end</td>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-retrieve_for-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-retrieve_for-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 355</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">retrieve_for</span>(<span class="ruby-identifier">loc</span>)&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-identifier">api_request</span>(<span class="ruby-string">&#39;q&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">loc</span>)&#x000A;&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:location</span>] = <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;name&#39;</span>]&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:id_code</span>] = <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;weather&#39;</span>].<span class="ruby-identifier">first</span>[<span class="ruby-string">&#39;id&#39;</span>]&#x000A;&#x000A;  <span class="ruby-identifier">wc</span> = <span class="ruby-constant">WeatherCode</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:id_code</span>])&#x000A;&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:flavor</span>] = <span class="ruby-identifier">wc</span>.<span class="ruby-identifier">flavor</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:icon</span>] = <span class="ruby-identifier">wc</span>.<span class="ruby-identifier">icon</span>&#x000A;  {&#x000A;    <span class="ruby-value">city_name:</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:location</span>],&#x000A;    <span class="ruby-value">weather:</span> <span class="ruby-identifier">wc</span>,&#x000A;    <span class="ruby-value">temp_min:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;main&#39;</span>][<span class="ruby-string">&#39;temp_min&#39;</span>],&#x000A;    <span class="ruby-value">temp_max:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;main&#39;</span>][<span class="ruby-string">&#39;temp_max&#39;</span>]&#x000A;  }&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-retrieve_for-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 359</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">retrieve_for</span>(<span class="ruby-identifier">loc</span>)&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-identifier">api_request</span>(<span class="ruby-string">&#39;q&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">loc</span>)&#x000A;  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;weather&#39;</span>]&amp;.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">nil?</span>&#x000A;&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:location</span>] = <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;name&#39;</span>]&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:id_code</span>] = <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;weather&#39;</span>].<span class="ruby-identifier">first</span>[<span class="ruby-string">&#39;id&#39;</span>]&#x000A;&#x000A;  <span class="ruby-identifier">wc</span> = <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:id_code</span>])&#x000A;&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:flavor</span>] = <span class="ruby-identifier">wc</span>.<span class="ruby-identifier">flavor</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:icon</span>] = <span class="ruby-identifier">wc</span>.<span class="ruby-identifier">icon</span>&#x000A;  {&#x000A;    <span class="ruby-value">city_name:</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:location</span>],&#x000A;    <span class="ruby-value">weather:</span> <span class="ruby-identifier">wc</span>,&#x000A;    <span class="ruby-value">temp_min:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;main&#39;</span>][<span class="ruby-string">&#39;temp_min&#39;</span>],&#x000A;    <span class="ruby-value">temp_max:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;main&#39;</span>][<span class="ruby-string">&#39;temp_max&#39;</span>]&#x000A;  }&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-run'>
@@ -134,7 +200,7 @@ end</td>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 373</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:location</span>] = <span class="ruby-identifier">query</span>[<span class="ruby-string">&#39;xpos&#39;</span>, <span class="ruby-string">&#39;NNP&#39;</span>].<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39; &#39;</span>)&#x000A;  <span class="ruby-identifier">req</span> = <span class="ruby-identifier">retrieve_for</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:location</span>])&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">req</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">contains?</span>(<span class="ruby-regexp">/temperature/i</span>)&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}&quot;</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;The current weather in #{req[:city_name]} is #{req[:weather].flavor}.&quot;</span>).<span class="ruby-identifier">with_format</span>(<span class="ruby-value">use_icon:</span> <span class="ruby-identifier">req</span>[<span class="ruby-value">:weather</span>].<span class="ruby-identifier">icon</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 378</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:location</span>] = <span class="ruby-identifier">query</span>[<span class="ruby-string">&#39;xpos&#39;</span>, <span class="ruby-string">&#39;NNP&#39;</span>].<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">capitalize</span> }.<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39; &#39;</span>)&#x000A;  <span class="ruby-keyword">begin</span>&#x000A;    <span class="ruby-identifier">req</span> = <span class="ruby-identifier">retrieve_for</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:location</span>])&#x000A;  <span class="ruby-keyword">rescue</span> <span class="ruby-constant">ArgumentError</span>&#x000A;    <span class="ruby-keyword">return</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:frown I&#39;m sorry, I didn&#39;t comperhend the location. Try just the city.&quot;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">req</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">contains?</span>(<span class="ruby-regexp">/temperature/i</span>)&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:thermometer The temperature right now is around #{req[:temp_min]}˚F in #{req[:city_name]}&quot;</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;The current weather in #{req[:city_name]} is #{req[:weather].flavor}.&quot;</span>).<span class="ruby-identifier">with_format</span>(<span class="ruby-value">use_icon:</span> <span class="ruby-identifier">req</span>[<span class="ruby-value">:weather</span>].<span class="ruby-identifier">icon</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>
