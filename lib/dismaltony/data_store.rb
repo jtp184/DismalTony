@@ -61,10 +61,13 @@ module DismalTony # :nodoc:
       directive_data.dig(dname, *ky)
     end
 
+
+    # Using the key +k+ and the value +v+, add something to the @opts hash
     def set_opt(k, v)
       @opts[k] = v
     end
 
+    # Returns the @opts hash.
     def load_opts
       @opts
     end
@@ -97,7 +100,7 @@ module DismalTony # :nodoc:
       new_store.save
     end
 
-    # Kickback function. Ignores +_handled+ and saves to disk after every query.
+    # Kickback function. Ignores +_args+ and saves to disk after every query.
     def on_query(*_args)
       save
     end
@@ -113,26 +116,46 @@ module DismalTony # :nodoc:
       load_from(filepath)
     end
 
-    # Checks the internal +datastore+ to see if it responds to +name+, and passes the +params+ along.
+    # Passes the +slug+ to DataStore#store_data and, then saves to disk.
+    def store_data(slug)
+      x = @data_store.store_data(slug)
+      save
+      x
+    end
+
+    # Delegates +k+ and +v+ to DataStore#set_opt and saves to disk.
+    def set_opt(k, v)
+      x = @data_store.set_opt(k, v)
+      save
+      x
+    end
+
+    # Checks the internal +data_store+ to see if it responds to +name+, and passes the +params+ along.
     def method_missing(name, *params)
       @data_store.respond_to?(name) ? @data_store.method(name).(*params) : super
     end
   end
 
+  # Uses Redis to store and retrieve user and directive data
   class RedisStore
+    # The environment options, which get reloaded from the db
     attr_reader :opts
 
+    # takes in a :redis_config in +args+
     def initialize(args={})
       @redis = Redis.new(args.fetch(:redis_config) { {} })
       load_opts
     end
 
+    # Takes in options for the new user's UserIdentity#user_data through +args+
     def new_user(args = {})
       tu = DismalTony::UserIdentity.new(user_data: args)
       commit_user(serialize_out(tu))
       tu
     end
 
+    # Takes the options in +args+ and doublesplats them. 
+    # Uses the user returned to update their model in the db
     def on_query(**args)
       user = args.fetch(:user)
       response = args.fetch(:response)
@@ -140,6 +163,8 @@ module DismalTony # :nodoc:
       user = select_user(user[:uuid])
     end
 
+    # If given a +uid+ that is a UserIdentity's uuid, returns that user.
+    # Otherwise, passes a block argument to a select on #all_users
     def select_user(uid=nil,&block)
       if uid.nil? && block_given?
         all_users.select(&block)
@@ -150,13 +175,17 @@ module DismalTony # :nodoc:
       end
     end
 
-    def update_user(uid,&block)
+    # Given a +uid+, this passes the +user+ for editing
+    # inside the +block+. Then commits the changes.
+    def update_user(uid,&block) # :yields: user
       u = select_user(uid)
       yield u
       commit_user(serialize_out(u))
       u
     end
 
+    # Given any object +user+ which responds properly to #[:uuid],
+    # deletes the associated hash and keys. Returns +user+ when done.
     def delete_user(user)
       ukey = user_key(user)
       to_delete = @redis.hgetall(ukey).keys
@@ -164,6 +193,7 @@ module DismalTony # :nodoc:
       user
     end
 
+    # Globs all the Users' keys and turns them into UserIdentity records.
     def all_users
       allofem = @redis.keys("DismalTony:UserIdentity:*")
       @redis.pipelined { allofem.map! { |a| @redis.hgetall(a) } }
@@ -172,14 +202,18 @@ module DismalTony # :nodoc:
       allofem
     end
 
+    # Alias for #all_users
     def users
       all_users
     end
 
+    # Yields an empty hash if read from directly.
     def directive_data
       {}
     end
 
+    # Takes in the +slug+ and stores data in the db using the #directive_key method
+    # to generate a hash string.
     def store_data(slug)
       dr, ky, vl = slug.fetch(:directive).to_s, slug.fetch(:key).to_s, Psych.dump(slug.fetch(:value))
       @redis.hset directive_key(dr), ky, vl
@@ -187,6 +221,8 @@ module DismalTony # :nodoc:
       nil
     end
 
+    # Given the directive name +dname+ and any number of keys +ky+,
+    # will dig through the hash and return values.
     def read_data(dname, *ky)
       initial = ky.shift
       s = Psych.load(@redis.hget directive_key(dname), initial)
@@ -194,11 +230,14 @@ module DismalTony # :nodoc:
       s.dig(*ky)
     end
 
+    # Given a key-value pair +k+ and +v+, stores them in the db under the global
+    # opts hash. Returns the whole array of opts
     def set_opt(k, v)
       @redis.hset("DismalTony:RedisStore:opts", k.to_s, Psych.dump(v))
       load_opts
     end
 
+    # Reads the opts in from the database and replaces +opts+ with them.
     def load_opts
       o = @redis.hgetall("DismalTony:RedisStore:opts").clone
       o.transform_keys!(&:to_sym)
@@ -209,11 +248,14 @@ module DismalTony # :nodoc:
 
     private
 
+    # Given hash +fields+, flattens them and sets them into the db
     def commit_user(fields)
       zipper = fields.to_a.flatten
       @redis.hmset user_key(fields), *zipper
     end
 
+    # Takes in a UserIdentity and transforms it into a storable hash for Redis
+    # by serializing complex data to YAML
     def serialize_out(model)
       hfields = {}
       hfields['conversation_state'] = Psych.dump(model.conversation_state)
@@ -224,6 +266,7 @@ module DismalTony # :nodoc:
       hfields
     end
 
+    # Reads the +redis_hash+ from db and undoes what #serialize_out does, yielding a UserIdentity.
     def serialize_in(redis_hash)
       h = redis_hash.clone
       h.transform_keys!(&:to_sym)
@@ -233,10 +276,12 @@ module DismalTony # :nodoc:
       uid
     end
 
+    # Given a string +dk+, prepends it with "DismalTony:" to serve as a globbable identifier.
     def directive_key(dk)
       "DismalTony:#{dk}"
     end
 
+    # Given +either+, which is anything that responds to ['uuid'], yields a key for identifying it in the db
     def user_key(either)
       "DismalTony:UserIdentity:#{either[:uuid] || either['uuid']}"
     end
