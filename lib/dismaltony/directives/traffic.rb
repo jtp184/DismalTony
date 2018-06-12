@@ -62,7 +62,6 @@ end
 
 module DismalTony::Directives
   class TrafficReportDirective < DismalTony::Directive
-    include DismalTony::DirectiveHelpers::CoreHelpers
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::DataStructHelpers
     include DismalTony::DirectiveHelpers::ConversationHelpers

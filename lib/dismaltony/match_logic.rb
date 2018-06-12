@@ -114,6 +114,7 @@ module DismalTony
       def initialize(pre) # :nodoc:
         super(pre)
         @priority = :must
+        @success_incr = 3
       end
 
       # raises a MatchLogicFailure.
