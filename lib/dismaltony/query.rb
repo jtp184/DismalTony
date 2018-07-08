@@ -48,9 +48,9 @@ module DismalTony # :nodoc:
     end
 
     # Redefined to check first if +parsed_result+ can respond to +method_name+, and passes along +params+
-    def method_missing(method_name, *params)
+    def method_missing(method_name, *params, &blk)
       if parsed_result.respond_to?(method_name)
-        parsed_result.method(method_name).(*params)
+        parsed_result.method(method_name).(*params, &blk)
       else
         super
       end
