@@ -226,7 +226,7 @@ module DismalTony::Directives
     def ask_for_number
       DismalTony::HandledResponse.then_do(
         message: "~e:pound Please enter the number of shares you'd like to sum as a number.",
-        directive: self.name, 
+        directive: self, 
         method: :read_number, 
         data: parameters,
         parse_next: false
