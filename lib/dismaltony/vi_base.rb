@@ -12,12 +12,10 @@
     attr_reader :data_store
     # The UserIdentity corresponding to the current user.
     attr_reader :user
-    # the Scheduler object for executing timed tasks
-    attr_reader :scheduler
 
     # Options for +opts+
     # * +:name+ - The name for the VI. Defaults to 'Tony'
-    # * +:directives+ - The Array of directives. Defaults to the entire contents of the HandlerRegistry.
+    # * +:directives+ - The Array of directives. Defaults to all known.
     # * +:data_store+ - The data store to use with this VI. Defaults to a generic DataStore object.
     # * +:return_interface+ - The interface to route conversation back through. Defaults to the ConsoleInterface.
     # * +:user+ - the UserIdentity of who is using this VI

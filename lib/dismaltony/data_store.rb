@@ -61,6 +61,32 @@ module DismalTony # :nodoc:
       directive_data.dig(dname, *ky)
     end
 
+    # Using the directive's +dname+ and the nested keys 
+    # +ky+, removes the key from the store
+    def delete_data(dname, *ky)
+      ini = directive_data[dname]
+      jni = nil
+
+      if ky.length == 0
+        ini
+      elsif ky.length == 1
+        ini.delete(ky.first)
+      else
+        ky.each do |j|
+          jni = ini
+          ini = j
+        end
+        jni.delete(ini)
+      end
+    end
+
+    def update_data(slug)
+      dr, ky, vl = slug.fetch(:directive), slug.fetch(:key), slug.fetch(:value)
+      @directive_data[dr] ||= {}
+      @directive_data[dr][ky] = vl
+    rescue KeyError
+      nil
+    end
 
     # Using the key +k+ and the value +v+, add something to the @opts hash
     def set_opt(k, v)
@@ -119,6 +145,28 @@ module DismalTony # :nodoc:
     # Passes the +slug+ to DataStore#store_data and, then saves to disk.
     def store_data(slug)
       x = @data_store.store_data(slug)
+      save
+      x
+    end
+
+    # Using the directive's +dname+ and the nested keys 
+    # +ky+, digs inside +directive_data+ for the information
+    def read_data(dname, *ky)
+      x = @data_store.read_data(dname, *ky)
+      save
+      x
+    end
+
+    # Using the directive's +dname+ and the nested keys 
+    # +ky+, removes the key from the store
+    def delete_data(dname, *ky)
+      x = @data_store.delete_data(dname, *ky)
+      save
+      x
+    end
+
+    def update_data(slug)
+      x = @data_store.update_data(slug)
       save
       x
     end
@@ -221,13 +269,43 @@ module DismalTony # :nodoc:
       nil
     end
 
+    # Takes in the +slug+ and stores data in the db using the #directive_key method
+    # to generate a hash string.
+    def update_data(slug)
+      store_data(slug)
+    end
+
     # Given the directive name +dname+ and any number of keys +ky+,
     # will dig through the hash and return values.
     def read_data(dname, *ky)
-      initial = ky.shift
-      s = Psych.load(@redis.hget directive_key(dname), initial)
-      return s if ky.empty?
-      s.dig(*ky)
+      if ky.length == 0
+        @redis.hgetall(directive_key(dname)).map { |e, v| Psych.load(v) }
+      elsif ky.length == 1
+        initial = ky.shift
+        s = Psych.load(@redis.hget directive_key(dname), initial)
+      else
+        s = Psych.load(@redis.hget directive_key(dname), initial)
+        s.dig(*ky)
+      end
+    end
+
+    # Given the directive name +dname+ and any number of keys +ky+,
+    # will expunge the value from the hash.
+    def delete_data(dname, *ky)
+      ini = directive_data[dname]
+      jni = nil
+
+      if ky.length == 0
+        @redis.hdelall(ini)
+      elsif ky.length == 1
+        @redis.hdel(directive_key(ini), ky.first)
+      else
+        ky.each do |j|
+          jni = ini
+          ini = j
+        end
+        @redis.hdel(directive_key(jni), ini)
+      end
     end
 
     # Given a key-value pair +k+ and +v+, stores them in the db under the global

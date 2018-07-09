@@ -4,6 +4,7 @@ require 'colorize'
 require 'optparse'
 require 'ostruct'
 require 'psych'
+require 'redis'
 require 'open-uri'
 
 require 'pry'
@@ -42,12 +43,16 @@ module DismalTony
 				__[:load_file] = l
 			end
 
-			opts.on('-r', '--remote=ADDR', 'choose a URL to post hooks to instead of locally running') do |r|
-				__[:remote_addr] = URI(r)
+			opts.on('-r', '--redis=DB', 'use Redis at server DB for Tony, and DB+1 for Parsey') do |r|
+				__[:redis_db] = Integer(r)
 			end
 
 			opts.on('-s', '--syntaxnet=PATH', 'the path for the Syntaxnet scripts') do |s|
 				__[:syntaxnet_path] = s
+			end
+
+			opts.on('-u', '--user=UID', 'the UUID of the User to log in as') do |u|
+				__[:uuid] = u
 			end
 		end.parse!
 
@@ -65,7 +70,30 @@ module DismalTony
 
 			DismalTony.vi = DismalTony::VIBase.new(
 				:data_store => db,
-				:user => db.users&.first
+				:user => get_the_user(db)
+				)
+		end
+
+		def self.get_the_user(dbb)
+			if __[:uuid]
+				dbb.select_user { |u| u[:uuid] == __[:uuid] }.first
+			else
+				dbb.users.last
+			end
+		end
+
+		def self.use_redis_instead
+			ParseyParse.configure do |conf|
+				conf[:cache] = ParseyParse::RedisCache.new(redis_config: {db: __[:redis_db]+1})
+				conf[:syntaxnet_path] = __[:syntaxnet_path] if __[:syntaxnet_path]
+				conf[:disable_tf] = !File.exists?(conf[:syntaxnet_path] + '/' + conf[:script_path])
+			end
+
+			db = DismalTony::RedisStore.new(redis_config: {db: __[:redis_db]})
+
+			DismalTony.vi = DismalTony::VIBase.new(
+				:data_store => db,
+				:user => get_the_user(db)
 				)
 		end
 
@@ -94,10 +122,18 @@ module DismalTony
 			end
 		end
 
+		def self.get_icon
+			if DismalTony.().user[:icon]
+				DismalTony.().user[:icon]
+			else
+				'laptop'
+			end
+		end
+
 		def self.interactive(debug = false)
 			puts
 			loop do
-				print "[#{DismalTony::EmojiDictionary['laptop']}  ]: "
+				print "[#{DismalTony::EmojiDictionary[get_icon]}  ]: "
 				inp = gets.chomp
 				puts
 				if check_interactive_options(inp)
@@ -131,12 +167,12 @@ module DismalTony
 		end
 
 		def self.load_homefile
-			__ = Psych.load(File.read(Dir.home + '/.tony'))
+			@__ = Psych.load(File.read(Dir.home + '/.tony'))
 		end
 
 		def self.check_homefile
 			if File.exists?(Dir.home + '/.tony')
-				Psych.load(File.read(Dir.home + '/.tony'))
+				true
 			else
 				nil
 			end
@@ -148,8 +184,12 @@ module DismalTony
 
 		def self.call
 			preload
-			configure_parsey
-			configure_vi
+			unless __[:redis_db]
+				configure_parsey
+				configure_vi
+			else
+				use_redis_instead
+			end
 
 			if __[:interactive]
 				interactive
