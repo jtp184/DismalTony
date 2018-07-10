@@ -279,7 +279,7 @@ module DismalTony # :nodoc:
     # will dig through the hash and return values.
     def read_data(dname, *ky)
       if ky.length == 0
-        @redis.hgetall(directive_key(dname)).map { |e, v| Psych.load(v) }
+        @redis.hgetall(directive_key(dname)).map { |e, v| Psych.load(v) }.flatten
       elsif ky.length == 1
         initial = ky.shift
         s = Psych.load(@redis.hget directive_key(dname), initial)
@@ -292,11 +292,11 @@ module DismalTony # :nodoc:
     # Given the directive name +dname+ and any number of keys +ky+,
     # will expunge the value from the hash.
     def delete_data(dname, *ky)
-      ini = directive_data[dname]
+      ini = dname
       jni = nil
 
       if ky.length == 0
-        @redis.hdelall(ini)
+        @redis.hdelall(directive_key(ini))
       elsif ky.length == 1
         @redis.hdel(directive_key(ini), ky.first)
       else
