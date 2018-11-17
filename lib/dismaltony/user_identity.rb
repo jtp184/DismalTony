@@ -2,6 +2,7 @@ module DismalTony # :nodoc:
   # Represents the identity of the user submitting queries. Used both to allow for stated conversation,
   # and as a way to keep user-specific information isolated from other user-specific information, such as
   # names, phone numbers, preferences, etc.
+  require 'securerandom'
   class UserIdentity
     # A Hash. +user_data+ keeps track of unique information. Calling <tt>UserIdentity[key]</tt> retrieves from here.
     attr_reader :user_data
@@ -17,7 +18,8 @@ module DismalTony # :nodoc:
       @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(idle: true, user_identity: self))
       
       possible = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a
-      @user_data[:uuid] ||= (0..24).each_with_object([]) { |_n, i| i << possible.sample }.join
+      # @user_data[:uuid] ||= (0..24).each_with_object([]) { |_n, i| i << possible.sample }.join
+      @user_data[:uuid] ||= SecureRandom.uuid
     end
 
     # Clones using the Marlshal dump / load trick.
