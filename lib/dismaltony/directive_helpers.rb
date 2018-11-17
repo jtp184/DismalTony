@@ -367,5 +367,25 @@ module DismalTony # :nodoc:
         end
       end
     end
+
+    module ListHelpers
+      module ClassMethods
+        def new_list
+        end
+
+        def enumerate_lists
+        end
+
+        def list_template
+        end
+      end
+      module InstanceMethods
+        def read_from_list
+        end
+
+        def set_in_list
+        end
+      end
+    end
   end
 end
