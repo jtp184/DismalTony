@@ -9,9 +9,9 @@ module DismalTony
     def self.match(query, directives)
       succeeds = match!(query, directives)
       succeeds.reject! { |_d, p| p.nil? }
-      succeeds.sort_by! { |_d, p| p }.reverse!
-      raise NoDirectiveError, 'No Matching Directive!' if succeeds.empty?
-      succeeds
+      succeeds = succeeds.max_by(&:last)
+      raise NoDirectiveError, 'No Matching Directive!' unless succeeds
+      succeeds.first
     end
 
     # A debugging version of the #match function, this takes the same +query+ and +directives+
@@ -41,7 +41,7 @@ module DismalTony
     # Takes a Query +query+ and a VIBase +vi+ and uses the +vi+ to
     # execute a matching directive for +query+
     def self.run_match(query, vi)
-      result = match(query, vi.directives).first.first
+      result = match(query, vi.directives)
       result = result.from(query, vi)
       result.call
     rescue NoDirectiveError
