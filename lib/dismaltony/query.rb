@@ -8,8 +8,6 @@ module DismalTony # :nodoc:
     attr_reader :parsed_result
     # a UserIdentity object representing the person who made the query
     attr_reader :user
-    # a HandledResponse representing the state of +user+ after the query is run.
-    attr_reader :response
 
     # Accesses the following keys for the hash +opts+:
     # * :raw_text, The plain string input of the query.
@@ -20,12 +18,6 @@ module DismalTony # :nodoc:
       @raw_text = opts.fetch(:raw_text) { '' }
       @parsed_result = opts.fetch(:parsed_result) { ParseyParse::Sentence.new }
       @user = opts.fetch(:user) { DismalTony::UserIdentity::DEFAULT }.clone
-    end
-
-    # Completes the query using HandledResponse +hr+ that is yielded.
-    def complete(hr)
-      @response = hr
-      self
     end
 
     # Compares +check+ against +raw_text+ using #=~
@@ -40,11 +32,6 @@ module DismalTony # :nodoc:
       else
         super
       end
-    end
-
-    # Checks to see both if there's a +completed at+ timestamp and a +response+
-    def complete?
-      [completed_at, response].none?(&:nil?)
     end
 
     # Implicit string conversion

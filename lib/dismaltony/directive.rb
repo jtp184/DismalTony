@@ -86,6 +86,9 @@ module DismalTony # :nodoc:
     # The VI used to evaluate this Query.
     attr_reader :vi
 
+    # The HandledResponse produced during the Directive
+    attr_reader :response
+
     class << self
       attr_reader :name #:nodoc:
       attr_reader :group #:nodoc:
@@ -118,11 +121,6 @@ module DismalTony # :nodoc:
       @parameters[indx]
     end
 
-    # Returns the response from this directive's +query+
-    def response
-      query.response
-    end
-
     # Overridden by child classes. The default method used by the
     # #call function to respond to a matched Query.
     def run; end
@@ -133,7 +131,7 @@ module DismalTony # :nodoc:
       fin = method(mtd).call
       raise "No response (#{fin.inspect})" unless fin.respond_to? :outgoing_message
 
-      @query.complete(fin)
+      @response = fin
       self
     end
 
