@@ -1,4 +1,4 @@
- module DismalTony # :nodoc:
+module DismalTony # :nodoc:
   # The essential class. A VI, or Virtual Intelligence,
   # forms the basis for the DismalTony gem, and is your conversational agents for handling queries
   class VIBase
@@ -35,12 +35,12 @@
     # Takes the module level VI and duplicates it, overriding its values with ones from +opts+
     def self.with(**opts)
       DismalTony::VIBase.new(
-        user: (opts[:user] || DismalTony.().user || DismalTony::UserIdentity::DEFAULT),
-        name: (opts[:name] || DismalTony.().name),
-        return_interface: (opts[:return_interface] || DismalTony.().return_interface),
-        directives: (opts[:directives] || DismalTony.().directives),
-        data_store: (opts[:data_store] || DismalTony.().data_store)
-        )
+        user: (opts[:user] || DismalTony.call.user || DismalTony::UserIdentity::DEFAULT),
+        name: (opts[:name] || DismalTony.call.name),
+        return_interface: (opts[:return_interface] || DismalTony.call.return_interface),
+        directives: (opts[:directives] || DismalTony.call.directives),
+        data_store: (opts[:data_store] || DismalTony.call.data_store)
+      )
     end
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it.
@@ -67,26 +67,26 @@
     # The interface method takes in a Query +q+ and uses the QueryResolver#call method to decide what to do with it.
     # Responsible for using the +return_interface+ to send back the text response.
     def call(q)
-      result = QueryResolver.(q, self)
+      result = QueryResolver.call(q, self)
       response = result.response
 
       @user.modify_state!(response.conversation_state.stamp)
       DismalTony.last_result = result
 
-      if !response.format[:silent]
+      unless response.format[:silent]
         if response.format.empty?
           say response.outgoing_message
         else
-          say_opts(return_interface, response.outgoing_message, apply_format(response)) 
+          say_opts(return_interface, response.outgoing_message, apply_format(response))
         end
       end
-      
+
       dr = nil
 
       final_result = if result.respond_to?(:data_representation)
-        dr = result.data_representation
-      else
-        DismalTony::Formatter.format(response.to_s, apply_format(response))
+                       dr = result.data_representation
+                     else
+                       DismalTony::Formatter.format(response.to_s, apply_format(response))
       end
 
       data_store.on_query(response: response, user: @user, data: dr)

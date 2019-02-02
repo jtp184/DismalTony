@@ -117,7 +117,7 @@ module DismalTony # :nodoc:
         def synonym_for(word)
           resp = nil
           synonyms.each do |reg, syns|
-            resp = word =~ reg ? syns.sample : nil
+            resp = word&.match?(reg) ? syns.sample : nil
             return resp if resp
           end
           word
@@ -370,21 +370,16 @@ module DismalTony # :nodoc:
 
     module ListHelpers
       module ClassMethods
-        def new_list
-        end
+        def new_list; end
 
-        def enumerate_lists
-        end
+        def enumerate_lists; end
 
-        def list_template
-        end
+        def list_template; end
       end
       module InstanceMethods
-        def read_from_list
-        end
+        def read_from_list; end
 
-        def set_in_list
-        end
+        def set_in_list; end
       end
     end
   end

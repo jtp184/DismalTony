@@ -5,7 +5,7 @@ module DismalTony #:nodoc:
       ino = {}
       ino[:time] = init_opts.fetch(:time) { Time.now }
       ino[:query] = init_opts.fetch(:query) { '' }
-      ino[:user_id] = init_opts.fetch(:user_id) { DismalTony.().user[:uuid] }
+      ino[:user_id] = init_opts.fetch(:user_id) { DismalTony.call.user[:uuid] }
       ino[:opts] = init_opts.fetch(:opts) { {} }
       e = ScheduleEvent.new(ino)
       store_event(e)
@@ -13,11 +13,11 @@ module DismalTony #:nodoc:
     end
 
     def self.store_event(e)
-      DismalTony.().data_store.store_data(directive: :core_scheduler, key: "Event:#{e.event_id}", value: e)
+      DismalTony.call.data_store.store_data(directive: :core_scheduler, key: "Event:#{e.event_id}", value: e)
     end
 
     def self.load_events
-      DismalTony.().data_store.read_data(:core_scheduler)
+      DismalTony.call.data_store.read_data(:core_scheduler)
     end
 
     def self.ready_events
@@ -29,7 +29,7 @@ module DismalTony #:nodoc:
       e = load_events
       r = e.map(&:call)
       r.each do |f|
-        DismalTony.().data_store.update_data(directive: :core_scheduler, key: "Event:#{f.event_id}", value: f)
+        DismalTony.call.data_store.update_data(directive: :core_scheduler, key: "Event:#{f.event_id}", value: f)
       end
       r
     end
@@ -49,7 +49,7 @@ module DismalTony #:nodoc:
     def self.prune_events
       e = load_events
       e.each do |f|
-        DismalTony.().data_store.delete_data(:core_scheduler, "Event:#{f.event_id}") if f.finished?
+        DismalTony.call.data_store.delete_data(:core_scheduler, "Event:#{f.event_id}") if f.finished?
       end
     end
   end
@@ -89,7 +89,7 @@ module DismalTony #:nodoc:
       @opts = args.fetch(:opts) { {} }
 
       possible = (('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a)
-      @event_id = (0..24).each_with_object([]) { |_n, i| i << possible.sample }.join 
+      @event_id = (0..24).each_with_object([]) { |_n, i| i << possible.sample }.join
     end
 
     # Syntactic sugar, takes a hash +options+ and sets #opts equal to it
@@ -110,6 +110,7 @@ module DismalTony #:nodoc:
     # Otherwise, returns true if not finished, and our time is valid according to #=~
     def ready?
       return failed if (time + expiry) < Time.now
+
       !finished? && self < Time.now
     end
 
@@ -122,25 +123,16 @@ module DismalTony #:nodoc:
     # Compares a ScheduleEvent to a Time object +other+ with minute accuracy (or uses #== if it's a ScheduleEvent)
     def =~(other)
       return other == self if other.is_a? ScheduleEvent
-      if other.is_a? Time
-        other.to_i == @time.to_i
-      end
+
+      other.to_i == @time.to_i if other.is_a? Time
     end
 
     def >(other)
-      if other.is_a? Time
-        @time.to_i > other.to_i
-      else
-        nil
-      end
+      @time.to_i > other.to_i if other.is_a? Time
     end
 
     def <(other)
-      if other.is_a? Time
-        @time.to_i < other.to_i
-      else
-        nil
-      end
+      @time.to_i < other.to_i if other.is_a? Time
     end
 
     # Compare our #time and #user_identity to +other+
@@ -158,12 +150,12 @@ module DismalTony #:nodoc:
     end
 
     # Executes this ScheduleEvent,
-    def run(vi=nil)
+    def run(vi = nil)
       unless finished?
         vi = construct_vi
         @finished = true
         @state = :success
-        
+
         vi.call(@query)
         update_me
       end
@@ -171,13 +163,13 @@ module DismalTony #:nodoc:
     end
 
     def call
-      ready? 
+      ready?
       run
     end
 
     # Simple output of the event
     def to_s
-      "(#{@time.strftime('%m/%d/%Y %I:%M%p')}): #{@query if @query}#{@state if @state}"
+      "(#{@time.strftime('%m/%d/%Y %I:%M%p')}): #{@query}#{@state}"
     end
 
     private
@@ -185,17 +177,11 @@ module DismalTony #:nodoc:
     def construct_vi
       ocon = {}
 
-      if @user_id
-        ocon[:user] = DismalTony.().data_store.select_user(@user_id)
-      end
+      ocon[:user] = DismalTony.call.data_store.select_user(@user_id) if @user_id
 
-      if @opts.fetch(:return_interface) { false }
-        ocon[:return_interface] = @opts.fetch(:return_interface)
-      end
+      ocon[:return_interface] = @opts.fetch(:return_interface) if @opts.fetch(:return_interface) { false }
 
-      if @opts.fetch(:quiet) { false }
-        ocon[:return_interface] = DismalTony::NowhereInterface.new
-      end
+      ocon[:return_interface] = DismalTony::NowhereInterface.new if @opts.fetch(:quiet) { false }
 
       # if @opts.fetch(:) { false }
       # end

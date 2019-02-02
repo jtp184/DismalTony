@@ -51,25 +51,27 @@ module DismalTony # :nodoc:
     def send(msg)
       return nil if msg =~ /^ *$/
       raise 'No Destination!' if @destination.nil?
-      if(msg.chars.length < 1600)
+
+      if msg.chars.length < 1600
         @client.api.account.messages.create(
           from: ENV['twilio_phone_number'],
           to: destination,
           body: msg
-          )
+        )
       else
         count_it = (msg.chars.length / 1600) + 1
-        si, ei = 0, 1600
+        si = 0
+        ei = 1600
 
         count_it.times do
-         @client.api.account.messages.create(
-          from: ENV['twilio_phone_number'],
-          to: destination,
-          body: msg[si..ei]
-          ) 
-         si += 1600
-         ei += 1600
-       end
+          @client.api.account.messages.create(
+            from: ENV['twilio_phone_number'],
+            to: destination,
+            body: msg[si..ei]
+          )
+          si += 1600
+          ei += 1600
+        end
 
      end
    end
@@ -77,11 +79,12 @@ module DismalTony # :nodoc:
     # Overrides the stored +destination+ and sends +msg+ to the number +num+ instead
     def send_to(msg, num)
       return nil if msg =~ /^ *$/
+
       @client.api.account.messages.create(
         from: ENV['twilio_phone_number'],
         to: num,
         body: msg
-        )
+      )
     end
   end
 
@@ -90,7 +93,7 @@ module DismalTony # :nodoc:
     # Calls <tt>`say`</tt> on the message.
     # If the message is formatted, it prefaces +msg+ with the name of the emote
     def send(msg)
-      if msg =~ DismalTony::Formatter::OUTGOING
+      if DismalTony::Formatter::OUTGOING.match?(msg)
         md = DismalTony::Formatter::OUTGOING.match msg
         emote = md['moji']
         text = md['message']

@@ -5,9 +5,9 @@ module DismalTony # :nodoc:
     attr_reader :opts
 
     # a Regexp which matches a message sent with the standard DismalTony format
-    OUTGOING = /(?<label>\[(?<moji>.+)\]\: )(?<message>.+)/
+    OUTGOING = /(?<label>\[(?<moji>.+)\]\: )(?<message>.+)/.freeze
     # a Regexp which matches a message string, and includes support for extracting the emoji signifier
-    INCOMING = /(?:~e:(?<emote>\w+\b) )?(?<message>(.|\s)+)/
+    INCOMING = /(?:~e:(?<emote>\w+\b) )?(?<message>(.|\s)+)/.freeze
 
     # Sets this Formatter's +opts+ hash to +args+
     def initialize(**args) # :nodoc:

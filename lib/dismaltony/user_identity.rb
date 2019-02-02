@@ -16,7 +16,7 @@ module DismalTony # :nodoc:
     def initialize(**args)
       @user_data = (args[:user_data] || {})
       @conversation_state = (args[:conversation_state] || DismalTony::ConversationState.new(idle: true, user_identity: self))
-      
+
       possible = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a
       # @user_data[:uuid] ||= (0..24).each_with_object([]) { |_n, i| i << possible.sample }.join
       @user_data[:uuid] ||= SecureRandom.uuid
@@ -53,6 +53,7 @@ module DismalTony # :nodoc:
     # Compares if these users have the same user_data hash
     def ==(other)
       return nil unless other.respond_to?(:user_data)
+
       other.user_data == user_data
     end
 

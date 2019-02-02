@@ -11,6 +11,7 @@ module DismalTony
       succeeds.reject! { |_d, p| p.nil? }
       succeeds = succeeds.max_by(&:last)
       raise NoDirectiveError, 'No Matching Directive!' unless succeeds
+
       succeeds.first
     end
 

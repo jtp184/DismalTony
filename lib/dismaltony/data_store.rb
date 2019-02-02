@@ -15,7 +15,7 @@ module DismalTony # :nodoc:
     attr_reader :directive_data
 
     # Initializes an empty store, and extracts data from +args+
-    def initialize(args={})
+    def initialize(args = {})
       @opts = {}
       @opts.merge!(args.fetch(:opts) { {} })
       @users = args.fetch(:users) { [] }
@@ -48,26 +48,28 @@ module DismalTony # :nodoc:
 
     # Uses the hash +slug+ to insert a new value into the #directive_data hash
     def store_data(slug)
-      dr, ky, vl = slug.fetch(:directive), slug.fetch(:key), slug.fetch(:value)
+      dr = slug.fetch(:directive)
+      ky = slug.fetch(:key)
+      vl = slug.fetch(:value)
       @directive_data[dr] ||= {}
       @directive_data[dr][ky] = vl
     rescue KeyError
       nil
     end
 
-    # Using the directive's +dname+ and the nested keys 
+    # Using the directive's +dname+ and the nested keys
     # +ky+, digs inside +directive_data+ for the information
     def read_data(dname, *ky)
       directive_data.dig(dname, *ky)
     end
 
-    # Using the directive's +dname+ and the nested keys 
+    # Using the directive's +dname+ and the nested keys
     # +ky+, removes the key from the store
     def delete_data(dname, *ky)
       ini = directive_data[dname]
       jni = nil
 
-      if ky.length == 0
+      if ky.empty?
         ini
       elsif ky.length == 1
         ini.delete(ky.first)
@@ -81,7 +83,9 @@ module DismalTony # :nodoc:
     end
 
     def update_data(slug)
-      dr, ky, vl = slug.fetch(:directive), slug.fetch(:key), slug.fetch(:value)
+      dr = slug.fetch(:directive)
+      ky = slug.fetch(:key)
+      vl = slug.fetch(:value)
       @directive_data[dr] ||= {}
       @directive_data[dr][ky] = vl
     rescue KeyError
@@ -108,21 +112,21 @@ module DismalTony # :nodoc:
     attr_reader :data_store
 
     # Args takes hooks for :filepath and :data_store, and autopopulates them if not present.
-    def initialize(args={})
-      @filepath = args.fetch(:filepath) { "./tony.yml" }
+    def initialize(args = {})
+      @filepath = args.fetch(:filepath) { './tony.yml' }
       @data_store = args.fetch(:data_store) { DataStore.new }
     end
 
     # Takes a filepath +fp+ and reads in that YAMLStore.
     def self.load_from(fp = './tony.yml')
-      loaded = self.new(filepath: fp, data_store: Psych.load(File.read(fp)))
+      loaded = new(filepath: fp, data_store: Psych.load(File.read(fp)))
       loaded.opts[:env_vars]&.each_pair { |key, val| ENV[key] = val }
       loaded
     end
 
     # Creates a new YAMLStore at the filepath +fp+, and saves it to disk as well.
     def self.create_at(fp)
-      new_store = self.new(filepath: fp)
+      new_store = new(filepath: fp)
       new_store.save
     end
 
@@ -149,7 +153,7 @@ module DismalTony # :nodoc:
       x
     end
 
-    # Using the directive's +dname+ and the nested keys 
+    # Using the directive's +dname+ and the nested keys
     # +ky+, digs inside +directive_data+ for the information
     def read_data(dname, *ky)
       x = @data_store.read_data(dname, *ky)
@@ -157,7 +161,7 @@ module DismalTony # :nodoc:
       x
     end
 
-    # Using the directive's +dname+ and the nested keys 
+    # Using the directive's +dname+ and the nested keys
     # +ky+, removes the key from the store
     def delete_data(dname, *ky)
       x = @data_store.delete_data(dname, *ky)
@@ -180,7 +184,7 @@ module DismalTony # :nodoc:
 
     # Checks the internal +data_store+ to see if it responds to +name+, and passes the +params+ along.
     def method_missing(name, *params)
-      @data_store.respond_to?(name) ? @data_store.method(name).(*params) : super
+      @data_store.respond_to?(name) ? @data_store.method(name).call(*params) : super
     end
   end
 
@@ -190,7 +194,7 @@ module DismalTony # :nodoc:
     attr_reader :opts
 
     # takes in a :redis_config in +args+
-    def initialize(args={})
+    def initialize(args = {})
       @redis = Redis.new(args.fetch(:redis_config) { {} })
       load_opts
     end
@@ -202,7 +206,7 @@ module DismalTony # :nodoc:
       tu
     end
 
-    # Takes the options in +args+ and doublesplats them. 
+    # Takes the options in +args+ and doublesplats them.
     # Uses the user returned to update their model in the db
     def on_query(**args)
       user = args.fetch(:user)
@@ -213,19 +217,17 @@ module DismalTony # :nodoc:
 
     # If given a +uid+ that is a UserIdentity's uuid, returns that user.
     # Otherwise, passes a block argument to a select on #all_users
-    def select_user(uid=nil,&block)
+    def select_user(uid = nil, &block)
       if uid.nil? && block_given?
         all_users.select(&block)
       elsif !uid.nil?
-        serialize_in(@redis.hgetall(user_key({uuid: uid})))
-      else
-        nil
+        serialize_in(@redis.hgetall(user_key(uuid: uid)))
       end
     end
 
     # Given a +uid+, this passes the +user+ for editing
     # inside the +block+. Then commits the changes.
-    def update_user(uid,&block) # :yields: user
+    def update_user(uid) # :yields: user
       u = select_user(uid)
       yield u
       commit_user(serialize_out(u))
@@ -243,7 +245,7 @@ module DismalTony # :nodoc:
 
     # Globs all the Users' keys and turns them into UserIdentity records.
     def all_users
-      allofem = @redis.keys("DismalTony:UserIdentity:*")
+      allofem = @redis.keys('DismalTony:UserIdentity:*')
       @redis.pipelined { allofem.map! { |a| @redis.hgetall(a) } }
       allofem.map!(&:value)
       allofem.map! { |a| serialize_in(a) }
@@ -263,7 +265,9 @@ module DismalTony # :nodoc:
     # Takes in the +slug+ and stores data in the db using the #directive_key method
     # to generate a hash string.
     def store_data(slug)
-      dr, ky, vl = slug.fetch(:directive).to_s, slug.fetch(:key).to_s, Psych.dump(slug.fetch(:value))
+      dr = slug.fetch(:directive).to_s
+      ky = slug.fetch(:key).to_s
+      vl = Psych.dump(slug.fetch(:value))
       @redis.hset directive_key(dr), ky, vl
     rescue KeyError
       nil
@@ -278,13 +282,13 @@ module DismalTony # :nodoc:
     # Given the directive name +dname+ and any number of keys +ky+,
     # will dig through the hash and return values.
     def read_data(dname, *ky)
-      if ky.length == 0
-        @redis.hgetall(directive_key(dname)).map { |e, v| Psych.load(v) }.flatten
+      if ky.empty?
+        @redis.hgetall(directive_key(dname)).map { |_e, v| Psych.load(v) }.flatten
       elsif ky.length == 1
         initial = ky.shift
-        s = Psych.load(@redis.hget directive_key(dname), initial)
+        s = Psych.load(@redis.hget(directive_key(dname), initial))
       else
-        s = Psych.load(@redis.hget directive_key(dname), initial)
+        s = Psych.load(@redis.hget(directive_key(dname), initial))
         s.dig(*ky)
       end
     end
@@ -295,7 +299,7 @@ module DismalTony # :nodoc:
       ini = dname
       jni = nil
 
-      if ky.length == 0
+      if ky.empty?
         @redis.hdelall(directive_key(ini))
       elsif ky.length == 1
         @redis.hdel(directive_key(ini), ky.first)
@@ -311,13 +315,13 @@ module DismalTony # :nodoc:
     # Given a key-value pair +k+ and +v+, stores them in the db under the global
     # opts hash. Returns the whole array of opts
     def set_opt(k, v)
-      @redis.hset("DismalTony:RedisStore:opts", k.to_s, Psych.dump(v))
+      @redis.hset('DismalTony:RedisStore:opts', k.to_s, Psych.dump(v))
       load_opts
     end
 
     # Reads the opts in from the database and replaces +opts+ with them.
     def load_opts
-      o = @redis.hgetall("DismalTony:RedisStore:opts").clone
+      o = @redis.hgetall('DismalTony:RedisStore:opts').clone
       o.transform_keys!(&:to_sym)
       o.transform_values! { |v| Psych.load(v) }
       o[:env_vars]&.each_pair { |key, val| ENV[key.to_s] = val }

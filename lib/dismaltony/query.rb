@@ -1,8 +1,7 @@
 module DismalTony # :nodoc:
   # Represents the query to the system. Holds the input, and metadata, then stores the result
   class Query
-
-    # The incoming query as pure text. 
+    # The incoming query as pure text.
     # Useful as a fallback in the case that there's no +parsed_result+, and utilized by #=~
     attr_reader :raw_text
     # The result of the text being run through a NLU analysis, should be a ParseyParse::Sentence
@@ -21,18 +20,17 @@ module DismalTony # :nodoc:
     attr_reader :completed_at
 
     # Accesses the following keys for the hash +opts+:
-    # * :raw_text, The plain string input of the query. 
+    # * :raw_text, The plain string input of the query.
     # Used for #=~ comparisons and as a backup
     # * :parsed_result, An object representing the parsed result. Should be a ParseyParse sentence.
     # * :user, The UserIdentity corresponding to who asked the query.
     def initialize(**opts)
-      @raw_text = opts.fetch(:raw_text) { "" }
-      @parsed_result = opts.fetch(:parsed_result) { ParseyParse::Sentence.new}
+      @raw_text = opts.fetch(:raw_text) { '' }
+      @parsed_result = opts.fetch(:parsed_result) { ParseyParse::Sentence.new }
       @user = opts.fetch(:user) { DismalTony::UserIdentity::DEFAULT }.clone
       @timestamp = Time.now
       @previous_state = @user&.state&.clone
     end
-
 
     # Completes the query using the Directive +directive+ and HandledResponse +hr+ that are yielded.
     def complete(directive, hr)
@@ -50,7 +48,7 @@ module DismalTony # :nodoc:
     # Redefined to check first if +parsed_result+ can respond to +method_name+, and passes along +params+
     def method_missing(method_name, *params, &blk)
       if parsed_result.respond_to?(method_name)
-        parsed_result.method(method_name).(*params, &blk)
+        parsed_result.method(method_name).call(*params, &blk)
       else
         super
       end
