@@ -23,7 +23,7 @@ module DismalTony::DirectiveHelpers
 
           def step_string(n)
             i = steps[n][:html_instructions].clone
-            i.gsub!(/<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)<\/\1>/i) { %Q|#{"\n\n" if Regexp.last_match(1) == 'div'}#{Regexp.last_match(2)}| }
+            i.gsub!(%r{<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)</\1>}i) { %(#{"\n\n" if Regexp.last_match(1) == 'div'}#{Regexp.last_match(2)}) }
             i
           end
         end
@@ -154,9 +154,7 @@ module DismalTony::Directives
         unresolved << res
       end
 
-      if parameters[:start_address] && parameters[:end_address]
-        unresolved << true
-      end
+      unresolved << true if parameters[:start_address] && parameters[:end_address]
 
       unresolved
     end
@@ -263,11 +261,7 @@ module DismalTony::Directives
 
     def check_shortcut(addr = '')
       srch = vi.user[(addr.gsub(/\.\?\,\!\'/i, '') + '_address').to_sym]
-      if srch
-        srch
-      else
-        addr
-      end
+      srch || addr
     end
 
     def get_gmaps_data

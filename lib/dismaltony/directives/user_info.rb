@@ -9,37 +9,37 @@ module DismalTony::Directives
     add_criteria do |qry|
       qry << must { |q| q.contains?(/who/i, /what(?:'s)?/i) }
       qry << must { |q| q.contains?(/\bi\b/i, /\bmy\b/i) }
-      qry << could { |q| q.contains?(/\bis\b/i, /\bare\b/i, /\bam\b/i)}
+      qry << could { |q| q.contains?(/\bis\b/i, /\bare\b/i, /\bam\b/i) }
       qry << could { |q| q.contains?(/phone|number/i, /\bname\b/i, /birthday/i, /\bemail\b/i) }
     end
 
     def run
-      if query =~ /who am i/i
-        moj = random_emoji('think','magnifyingglass','crystalball','smile')
+      if /who am i/i.match?(query)
+        moj = random_emoji('think', 'magnifyingglass', 'crystalball', 'smile')
         return_data(query.user)
         DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.")
-      elsif query =~ /what('| i)?s my/i
+      elsif /what('| i)?s my/i.match?(query)
         seek = query.children_of(query.root).select { |w| w.rel == 'nsubj' }&.first.to_s.downcase
         moj = case seek
-        when /phone/i, /number/i
-          'phone'
-        when /name/i
-          'speechbubble'
-        when /birthday/i
-          'calendar'
-        when /age/i
-          'clockface'
-        when /email/i
-          'envelope'
-        else
-          random_emoji('magnifyingglass', 'key')
+              when /phone/i, /number/i
+                'phone'
+              when /name/i
+                'speechbubble'
+              when /birthday/i
+                'calendar'
+              when /age/i
+                'clockface'
+              when /email/i
+                'envelope'
+              else
+                random_emoji('magnifyingglass', 'key')
         end
 
-        return_data("#{query.user[:first_name]} #{query.user[:last_name]}") and return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.") if (seek == 'name')
+        return_data("#{query.user[:first_name]} #{query.user[:last_name]}") && (return DismalTony::HandledResponse.finish("~e:#{moj} You're #{query.user[:nickname]}! #{query.user[:first_name]} #{query.user[:last_name]}.")) if seek == 'name'
         age_in_years = Duration.new(Time.now - query.user[:birthday]).weeks / 52
-        return_data(age_in_years) and return DismalTony::HandledResponse.finish("~e:#{moj} You are #{age_in_years} years old, #{query.user[:nickname]}!") if (seek == 'age')
+        return_data(age_in_years) && (return DismalTony::HandledResponse.finish("~e:#{moj} You are #{age_in_years} years old, #{query.user[:nickname]}!")) if seek == 'age'
 
-        ky = seek.gsub(" ", "_").to_sym
+        ky = seek.tr(' ', '_').to_sym
         ky = :phone if ky == :number
 
         if query.user[ky]
@@ -65,7 +65,7 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << must { |q| q.contains?(/what/i) }
-      qry << must { |q| !Array(q.xpos 'NNP').empty? }
+      qry << must { |q| !Array(q.xpos('NNP')).empty? }
       qry << could { |q| q.contains?(/phone|number/i, /\bname\b/i, /birthday/i, /\bemail\b/i) }
       qry << doesnt { |q| q.contains?(/weather/i, /stocks/i) }
     end
@@ -78,32 +78,32 @@ module DismalTony::Directives
       target = Array(query.xpos('NNP')).join
       u = user_for(target)
 
-      if query =~ /who is/i
-        moj = random_emoji('think','magnifyingglass','crystalball','smile')
+      if /who is/i.match?(query)
+        moj = random_emoji('think', 'magnifyingglass', 'crystalball', 'smile')
         return_data(u)
         DismalTony::HandledResponse.finish("~e:#{moj} #{target}'s number is #{u[:phone]}.")
-      elsif query =~ /what('| i)?s/i
+      elsif /what('| i)?s/i.match?(query)
         seek = Array(query.children_of(query.root).select { |w| w.rel == 'nsubj' }).join.to_s.downcase
         moj = case seek
-        when /phone/i, /number/i
-          'phone'
-        when /name/i
-          'speechbubble'
-        when /birthday/i
-          'calendar'
-        when /age/i
-          'clockface'
-        when /email/i
-          'envelope'
-        else
-          random_emoji('magnifyingglass', 'key')
+              when /phone/i, /number/i
+                'phone'
+              when /name/i
+                'speechbubble'
+              when /birthday/i
+                'calendar'
+              when /age/i
+                'clockface'
+              when /email/i
+                'envelope'
+              else
+                random_emoji('magnifyingglass', 'key')
         end
 
-        return_data("#{u[:first_name]} #{u[:last_name]}") and return DismalTony::HandledResponse.finish("~e:#{moj} Their name is #{u[:nickname]}.") if (seek =~ /\bname\b/)
+        return_data("#{u[:first_name]} #{u[:last_name]}") && (return DismalTony::HandledResponse.finish("~e:#{moj} Their name is #{u[:nickname]}.")) if seek =~ /\bname\b/
         age_in_years = Duration.new(Time.now - u[:birthday]).weeks / 52
-        return_data(age_in_years) and return DismalTony::HandledResponse.finish("~e:#{moj} They are #{age_in_years} years old#{(rand < 0.5) ? (', ' + query.user[:nickname]) : nil}.") if seek == 'age'
+        return_data(age_in_years) && (return DismalTony::HandledResponse.finish("~e:#{moj} They are #{age_in_years} years old#{rand < 0.5 ? (', ' + query.user[:nickname]) : nil}.")) if seek == 'age'
 
-        ky = seek.gsub(" ", "_").to_sym
+        ky = seek.tr(' ', '_').to_sym
         ky = :phone if ky == :number
 
         if query.user[ky]

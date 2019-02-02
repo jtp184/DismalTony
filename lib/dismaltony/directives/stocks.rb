@@ -39,7 +39,7 @@ module DismalTony::Directives
         /\b[A-Z]+\b/.match(query.raw_text)[0]
       prices = retrieve_data(symbol: parameters[:stock_id])
 
-      parameters[:current_value] = prices.sort_by(&:date).last
+      parameters[:current_value] = prices.max_by(&:date)
 
       return_data(OpenStruct.new)
 
@@ -81,7 +81,7 @@ module DismalTony::Directives
     end
 
     def price_comment(history)
-      current = history.sort_by(&:date).last
+      current = history.max_by(&:date)
       moj = ''
 
       comment = "$#{format('%.2f', current.price)}" << case [0, 1, 2, 3].sample
@@ -138,7 +138,7 @@ module DismalTony::Directives
     include DismalTony::DirectiveHelpers::DataStructHelpers
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
-  
+
     set_name :stock_math
     set_group :info
 
@@ -149,7 +149,7 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /stocks?/i }
-      qry << keyword { |q| q.contains?(/worth/i, /much/i, /how/i, /many/i, /shares/i)}
+      qry << keyword { |q| q.contains?(/worth/i, /much/i, /how/i, /many/i, /shares/i) }
       qry << keyword { |q| q.any? { |w| w.pos == 'NUM' } }
       qry << must { |q| q =~ /\b[A-Z]+\b/ }
     end
@@ -197,7 +197,8 @@ module DismalTony::Directives
       end
 
       return ask_for_number if clarify_number
-      return finalize
+
+      finalize
     end
 
     private
@@ -208,7 +209,7 @@ module DismalTony::Directives
       resp = nil
       resp = calculate_final_total
       return_data(OpenStruct.new)
-      
+
       data_representation[:stock_data] = parameters[:current_value]
       data_representation[:shares_requested] = parameters[:shares_requested]
       data_representation[:answer] = parameters[:final_total]
@@ -226,20 +227,18 @@ module DismalTony::Directives
     def ask_for_number
       DismalTony::HandledResponse.then_do(
         message: "~e:pound Please enter the number of shares you'd like to sum as a number.",
-        directive: self, 
-        method: :read_number, 
+        directive: self,
+        method: :read_number,
         data: parameters,
         parse_next: false
-        )
+      )
     end
 
     def read_number
-      begin
-        parameters[:shares_requested] ||= Integer(query.raw_text)
-        return finalize
-      rescue ArgumentError
-        return ask_for_number
-      end
+      parameters[:shares_requested] ||= Integer(query.raw_text)
+      finalize
+    rescue ArgumentError
+      ask_for_number
     end
 
     def retrieve_data(qpr)

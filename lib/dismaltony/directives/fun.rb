@@ -12,7 +12,7 @@ module DismalTony::Directives
 
     def run
       parameters[:drink] = ['Glass of Water', 'Old Fashioned', 'Zombie', 'Mai Tai', 'Rum & Coke', 'Gin & Tonic', 'Pepsi Crystal'].sample
-      moj = ['martini','pineapple','think','tropicaldrink','beer','cheers','toast','champagne'].sample
+      moj = %w[martini pineapple think tropicaldrink beer cheers toast champagne].sample
 
       DismalTony::HandledResponse.finish("~e:#{moj} Okay, #{query.user['nickname']}. Have a #{parameters[:drink]}!")
     end

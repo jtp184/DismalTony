@@ -13,7 +13,7 @@ module DismalTony::Directives
     end
 
     def run
-      if query =~ /how are you/i
+      if /how are you/i.match?(query)
         DismalTony::HandledResponse.finish("~e:thumbsup I'm doing well!")
       else
         moj = random_emoji('wave', 'smile', 'rocket', 'star', 'snake', 'cat', 'octo', 'spaceinvader')
@@ -62,7 +62,7 @@ module DismalTony::Directives
     end
 
     def get_name
-      if query.raw_text =~ /\s/
+      if /\s/.match?(query.raw_text)
         the_user = vi.data_store.select { |u| u == parameters[:user_id] }
         parameters[:user_id][:first_name] = query.raw_text.split(' ')[0]
         parameters[:user_id][:last_name] = query.raw_text.split(' ')[1]
