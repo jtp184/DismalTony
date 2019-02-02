@@ -170,7 +170,7 @@ module DismalTony # :nodoc:
       x
     end
 
-    # Takes the data from the +slug+ and updates accordingly 
+    # Takes the data from the +slug+ and updates accordingly
     def update_data(slug)
       x = @data_store.update_data(slug)
       save

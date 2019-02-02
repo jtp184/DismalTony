@@ -49,7 +49,8 @@ module DismalTony
   # Returns the VIBase in the config. Creates a basic one if none exists.
   def self.vi
     return config[:vi] if config[:vi]
-    data_store = (config[:data_store] if config[:data_store])
+
+    data_store = config[:data_store]
 
     @@config[:vi] = DismalTony::VIBase.new(
       data_store: config[:data_store]
@@ -59,6 +60,7 @@ module DismalTony
   # Overrides the VI inside the config with the one passed in. Very strict about typing.
   def self.vi=(vi)
     raise TypeError, 'Not a VIBase!' unless vi.is_a? DismalTony::VIBase
+
     config[:vi] = vi
   end
 
@@ -67,6 +69,7 @@ module DismalTony
   def self.call(*args)
     return vi if args.empty?
     return vi.call(args[0]) if args.length == 1
+
     raise NoMethodError
   end
 end
