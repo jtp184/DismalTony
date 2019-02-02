@@ -25,7 +25,7 @@ module DismalTony
     def self.query_from_text(txt, user)
       Query.new(
         raw_text: txt,
-        user: user.clone
+        user: user
       )
     end
 
@@ -35,7 +35,7 @@ module DismalTony
       Query.new(
         raw_text: txt,
         parsed_result: ParseyParse.call(txt),
-        user: user.clone
+        user: user
       )
     end
 

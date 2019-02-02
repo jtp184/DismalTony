@@ -6,18 +6,10 @@ module DismalTony # :nodoc:
     attr_reader :raw_text
     # The result of the text being run through a NLU analysis, should be a ParseyParse::Sentence
     attr_reader :parsed_result
-    # A UserIdentity corresponding to the user who submitted the query.
+    # a UserIdentity object representing the person who made the query
     attr_reader :user
-    # A Time object representing when the query was submitted
-    attr_reader :timestamp
-    # a ConversationState representing the state of +user+ before the query is run.
-    attr_reader :previous_state
-    # a ConversationState representing the state of +user+ after the query is run.
+    # a HandledResponse representing the state of +user+ after the query is run.
     attr_reader :response
-    # the Directive that is triggered by the query
-    attr_reader :directive
-    # a Time object for when the query completed
-    attr_reader :completed_at
 
     # Accesses the following keys for the hash +opts+:
     # * :raw_text, The plain string input of the query.
@@ -28,14 +20,10 @@ module DismalTony # :nodoc:
       @raw_text = opts.fetch(:raw_text) { '' }
       @parsed_result = opts.fetch(:parsed_result) { ParseyParse::Sentence.new }
       @user = opts.fetch(:user) { DismalTony::UserIdentity::DEFAULT }.clone
-      @timestamp = Time.now
-      @previous_state = @user&.state&.clone
     end
 
-    # Completes the query using the Directive +directive+ and HandledResponse +hr+ that are yielded.
-    def complete(directive, hr)
-      @directive = directive
-      @completed_at = Time.now
+    # Completes the query using HandledResponse +hr+ that is yielded.
+    def complete(hr)
       @response = hr
       self
     end
@@ -56,7 +44,7 @@ module DismalTony # :nodoc:
 
     # Checks to see both if there's a +completed at+ timestamp and a +response+
     def complete?
-      completed_at && response
+      [completed_at, response].none?(&:nil?)
     end
 
     # Implicit string conversion

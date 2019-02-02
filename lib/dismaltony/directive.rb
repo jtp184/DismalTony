@@ -133,7 +133,7 @@ module DismalTony # :nodoc:
       fin = method(mtd).call
       raise "No response (#{fin.inspect})" unless fin.respond_to? :outgoing_message
 
-      @query.complete(self, fin)
+      @query.complete(fin)
       self
     end
 
