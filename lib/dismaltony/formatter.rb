@@ -30,6 +30,7 @@ module DismalTony # :nodoc:
       alias emoji get_icon
     end
 
+    # Inverse lookup on the emoji table
     def emoji_name(moj)
       emoji_dictionary.key(moj)
     end

@@ -1,8 +1,8 @@
 module DismalTony # :nodoc:
+  require 'securerandom'
   # Represents the identity of the user submitting queries. Used both to allow for stated conversation,
   # and as a way to keep user-specific information isolated from other user-specific information, such as
   # names, phone numbers, preferences, etc.
-  require 'securerandom'
   class UserIdentity
     # A Hash. +user_data+ keeps track of unique information. Calling <tt>UserIdentity[key]</tt> retrieves from here.
     attr_reader :user_data

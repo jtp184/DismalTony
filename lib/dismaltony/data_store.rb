@@ -82,6 +82,7 @@ module DismalTony # :nodoc:
       end
     end
 
+    # Takes the +slug+ and modifies +directive_data+ accordingly
     def update_data(slug)
       dr = slug.fetch(:directive)
       ky = slug.fetch(:key)
@@ -169,6 +170,7 @@ module DismalTony # :nodoc:
       x
     end
 
+    # Takes the data from the +slug+ and updates accordingly 
     def update_data(slug)
       x = @data_store.update_data(slug)
       save
