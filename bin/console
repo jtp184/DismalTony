@@ -7,14 +7,16 @@ require 'dismaltony'
 require 'ParseyParse'
 require 'ParseyParse/cache'
 
-Dir.entries('lib/dismaltony/directives').select { |f| f =~ /(\w*)\.rb/i }.each do |f|
-  mod = /(\w*)\.rb/.match(f)[1]
-  require "dismaltony/directives/#{ mod }"
-end
+Dir.entries('lib/dismaltony/directive_helpers')
+   .select! { |f| /(\w*)\.rb/i.match?(f) }
+   .map! { |f| /(\w*)\.rb/.match(f)[1] }
+   .each { |f| require "dismaltony/directive_helpers/#{ f }" }
 
-require 'dismaltony/directives/core'
-require 'dismaltony/directives/conversation'
-require 'dismaltony/directives/weather'
+
+Dir.entries('lib/dismaltony/directives')
+   .select! { |f| /(\w*)\.rb/i.match?(f) }
+   .map! { |f| /(\w*)\.rb/.match(f)[1] }
+   .each { |f| require "dismaltony/directives/#{ f }" }
 
 ParseyParse.configure do |conf|
   conf[:cache] = begin
