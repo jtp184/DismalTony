@@ -97,7 +97,7 @@ module DismalTony # :nodoc:
         md = DismalTony::Formatter::OUTGOING.match msg
         emote = md['moji']
         text = md['message']
-        `say #{DismalTony::EmojiDictionary.name(emote)}. #{text}`
+        `say #{DismalTony::Formatter.emoji_name(emote)}. #{text}`
       else
         `say #{msg}`
       end

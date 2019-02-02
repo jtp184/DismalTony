@@ -10,7 +10,7 @@ module DismalTony # :nodoc:
         # Chooses randomly from +moj+, or if no arguments are passed randomly from all emoji.
         def random_emoji(*moj)
           if moj.length.zero?
-            DismalTony::EmojiDictionary.emoji_table.keys.sample
+            DismalTony::Formatter.emoji_dictionary.keys.sample
           else
             moj.sample
           end

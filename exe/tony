@@ -133,7 +133,7 @@ module DismalTony
 		def self.interactive(debug = false)
 			puts
 			loop do
-				print "[#{DismalTony::EmojiDictionary[get_icon]}  ]: "
+				print "[#{DismalTony::Formatter.emoji(get_icon)}  ): "
 				inp = gets.chomp
 				puts
 				if check_interactive_options(inp)

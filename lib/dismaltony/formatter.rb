@@ -1,20 +1,12 @@
 module DismalTony # :nodoc:
   # Responsible for taking strings and formatting them according to project guidelines
-  class Formatter
-    # Options for the format
-    attr_reader :opts
-
+  module Formatter
     # a Regexp which matches a message sent with the standard DismalTony format
     OUTGOING = /(?<label>\[(?<moji>.+)\]\: )(?<message>.+)/.freeze
     # a Regexp which matches a message string, and includes support for extracting the emoji signifier
     INCOMING = /(?:~e:(?<emote>\w+\b) )?(?<message>(.|\s)+)/.freeze
 
-    # Sets this Formatter's +opts+ hash to +args+
-    def initialize(**args) # :nodoc:
-      @opts = args
-    end
-
-    # The main function of the class. Parses +opts+ to determine what transformations to apply to +str+ before returning it
+    # The main function of the module. Parses +opts+ to determine what transformations to apply to +str+ before returning it
     def self.format(str, opts = {})
       md = Formatter::INCOMING.match(str)
       em = (md['emote'] || 'smile')
@@ -31,7 +23,15 @@ module DismalTony # :nodoc:
 
     # Gets an emoji from its internal name.
     def self.get_icon(emo)
-      DismalTony::EmojiDictionary[emo]
+      emoji_dictionary[emo]
+    end
+
+    class << self
+      alias emoji get_icon
+    end
+
+    def emoji_name(moj)
+      emoji_dictionary.key(moj)
     end
 
     # Takes +str+ and an emoji +emo+ and creates a standard formatted string
@@ -43,6 +43,150 @@ module DismalTony # :nodoc:
     # square bracket, allowing the default text output to work in terminal.
     def self.extra_space(str)
       str.gsub(/]:/, '  ]:')
+    end
+  end
+
+  module Formatter # :nodoc:
+    def self.emoji_dictionary
+      {
+        '0' => '0️⃣',
+        '1' => '1️⃣',
+        '10' => '🔟',
+        '100' => '💯',
+        '2' => '2️⃣',
+        '3' => '3️⃣',
+        '4' => '4️⃣',
+        '5' => '5️⃣',
+        '6' => '6️⃣',
+        '7' => '7️⃣',
+        '8' => '8️⃣',
+        '9' => '9️⃣',
+        'airplane' => '✈️',
+        'alarmbell' => '🔔',
+        'alarmclock' => '⏰',
+        'americanflag' => '🇺🇸',
+        'anchor' => '⚓️',
+        'angry' => '😡',
+        'barchart' => '📊',
+        'beer' => '🍺',
+        'bicycle' => '🚲',
+        'birthdaycake' => '🎂',
+        'bolt' => '⚡️',
+        'bomb' => '💣',
+        'brain' => '🧠',
+        'burger' => '🍔',
+        'bus' => '🚌',
+        'calendar' => '📅',
+        'camera' => '📷',
+        'cancel' => '🚫',
+        'car' => '🚗',
+        'cat' => '😺',
+        'caution' => '⚠️',
+        'champagne' => '🍾',
+        'chartdown' => '📉',
+        'chartup' => '📈',
+        'checkbox' => '✅',
+        'cheeky' => '😜',
+        'cheers' => '🍻',
+        'chili' => '🌶',
+        'clockface' => '🕓',
+        'coffee' => '☕️',
+        'computer' => '🖥',
+        'cookie' => '🍪',
+        'cool' => '😎',
+        'creditcard' => '💳',
+        'crystalball' => '🔮',
+        'dice' => '🎲',
+        'dog' => '🐶',
+        'dollarsign' => '💲',
+        'egg' => '🍳',
+        'envelope' => '✉️',
+        'envelopearrow' => '📩',
+        'envelopeheart' => '💌',
+        'exclamationmark' => '❗️',
+        'fire' => '🔥',
+        'fish' => '🐠',
+        'flower' => '🌺',
+        'fries' => '🍟',
+        'frown' => '🙁',
+        'game' => '🎮',
+        'gate' => '🚧',
+        'gem' => '💎',
+        'genie' => '🧞‍♂️',
+        'globe' => '🌎',
+        'goofy' => '🤪',
+        'hourglass' => '⏳',
+        'key' => '🔑',
+        'knifefork' => '🍴',
+        'laptop' => '💻',
+        'lightbulb' => '💡',
+        'lock' => '🔒',
+        'magnifyingglass' => '🔎',
+        'mailbox' => '📫',
+        'mappin' => '📍',
+        'martini' => '🍸',
+        'medal' => '🏅',
+        'megaphone' => '📢',
+        'mindblown' => '🤯',
+        'moneybag' => '💰',
+        'moneywing' => '💸',
+        'monocle' => '🧐',
+        'moon' => '🌙',
+        'moviecamera' => '📽',
+        'nobell' => '🔕',
+        'octo' => '🐙',
+        'package' => '📦',
+        'pencil' => '✏️',
+        'phone' => '📞',
+        'pickaxe' => '⛏',
+        'pill' => '💊',
+        'pineapple' => '🍍',
+        'pizza' => '🍕',
+        'popcorn' => '🍿',
+        'pound' => '#️⃣',
+        'present' => '🎁',
+        'questionmark' => '❓',
+        'raincloud' => '🌧',
+        'rocket' => '🚀',
+        'scroll' => '📜',
+        'shower' => '🚿',
+        'shush' => '🤫',
+        'siren' => '🚨',
+        'sleepy' => '😴',
+        'sly' => '😏',
+        'smile' => '🙂',
+        'snail' => '🐌',
+        'snake' => '🐍',
+        'snowflake' => '❄️',
+        'spaceinvader' => '👾',
+        'speechbubble' => '💬',
+        'star' => '⭐️',
+        'stareyes' => '🤩',
+        'stopwatch' => '⏱',
+        'sun' => '☀️',
+        'taco' => '🌮',
+        'thebird' => '🖕',
+        'thermometer' => '🌡',
+        'think' => '🤔',
+        'thumbsdown' => '👎',
+        'thumbsup' => '👍',
+        'ticket' => '🎟',
+        'toast' => '🥂',
+        'tophat' => '🎩',
+        'trophy' => '🏆',
+        'tropicaldrink' => '🍹',
+        'tv' => '📺',
+        'unlock' => '🔓',
+        'vomit' => '🤮',
+        'watch' => '⌚️',
+        'wave' => '👋',
+        'whiskey' => '🥃',
+        'wineglass' => '🍷',
+        'wink' => '😉',
+        'worldmap' => '🗺️',
+        'worried' => '🤕',
+        'zzz' => '💤'
+      }
     end
   end
 end
