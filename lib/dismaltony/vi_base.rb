@@ -33,7 +33,7 @@
     end
 
     # Takes the module level VI and duplicates it, overriding its values with ones from +opts+
-    def self.inherit(**opts)
+    def self.with(**opts)
       DismalTony::VIBase.new(
         user: (opts[:user] || DismalTony.().user || DismalTony::UserIdentity::DEFAULT),
         name: (opts[:name] || DismalTony.().name),
