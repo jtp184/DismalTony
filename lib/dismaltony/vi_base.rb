@@ -35,11 +35,11 @@ module DismalTony # :nodoc:
     # Takes the module level VI and duplicates it, overriding its values with ones from +opts+
     def self.with(**opts)
       DismalTony::VIBase.new(
-        user: (opts[:user] || DismalTony.call.user || DismalTony::UserIdentity::DEFAULT),
-        name: (opts[:name] || DismalTony.call.name),
-        return_interface: (opts[:return_interface] || DismalTony.call.return_interface),
-        directives: (opts[:directives] || DismalTony.call.directives),
-        data_store: (opts[:data_store] || DismalTony.call.data_store)
+        user: (opts[:user] || DismalTony.vi.user || DismalTony::UserIdentity::DEFAULT),
+        name: (opts[:name] || DismalTony.vi.name),
+        return_interface: (opts[:return_interface] || DismalTony.vi.return_interface),
+        directives: (opts[:directives] || DismalTony.vi.directives),
+        data_store: (opts[:data_store] || DismalTony.vi.data_store)
       )
     end
 

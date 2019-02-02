@@ -5,7 +5,7 @@ module DismalTony #:nodoc:
       ino = {}
       ino[:time] = init_opts.fetch(:time) { Time.now }
       ino[:query] = init_opts.fetch(:query) { '' }
-      ino[:user_id] = init_opts.fetch(:user_id) { DismalTony.call.user[:uuid] }
+      ino[:user_id] = init_opts.fetch(:user_id) { DismalTony.vi.user[:uuid] }
       ino[:opts] = init_opts.fetch(:opts) { {} }
       e = ScheduleEvent.new(ino)
       store_event(e)
@@ -13,11 +13,11 @@ module DismalTony #:nodoc:
     end
 
     def self.store_event(e)
-      DismalTony.call.data_store.store_data(directive: :core_scheduler, key: "Event:#{e.event_id}", value: e)
+      DismalTony.vi.data_store.store_data(directive: :core_scheduler, key: "Event:#{e.event_id}", value: e)
     end
 
     def self.load_events
-      DismalTony.call.data_store.read_data(:core_scheduler)
+      DismalTony.vi.data_store.read_data(:core_scheduler)
     end
 
     def self.ready_events
@@ -29,7 +29,7 @@ module DismalTony #:nodoc:
       e = load_events
       r = e.map(&:call)
       r.each do |f|
-        DismalTony.call.data_store.update_data(directive: :core_scheduler, key: "Event:#{f.event_id}", value: f)
+        DismalTony.vi.data_store.update_data(directive: :core_scheduler, key: "Event:#{f.event_id}", value: f)
       end
       r
     end
@@ -49,7 +49,7 @@ module DismalTony #:nodoc:
     def self.prune_events
       e = load_events
       e.each do |f|
-        DismalTony.call.data_store.delete_data(:core_scheduler, "Event:#{f.event_id}") if f.finished?
+        DismalTony.vi.data_store.delete_data(:core_scheduler, "Event:#{f.event_id}") if f.finished?
       end
     end
   end
@@ -177,7 +177,7 @@ module DismalTony #:nodoc:
     def construct_vi
       ocon = {}
 
-      ocon[:user] = DismalTony.call.data_store.select_user(@user_id) if @user_id
+      ocon[:user] = DismalTony.vi.data_store.select_user(@user_id) if @user_id
 
       ocon[:return_interface] = @opts.fetch(:return_interface) if @opts.fetch(:return_interface) { false }
 
