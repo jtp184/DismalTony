@@ -17,193 +17,182 @@ require 'dismaltony/directives/core'
 require 'dismaltony/directives/conversation'
 
 module DismalTony
-	module CLI
+  module CLI
+    attr_accessor :configurator
 
-		attr_accessor :__
+    class << self
+      attr_accessor :configurator
+    end
 
-		class << self
-			attr_accessor :__
-		end
+    @configurator = OpenStruct.new
+    @opt = OptionParser.new do |opts|
+      opts.on('-i', '--interactive', 'Engage DismalTony in a REPL') do |_q|
+        configurator[:interactive] = true
+      end
 
-		@__ = OpenStruct.new
-		@opt = OptionParser.new do |opts|
-			opts.on('-i', '--interactive', 'Engage DismalTony in a REPL') do |q|
-				__[:interactive] = true
-			end
+      opts.on('-t', '--tony-cache=FILE', 'Select a file to read from for the DismalTony cache') do |t|
+        configurator[:tony_cache] = t
+      end
 
-			opts.on('-t', '--tony-cache=FILE', 'Select a file to read from for the DismalTony cache') do |t|
-				__[:tony_cache] = t
-			end
+      opts.on('-p', '--parse-cache=FILE', 'Select a file to read from for the ParseyParse cache') do |pc|
+        configurator[:parsey_cache] = pc
+      end
 
-			opts.on('-p', '--parse-cache=FILE', 'Select a file to read from for the ParseyParse cache') do |pc|
-				__[:parsey_cache] = pc
-			end
+      opts.on('-l', '--load-file=FILE', 'Select a Ruby file to read from, to add Directives') do |l|
+        configurator[:load_file] = l
+      end
 
-			opts.on('-l', '--load-file=FILE', 'Select a Ruby file to read from, to add Directives') do |l|
-				__[:load_file] = l
-			end
+      opts.on('-r', '--redis=DB', 'use Redis at server DB for Tony, and DB+1 for Parsey') do |r|
+        configurator[:redis_db] = Integer(r)
+      end
 
-			opts.on('-r', '--redis=DB', 'use Redis at server DB for Tony, and DB+1 for Parsey') do |r|
-				__[:redis_db] = Integer(r)
-			end
+      opts.on('-s', '--syntaxnet=PATH', 'the path for the Syntaxnet scripts') do |s|
+        configurator[:syntaxnet_path] = s
+      end
 
-			opts.on('-s', '--syntaxnet=PATH', 'the path for the Syntaxnet scripts') do |s|
-				__[:syntaxnet_path] = s
-			end
+      opts.on('-u', '--user=UID', 'the UUID of the User to log in as') do |u|
+        configurator[:uuid] = u
+      end
+    end.parse!
 
-			opts.on('-u', '--user=UID', 'the UUID of the User to log in as') do |u|
-				__[:uuid] = u
-			end
-		end.parse!
+    def self.configure_parsey
+      khash = parsey_cache? ? ParseyParse::YAMLCache.load_from(configurator[:parsey_cache]) : ParseyParse::Cache.new
+      ParseyParse.configure do |conf|
+        conf[:cache] = khash
+        conf[:syntaxnet_path] = configurator[:syntaxnet_path] if configurator[:syntaxnet_path]
+        conf[:disable_tf] = !File.exist?(conf[:syntaxnet_path] + '/' + conf[:script_path])
+      end
+    end
 
-		def self.configure_parsey
-			khash = parsey_cache? ? ParseyParse::YAMLCache.load_from(__[:parsey_cache]) : ParseyParse::Cache.new
-			ParseyParse.configure do |conf|
-				conf[:cache] = khash
-				conf[:syntaxnet_path] = __[:syntaxnet_path] if __[:syntaxnet_path]
-				conf[:disable_tf] = !File.exists?(conf[:syntaxnet_path] + '/' + conf[:script_path])
-			end
-		end
+    def self.configure_vi
+      db = tony_cache? ? DismalTony::YAMLStore.load_from(configurator[:tony_cache]) : DismalTony::DataStore.new
 
-		def self.configure_vi
-			db = tony_cache? ? DismalTony::YAMLStore.load_from(__[:tony_cache]) :	DismalTony::DataStore.new
+      DismalTony.vi = DismalTony::VIBase.new(
+        data_store: db,
+        user: get_the_user(db)
+      )
+    end
 
-			DismalTony.vi = DismalTony::VIBase.new(
-				:data_store => db,
-				:user => get_the_user(db)
-				)
-		end
+    def self.get_the_user(dbb)
+      if configurator[:uuid]
+        dbb.select_user { |u| u[:uuid] == configurator[:uuid] }.first
+      else
+        dbb.users.last
+      end
+    end
 
-		def self.get_the_user(dbb)
-			if __[:uuid]
-				dbb.select_user { |u| u[:uuid] == __[:uuid] }.first
-			else
-				dbb.users.last
-			end
-		end
+    def self.use_redis_instead
+      ParseyParse.configure do |conf|
+        conf[:cache] = ParseyParse::RedisCache.new(redis_config: { db: configurator[:redis_db] + 1 })
+        conf[:syntaxnet_path] = configurator[:syntaxnet_path] if configurator[:syntaxnet_path]
+        conf[:disable_tf] = !File.exist?(conf[:syntaxnet_path] + '/' + conf[:script_path])
+      end
 
-		def self.use_redis_instead
-			ParseyParse.configure do |conf|
-				conf[:cache] = ParseyParse::RedisCache.new(redis_config: {db: __[:redis_db]+1})
-				conf[:syntaxnet_path] = __[:syntaxnet_path] if __[:syntaxnet_path]
-				conf[:disable_tf] = !File.exists?(conf[:syntaxnet_path] + '/' + conf[:script_path])
-			end
+      db = DismalTony::RedisStore.new(redis_config: { db: configurator[:redis_db] })
 
-			db = DismalTony::RedisStore.new(redis_config: {db: __[:redis_db]})
+      DismalTony.vi = DismalTony::VIBase.new(
+        data_store: db,
+        user: get_the_user(db)
+      )
+    end
 
-			DismalTony.vi = DismalTony::VIBase.new(
-				:data_store => db,
-				:user => get_the_user(db)
-				)
-		end
+    def self.tony_cache?
+      configurator[:tony_cache]
+    end
 
-		def self.tony_cache?
-			__[:tony_cache]
-		end
+    def self.parsey_cache?
+      configurator[:parsey_cache]
+    end
 
-		def self.parsey_cache?
-			__[:parsey_cache]
-		end
+    def self.check_interactive_options(str)
+      case str
+      when /^exit$/i, /^quit$/i
+        exit
+      when /^pry$/i, /^console$/i, /^ruby$/i
+        Pry.start
+        exit
+      when /^list-directives$/i
+        DismalTony.call.directives.each { |d| puts d.name }
+        true
+      when /^list-parsed$/i
+        ParseyParse.known.keys.each { |k| puts k }
+      end
+    end
 
-		def self.check_interactive_options(str)
-			case str
-			when /^exit$/i, /^quit$/i
-				exit
-			when /^pry$/i, /^console$/i, /^ruby$/i
-				Pry.start
-				exit
-			when /^list-directives$/i
-				DismalTony.().directives.each { |d| puts d.name }
-				true
-			when /^list-parsed$/i
-				ParseyParse.known.keys.each { |k| puts k }
-			else
-				nil
-			end
-		end
+    def self.get_icon
+      DismalTony.call.user[:icon] || 'laptop'
+    end
 
-		def self.get_icon
-			if DismalTony.().user[:icon]
-				DismalTony.().user[:icon]
-			else
-				'laptop'
-			end
-		end
+    def self.interactive(debug = false)
+      puts
+      loop do
+        print "[#{DismalTony::Formatter.emoji(get_icon)}  ): "
+        inp = gets.chomp
+        puts
+        if check_interactive_options(inp)
 
-		def self.interactive(debug = false)
-			puts
-			loop do
-				print "[#{DismalTony::Formatter.emoji(get_icon)}  ): "
-				inp = gets.chomp
-				puts
-				if check_interactive_options(inp)
+        else
+          begin
+            res = DismalTony.call(inp)
+            @last_evaluated = res if debug
+          rescue ParseyParse::TensorFlowDisabledError
+            DismalTony.call.say("~e:frown I'm sorry, I can only answer preloaded queries")
+          end
+        end
+        puts
+      end
+    end
 
-				else
-					begin
-						res = DismalTony.(inp)
-						@last_evaluated = res if debug
-					rescue ParseyParse::TensorFlowDisabledError
-						DismalTony.().say("~e:frown I'm sorry, I can only answer preloaded queries")
-					end
-				end
-				puts
-			end
-		end
+    def self.preload
+      load_homefile if check_homefile
+      load configurator[:load_file] if configurator[:load_file]
+      tcs = ['./tmp/tony.yml', './tmp/tony.yaml', './tony.yml', './tony.yaml', Dir.home + '/tony.yml', Dir.home + '/tony.yaml']
+      tcs.each do |tc|
+        configurator[:tony_cache] ||= tc if File.exist?(tc)
+      end
 
-		def self.preload
-			load_homefile if check_homefile
-			load __[:load_file] if __[:load_file]
-			tcs = ['./tmp/tony.yml', './tmp/tony.yaml', './tony.yml', './tony.yaml', Dir.home + '/tony.yml', Dir.home + '/tony.yaml']
-			tcs.each do |tc|
-				__[:tony_cache] ||= tc if File.exists?(tc)
-			end
+      pcs = %w[parsey cache]
+      pcs.map! { |a| ["./tmp/#{a}.yml", "./tmp/#{a}.yaml", "./#{a}.yml", "./#{a}.yaml"] }
+      pcs = pcs.flatten
+      pcs.each do |pc|
+        configurator[:parsey_cache] ||= pc if File.exist?(pc)
+      end
+    end
 
-			pcs = ['parsey', 'cache']
-			pcs.map! { |a| ["./tmp/#{a}.yml", "./tmp/#{a}.yaml", "./#{a}.yml", "./#{a}.yaml"]}
-			pcs = pcs.flatten
-			pcs.each do |pc|
-				__[:parsey_cache] ||= pc if File.exists?(pc)
-			end
-		end
+    def self.load_homefile
+      @configurator = Psych.load(File.read(Dir.home + '/.tony'))
+    end
 
-		def self.load_homefile
-			@__ = Psych.load(File.read(Dir.home + '/.tony'))
-		end
+    def self.check_homefile
+      true if File.exist?(Dir.home + '/.tony')
+    end
 
-		def self.check_homefile
-			if File.exists?(Dir.home + '/.tony')
-				true
-			else
-				nil
-			end
-		end
+    def self.save_homefile
+      File.open(Dir.home + '/.tony', 'w+') { |fi| fi << Psych.dump(configurator) }
+    end
 
-		def self.save_homefile
-			File.open(Dir.home + '/.tony', 'w+') { |fi| fi << Psych.dump(__) }
-		end
+    def self.call
+      preload
+      if configurator[:redis_db]
+        use_redis_instead
+      else
+        configure_parsey
+        configure_vi
+       end
 
-		def self.call
-			preload
-			unless __[:redis_db]
-				configure_parsey
-				configure_vi
-			else
-				use_redis_instead
-			end
+      if configurator[:interactive]
+        interactive
+      elsif ARGV.empty?
 
-			if __[:interactive]
-				interactive
-			elsif ARGV.empty?
+      else
+        DismalTony.call(ARGV.join(' '))
+      end
+      save_homefile if check_homefile
+    end
 
-			else
-				DismalTony.(ARGV.join(" "))
-			end
-			save_homefile if check_homefile
-		end
-
-		def self.options
-			@__
-		end
-	end
+    def self.options
+      @configurator
+    end
+  end
 end
-DismalTony::CLI.()
+DismalTony::CLI.call
