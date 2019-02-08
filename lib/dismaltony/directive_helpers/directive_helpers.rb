@@ -66,6 +66,23 @@ module DismalTony # :nodoc:
           @match_criteria += crit
         end
 
+        # This directive's parsing strategies
+        def parsing_strategies
+          @parsing_strategies ||= []
+        end
+
+        # Writer, sets +parsing_strategy+ to +ps+
+        def parsing_strategies=(ps)
+          @parsing_strategies = ps
+        end
+
+        # Sets the +parsing_strategies+ to +strats+
+        def use_parsing_strategies(&blk) # :yields: strats
+          x = []
+          yield x
+          self.parsing_strategies = x
+        end
+
         # Returns an Errored directive, using +qry+ and +vi+ to construct the new Directive
         def error(qry, vi)
           me = new(qry, vi)

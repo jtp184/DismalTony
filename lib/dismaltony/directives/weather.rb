@@ -1,3 +1,4 @@
+require 'dismaltony/parsing_strategies/parsey_parse_strategy'
 require 'json'
 require 'net/http'
 require 'open-uri'
@@ -314,6 +315,10 @@ module DismalTony::Directives
     add_param :id_code
     add_param :flavor
     add_param :icon
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << keyword { |q| q.contains?(/weather/i, /temperature/i) }

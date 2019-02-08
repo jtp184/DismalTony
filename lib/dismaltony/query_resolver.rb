@@ -21,21 +21,11 @@ module DismalTony
       succeeds = directives.map { |d| [d, d =~ query] }
     end
 
-    # Returns a Query for +user+ without trying to parse +txt+
-    def self.query_from_text(txt, user)
+    # Returns a Query from raw text +txt+ and VIBase +vi+'s user
+    def self.create_query(txt, vi = DismalTony.vi)
       Query.new(
         raw_text: txt,
-        user: user
-      )
-    end
-
-    # Returns a new Query for a given UserIdentity +user+ and input string +txt+.
-    # Tries to use ParseyParse to parse +txt+ and provide the result.
-    def self.query_from_text!(txt, user)
-      Query.new(
-        raw_text: txt,
-        parsed_result: ParseyParse.call(txt),
-        user: user
+        user: vi.user
       )
     end
 
@@ -43,7 +33,7 @@ module DismalTony
     # execute a matching directive for +query+
     def self.run_match(query, vi)
       result = match(query, vi.directives)
-      result = result.from(query, vi)
+      result = result.from(result.apply_parsing_strategies(query), vi)
       result.call
     rescue NoDirectiveError
       Directive.error(query, vi)
@@ -56,15 +46,14 @@ module DismalTony
       st8 = vi.user.clone.state
 
       if st8.idle?
-        qry = query_from_text!(txt, vi.user)
+        qry = create_query(txt, vi)
         run_match qry, vi
       else
-        qry = if st8.parse_next
-                query_from_text!(txt, vi.user)
-              else
-                query_from_text(txt, vi.user)
-              end
-        res = DismalTony::Directives[st8.next_directive].new(qry, vi)
+        drek = DismalTony::Directives[st8.next_directive]
+        qry = create_query(txt, vi)
+        qry = st8.parse_next ? drek.apply_parsing_strategies(qry) : qry
+
+        res = drek.new(qry, vi)
         res.parameters = st8.data
         res.call(st8.next_method.to_sym)
       end

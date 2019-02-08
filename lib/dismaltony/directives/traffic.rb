@@ -1,3 +1,4 @@
+require 'dismaltony/parsing_strategies/parsey_parse_strategy'
 require 'google_maps_service'
 require 'ruby-units'
 require 'duration'
@@ -88,6 +89,10 @@ module DismalTony::Directives
     add_param :end_address
     add_param :info_type
     add_param :step_index, 0
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << keyword { |q| q.contains?(/directions/i, /traffic/i, /long/i, /far/i, /navigate/i) }

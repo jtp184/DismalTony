@@ -1,3 +1,5 @@
+require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+
 module DismalTony::Directives
   class GreetingDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::ConversationHelpers
@@ -5,6 +7,10 @@ module DismalTony::Directives
 
     set_name :hello
     set_group :conversation
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << must { |q| q.contains?(/hello/i, /\bhi\b/i, /greetings/i) }
@@ -29,6 +35,10 @@ module DismalTony::Directives
 
     add_param :user_id
     add_param :send_number
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /invit(e|ation)/i }

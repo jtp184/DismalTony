@@ -16,20 +16,16 @@ module DismalTony # :nodoc:
     # Options for +opts+
     # * +:name+ - The name for the VI. Defaults to 'Tony'
     # * +:directives+ - The Array of directives. Defaults to all known.
+    # * +:parsing_strategies+ - The Array of Parsing Strategies. Defaults to all known.
     # * +:data_store+ - The data store to use with this VI. Defaults to a generic DataStore object.
     # * +:return_interface+ - The interface to route conversation back through. Defaults to the ConsoleInterface.
     # * +:user+ - the UserIdentity of who is using this VI
     def initialize(**opts)
-      @name = (opts[:name].freeze || opts[:data_store]&.opts&.[](:vi_name) || 'Tony'.freeze)
-      @return_interface = (opts[:return_interface] || DismalTony::ConsoleInterface.new)
-      @directives = (opts[:directives] || DismalTony::Directives.all)
-      if opts[:data_store]
-        opts[:data_store].set_opt(:vi_name, @name)
-        @data_store = opts[:data_store]
-      else
-        @data_store = DismalTony::DataStore.new(vi_name: name)
-      end
-      @user = (opts[:user] || @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT)
+      @data_store = opts.fetch(:data_store, DismalTony::DataStore.new(vi_name: name))
+      @user = opts.fetch(:user, @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT)
+      @name = opts.fetch(:name, @data_store&.opts&.[](:vi_name) || 'Tony').freeze
+      @return_interface = opts.fetch(:return_interface, DismalTony::ConsoleInterface.new)
+      @directives = opts.fetch(:directives, DismalTony::Directives.all)
     end
 
     # Takes the module level VI and duplicates it, overriding its values with ones from +opts+

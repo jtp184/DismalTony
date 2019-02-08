@@ -4,19 +4,19 @@ module DismalTony # :nodoc:
     # The incoming query as pure text.
     # Useful as a fallback in the case that there's no +parsed_result+, and utilized by #=~
     attr_reader :raw_text
-    # The result of the text being run through a NLU analysis, should be a ParseyParse::Sentence
-    attr_reader :parsed_result
+    # a collection containing the parsing strategies that were applied
+    attr_accessor :parsed_results
     # a UserIdentity object representing the person who made the query
     attr_reader :user
 
     # Accesses the following keys for the hash +opts+:
     # * :raw_text, The plain string input of the query.
     # Used for #=~ comparisons and as a backup
-    # * :parsed_result, An object representing the parsed result. Should be a ParseyParse sentence.
+    # * :parsed_results, the array of parsing strategies
     # * :user, The UserIdentity corresponding to who asked the query.
     def initialize(**opts)
       @raw_text = opts.fetch(:raw_text) { '' }
-      @parsed_result = opts.fetch(:parsed_result) { ParseyParse::Sentence.new }
+      @parsed_results = opts.fetch(:parsed_results) { [] }
       @user = opts.fetch(:user) { DismalTony::UserIdentity::DEFAULT }.clone
     end
 
@@ -25,13 +25,16 @@ module DismalTony # :nodoc:
       raw_text =~ check
     end
 
-    # Redefined to check first if +parsed_result+ can respond to +method_name+, and passes along +params+
+    # Redefined to check first if +parsed_results+ can respond to +method_name+, and passes along +params+
     def method_missing(method_name, *params, &blk)
-      if parsed_result.respond_to?(method_name)
-        parsed_result.method(method_name).call(*params, &blk)
-      else
-        super
-      end
+      super unless parsed_results.any? { |r| r.respond_to?(method_name) }
+      raise ArgumentError, "Multiple parsed results respond to ##{method_name.to_s}" unless parsed_results.one? { |r| r.respond_to?(method_name) }
+      parsed_results.select { |r| r.respond_to?(method_name) }.first.method(method_name).call(*params, &blk)
+    end
+
+    # Also checks +mname+ on parsed_results so as to be unsurprising
+    def respond_to?(mname, incl = false)
+      parsed_results.any? { |r| r.respond_to?(mname) } || super
     end
 
     # Implicit string conversion

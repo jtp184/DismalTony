@@ -18,10 +18,15 @@ Dir.entries('lib/dismaltony/directives')
    .map! { |f| /(\w*)\.rb/.match(f)[1] }
    .each { |f| require "dismaltony/directives/#{ f }" }
 
+Dir.entries('lib/dismaltony/parsing_strategies')
+   .select! { |f| /(\w*)\.rb/i.match?(f) }
+   .map! { |f| /(\w*)\.rb/.match(f)[1] }
+   .each { |f| require "dismaltony/parsing_strategies/#{ f }" }
+
 ParseyParse.configure do |conf|
   conf[:cache] = begin
-    # ParseyParse::YAMLCache.load_from('tmp/cache.yml')
-    ParseyParse::RedisCache.new(redis_config: {db: 1})
+    ParseyParse::YAMLCache.load_from('tmp/cache.yml')
+    # ParseyParse::RedisCache.new(redis_config: {db: 1})
   rescue
     ParseyParse::Cache.new
   end

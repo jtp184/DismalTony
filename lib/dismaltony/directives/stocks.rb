@@ -1,3 +1,4 @@
+require 'dismaltony/parsing_strategies/parsey_parse_strategy'
 require 'uri'
 require 'date'
 require 'net/http'
@@ -16,6 +17,10 @@ module DismalTony::Directives
 
     add_param :stock_id
     add_param :current_value
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /stocks?/i }
@@ -146,6 +151,10 @@ module DismalTony::Directives
     add_param :current_value
     add_param :shares_requested
     add_param :final_total
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /stocks?/i }

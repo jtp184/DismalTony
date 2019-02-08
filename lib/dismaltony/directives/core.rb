@@ -1,3 +1,4 @@
+require 'dismaltony/parsing_strategies/parsey_parse_strategy'
 require 'duration'
 
 module DismalTony::Directives
@@ -8,6 +9,10 @@ module DismalTony::Directives
 
     add_param :sendto
     add_param :sendmsg
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /text/i }
@@ -61,6 +66,10 @@ module DismalTony::Directives
 
     set_name :selfdiagnostic
     set_group :debug
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /diagnostic/i }

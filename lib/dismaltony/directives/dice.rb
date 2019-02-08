@@ -1,3 +1,4 @@
+require 'dismaltony/parsing_strategies/parsey_parse_strategy'
 require 'gaming_dice'
 
 module DismalTony::Directives
@@ -7,6 +8,10 @@ module DismalTony::Directives
     set_group :fun
 
     add_param :result
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /\broll\b/i }

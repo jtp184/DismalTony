@@ -1,10 +1,17 @@
+require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+
 module DismalTony::Directives
   class RetrieveUserDataDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::ConversationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
+    
     set_name :retrieve_user_data
     set_group :info
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << must { |q| q.contains?(/who/i, /what(?:'s)?/i) }
@@ -62,6 +69,10 @@ module DismalTony::Directives
 
     set_name :retrieve_other_user_data
     set_group :info
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << must { |q| q.contains?(/what/i) }

@@ -1,8 +1,14 @@
+require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+
 module DismalTony::Directives
   class DrinkMixDirective < DismalTony::Directive
     set_name :drinkmix
     set_group :fun
     add_param :drink
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+    end
 
     add_criteria do |qry|
       qry << must { |q| q.verb&.any_of?(/want/i, /like/i, /mix/i, /make/i, /pick/i, /choose/i) }

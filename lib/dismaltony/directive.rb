@@ -35,6 +35,8 @@ module DismalTony # :nodoc:
     # may throw a MatchLogicFailure error, which causes this function to return a nil
     def self.matches?(qry)
       return nil if match_criteria.empty?
+      
+      apply_parsing_strategies(qry)
 
       certainty = 0.0
       match_criteria.each do |crit|
@@ -54,11 +56,18 @@ module DismalTony # :nodoc:
     # Takes in the Query +qry+ and verbosely checks it against the +match_criteria+
     # including a string representation of the original code block.
     def self.test_matches(qry)
+      apply_parsing_strategies(qry)
       match_criteria.map do |crit|
         pat = /{.*}/
         x = File.readlines(crit.predicate.source_location[0])[crit.predicate.source_location[1] - 1].slice(pat)
         [crit.priority, x, crit.predicate.call(qry)]
       end
+    end
+
+    def self.apply_parsing_strategies(q)
+      ps = self.parsing_strategies.map { |ps| ps.call(q.raw_text) }
+      q.parsed_results = ps
+      q
     end
 
     class << self
