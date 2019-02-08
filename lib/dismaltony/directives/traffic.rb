@@ -16,7 +16,7 @@ module DismalTony::DirectiveHelpers
           def step_list
             outp = ''
             steps.each_with_index do |_slug, ix|
-              outp << "#{ix + 1}) " << step_string(ix) << "\n"
+              outp << "#{ix + 1}) " << step_string(ix) << " (#{time_string ix})" << "\n"
             end
             outp
           end
@@ -25,6 +25,10 @@ module DismalTony::DirectiveHelpers
             i = steps[n][:html_instructions].clone
             i.gsub!(%r{<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)</\1>}i) { %(#{"\n\n" if Regexp.last_match(1) == 'div'}#{Regexp.last_match(2)}) }
             i
+          end
+
+          def time_string(n)
+            i = steps[n][:duration][:text]
           end
         end
       end
