@@ -30,25 +30,6 @@ module DismalTony
       end
     end
 
-    # A collection of topic detection information from the AWS Comprehend api
-    class ComprehendTopicMap
-      # A collection of ComprehendTopicEntity objects
-      attr_reader :entities
-      # A collection of ComprehendTopicKeyPhrase objects
-      attr_reader :key_phrases
-
-      # Takes in entities +es+ and key_phrases +ks+
-      def initialize(es, ks)
-        @entities = es
-        @key_phrases = ks
-        end
-
-      # True if both subsets are empty
-      def empty?
-        entities.empty? && key_phrases.empty?
-      end
-    end
-
     # Represents a capture entity from the AWS Comprehend api
     class ComprehendTopicEntity
       # The text content recognized
@@ -72,6 +53,7 @@ module DismalTony
         quantity
         title
       ].freeze
+
 
       # Takes in the Comprehend API's Entity type +awse+
       def initialize(awse)
@@ -117,6 +99,48 @@ module DismalTony
       # The score
       def to_f
         score
+      end
+    end
+
+    # A collection of topic detection information from the AWS Comprehend api
+    class ComprehendTopicMap
+      # A collection of ComprehendTopicEntity objects
+      attr_reader :entities
+      # A collection of ComprehendTopicKeyPhrase objects
+      attr_reader :key_phrases
+
+      # Takes in entities +es+ and key_phrases +ks+
+      def initialize(es, ks)
+        @entities = es
+        @key_phrases = ks
+      end
+
+      DismalTony::ParsingStrategies::ComprehendTopicEntity::ENTITY_TYPES.each do |label|
+        l = case label
+            when :person
+              :people
+            when :quantity
+              :quantities
+            else
+              (label.to_s << 's').to_sym
+            end
+        define_method(l) do
+          entities.select { |j| j.type == label }
+        end
+
+        define_method(label) do
+          entities.select { |j| j.type == label }.first
+        end
+
+        define_method((label.to_s << '?').to_sym) do
+          entities.select { |j| j.type == label }.any?
+        end
+
+      end
+
+      # True if both subsets are empty
+      def empty?
+        entities.empty? && key_phrases.empty?
       end
     end
   end
