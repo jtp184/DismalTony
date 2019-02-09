@@ -19,6 +19,7 @@ require: false
   gem 'google_maps_service', require: false
   gem 'ibm_watson'
   gem 'aws-sdk', '~> 3'
+  gem 'numbers_in_words'
 end
 
 group :runtime do

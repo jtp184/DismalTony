@@ -1,9 +1,71 @@
 require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 require 'uri'
 require 'date'
 require 'net/http'
 require 'json'
 require 'ostruct'
+require 'numbers_in_words'
+require 'numbers_in_words/duck_punch'
+
+module DismalTony::DirectiveHelpers
+  module StocksHelpers
+    include HelperTemplate
+    
+    module ClassMethods
+      StockPrice = Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
+        include Comparable
+
+        def price
+          close || open
+        end
+
+        def <=>(other)
+          close <=> other.close
+        rescue NoMethodError
+          close <=> Integer(other)
+        end
+
+        def to_s
+          price.to_s
+        end
+
+        def to_str
+          price.to_s
+        end
+      end
+
+      def stock_price(*args)
+        StockPrice.new(*args)
+      end
+    end
+
+    module InstanceMethods
+      def retrieve_data(qpr)
+        parse_web_req(api_request(qpr))
+      end
+
+      def parse_web_req(resp)
+        jsr = resp
+        sym = jsr['Meta Data']['2. Symbol']
+        slug = jsr.to_a[1].last
+
+        results = []
+
+        slug.each do |dat, prindx|
+          md = /(\d+)-(\d+)-(\d+)/.match dat
+          datum = Date.new(md[1].to_i, md[2].to_i, md[3].to_i)
+          results << stock_price(sym, datum, *prindx.values.map(&:to_f))
+        end
+        results
+      end
+
+      def stock_price(*args)
+        self.class.stock_price(*args)
+      end
+    end
+  end
+end
 
 module DismalTony::Directives
   class GetStockPriceDirective < DismalTony::Directive
@@ -11,6 +73,7 @@ module DismalTony::Directives
     include DismalTony::DirectiveHelpers::ConversationHelpers
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
+    include DismalTony::DirectiveHelpers::StocksHelpers
 
     set_name :get_stock_price
     set_group :info
@@ -20,12 +83,12 @@ module DismalTony::Directives
 
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendStrategy
     end
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /stocks?/i }
-      qry << must { |q| q =~ /\b[A-Z]+\b/ }
-      qry << could { |q| q =~ /prices?/i }
+      qry << must { |q| q.organization? }
     end
 
     add_synonyms do |make|
@@ -40,8 +103,7 @@ module DismalTony::Directives
     end
 
     def run
-      parameters[:stock_id] =
-        /\b[A-Z]+\b/.match(query.raw_text)[0]
+      parameters[:stock_id] = query.organization.text
       prices = retrieve_data(symbol: parameters[:stock_id])
 
       parameters[:current_value] = prices.max_by(&:date)
@@ -62,28 +124,6 @@ module DismalTony::Directives
     end
 
     private
-
-    StockPrice = Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
-      include Comparable
-
-      def price
-        close || open
-      end
-
-      def <=>(other)
-        close <=> other.close
-      rescue NoMethodError
-        close <=> Integer(other)
-      end
-
-      def to_s
-        price.to_s
-      end
-
-      def to_str
-        price.to_s
-      end
-    end
 
     def price_comment(history)
       current = history.max_by(&:date)
@@ -116,25 +156,6 @@ module DismalTony::Directives
        end
       [comment, moj]
      end
-
-    def retrieve_data(qpr)
-      parse_web_req(api_request(qpr))
-    end
-
-    def parse_web_req(resp)
-      jsr = resp
-      sym = jsr['Meta Data']['2. Symbol']
-      slug = jsr.to_a[1].last
-
-      results = []
-
-      slug.each do |dat, prindx|
-        md = /(\d+)-(\d+)-(\d+)/.match dat
-        datum = Date.new(md[1].to_i, md[2].to_i, md[3].to_i)
-        results << StockPrice.new(sym, datum, *prindx.values.map(&:to_f))
-      end
-      results
-   end
   end
 
   class StockMathDirective < DismalTony::Directive
@@ -143,6 +164,7 @@ module DismalTony::Directives
     include DismalTony::DirectiveHelpers::DataStructHelpers
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
+    include DismalTony::DirectiveHelpers::StocksHelpers
 
     set_name :stock_math
     set_group :info
@@ -154,13 +176,13 @@ module DismalTony::Directives
 
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendStrategy
     end
 
     add_criteria do |qry|
       qry << keyword { |q| q =~ /stocks?/i }
-      qry << keyword { |q| q.contains?(/worth/i, /much/i, /how/i, /many/i, /shares/i) }
-      qry << keyword { |q| q.any? { |w| w.pos == 'NUM' } }
-      qry << must { |q| q =~ /\b[A-Z]+\b/ }
+      qry << keyword { |q| q.quantity? }
+      qry << must { |q| q.organization? }
     end
 
     add_synonyms do |make|
@@ -174,40 +196,21 @@ module DismalTony::Directives
       adef[:apikey] = ENV['alpha_vantage_key']
     end
 
-    StockPrice = Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
-      include Comparable
-
-      def price
-        close || open
-      end
-
-      def <=>(other)
-        close <=> other.close
-      rescue NoMethodError
-        close <=> Integer(other)
-      end
-
-      def to_s
-        price.to_s
-      end
-
-      def to_str
-        price.to_s
-      end
-    end
-
     def run
-      clarify_number = false
-      parameters[:stock_id] ||= /\b[A-Z]+\b/.match(query.raw_text)[0]
-      begin
-        parameters[:shares_requested] ||= Integer(query['pos', 'NUM'].first.to_s)
-      rescue ArgumentError
-        clarify_number = true
+      parameters[:stock_id] ||= query.organization.text
+
+      num = query.quantity.text
+      if num =~ /\d/
+        parameters[:shares_requested] = Integer(num.match(/\d+/).to_s)
+      else
+        parameters[:shares_requested] = num.in_numbers
       end
 
-      return ask_for_number if clarify_number
-
-      finalize
+      if parameters[:shares_requested] < 1
+        ask_for_number
+      else
+        finalize
+      end
     end
 
     private
@@ -235,38 +238,18 @@ module DismalTony::Directives
 
     def ask_for_number
       DismalTony::HandledResponse.then_do(
-        message: "~e:pound Please enter the number of shares you'd like to sum as a number.",
+        message: "~e:pound Please enter the number of shares you'd like to sum as a digit.",
         directive: self,
         method: :read_number,
-        data: parameters,
-        parse_next: false
+        data: parameters
       )
     end
 
     def read_number
-      parameters[:shares_requested] ||= Integer(query.raw_text)
+      parameters[:shares_requested] ||= query.quantity.text.in_numbers
       finalize
     rescue ArgumentError
       ask_for_number
-    end
-
-    def retrieve_data(qpr)
-      parse_web_req(api_request(qpr))
-    end
-
-    def parse_web_req(resp)
-      jsr = resp
-      sym = jsr['Meta Data']['2. Symbol']
-      slug = jsr.to_a[1].last
-
-      results = []
-
-      slug.each do |dat, prindx|
-        md = /(\d+)-(\d+)-(\d+)/.match dat
-        datum = Date.new(md[1].to_i, md[2].to_i, md[3].to_i)
-        results << StockPrice.new(sym, datum, *prindx.values.map(&:to_f))
-      end
-      results
     end
   end
 end
