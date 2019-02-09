@@ -28,7 +28,8 @@ module DismalTony # :nodoc:
     # Redefined to check first if +parsed_results+ can respond to +method_name+, and passes along +params+
     def method_missing(method_name, *params, &blk)
       super unless parsed_results.any? { |r| r.respond_to?(method_name) }
-      raise NameError, "Multiple parsed results respond to ##{method_name.to_s}" unless parsed_results.one? { |r| r.respond_to?(method_name) }
+      raise NameError, "Multiple parsed results respond to ##{method_name}" unless parsed_results.one? { |r| r.respond_to?(method_name) }
+
       parsed_results.select { |r| r.respond_to?(method_name) }.first.method(method_name).call(*params, &blk)
     end
 

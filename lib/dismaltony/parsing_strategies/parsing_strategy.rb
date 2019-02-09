@@ -1,6 +1,6 @@
 module DismalTony
-	module ParsingStrategies
-		class << self
+  module ParsingStrategies
+    class << self
       include Enumerable
     end
 
@@ -14,8 +14,8 @@ module DismalTony
       all.each(&blk)
     end
 
-		class ParsingStrategy
-			def self.call(_q); end
-		end
-	end
+    class ParsingStrategy
+      def self.call(_q); end
+    end
+  end
 end

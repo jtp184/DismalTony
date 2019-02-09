@@ -35,7 +35,7 @@ module DismalTony # :nodoc:
     # may throw a MatchLogicFailure error, which causes this function to return a nil
     def self.matches?(qry)
       return nil if match_criteria.empty?
-      
+
       apply_parsing_strategies(qry)
 
       certainty = 0.0
@@ -65,7 +65,7 @@ module DismalTony # :nodoc:
     end
 
     def self.apply_parsing_strategies(q)
-      ps = self.parsing_strategies.map { |ps| ps.call(q.raw_text) }
+      ps = parsing_strategies.map { |ps| ps.call(q.raw_text) }
       q.parsed_results = ps
       q
     end

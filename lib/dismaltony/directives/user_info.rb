@@ -5,7 +5,7 @@ module DismalTony::Directives
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::ConversationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
-    
+
     set_name :retrieve_user_data
     set_group :info
 

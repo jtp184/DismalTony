@@ -77,7 +77,7 @@ module DismalTony # :nodoc:
         end
 
         # Sets the +parsing_strategies+ to +strats+
-        def use_parsing_strategies(&blk) # :yields: strats
+        def use_parsing_strategies # :yields: strats
           x = []
           yield x
           self.parsing_strategies = x
