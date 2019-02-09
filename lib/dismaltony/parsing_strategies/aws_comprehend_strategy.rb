@@ -72,6 +72,16 @@ module DismalTony
       def to_f
         score
       end
+
+      def match?(txt)
+        text.match?(txt)
+      end
+
+      def match(txt)
+        text.match(txt)
+      end
+
+      alias =~ match
     end
 
     # A Key phrase, a noun phrase detected by the AWS Comprehend api to be
@@ -100,6 +110,16 @@ module DismalTony
       def to_f
         score
       end
+
+      def match?(txt)
+        text.match?(txt)
+      end
+
+      def match(txt)
+        text.match(txt)
+      end
+
+      alias =~ match
     end
 
     # A collection of topic detection information from the AWS Comprehend api
