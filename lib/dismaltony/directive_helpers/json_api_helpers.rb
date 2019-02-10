@@ -9,13 +9,21 @@ module DismalTony # :nodoc:
       module ClassMethods
         # Takes in a block +blk+ and calculates it later to ensure late ENV access
         def set_api_defaults(&blk)
+          api_defaults_proc = blk
+        end
+
+        def api_defaults_proc
+          @api_defaults_proc
+        end
+
+        def api_defaults_proc=(blk)
           @api_defaults_proc = blk
         end
 
         # Retrieves the block from #set_api_defaults and calls it.
         def get_api_defaults
           res = {}
-          @api_defaults_proc.call(res)
+          api_defaults_proc.call(res)
           res
         end
 
