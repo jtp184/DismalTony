@@ -60,6 +60,12 @@ def self.interactive(debug = false)
   end
 end
 
+def self.Query(q)
+  k = DismalTony::QueryResolver.create_query(q)
+  k.parsed_results = DismalTony::ParsingStrategies.all.map { |b| b.(q) }
+  k
+end
+
 # (If you use this, don't forget to add pry to your Gemfile!)
 require 'pry'
 Pry.start
