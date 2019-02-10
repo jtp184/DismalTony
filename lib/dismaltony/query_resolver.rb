@@ -23,10 +23,7 @@ module DismalTony
 
     # Returns a Query from raw text +txt+ and VIBase +vi+'s user
     def self.create_query(txt, vi = DismalTony.vi)
-      Query.new(
-        raw_text: txt,
-        user: vi.user
-      )
+      Query.new(raw_text: txt, user: vi.user)
     end
 
     # Takes a Query +query+ and a VIBase +vi+ and uses the +vi+ to

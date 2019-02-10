@@ -21,13 +21,10 @@ module DismalTony
   class MatchLogicFailure < StandardError; end
 
   # The hash of configuration data, including the default DataStore and VIBase
-  @@config = {
-    data_store: nil,
-    vi: nil
-  }
+  @@config = { data_store: nil, vi: nil }
 
   # Yields the +config+ varable to the block +blk+ so you can define settings.
-  def self.configure # :yields: config
+  def self.configure
     yield @@config
     @@config
   end
@@ -53,9 +50,7 @@ module DismalTony
 
     data_store = config[:data_store]
 
-    @@config[:vi] = DismalTony::VIBase.new(
-      data_store: config[:data_store]
-    )
+    @@config[:vi] = DismalTony::VIBase.new(data_store: config[:data_store])
   end
 
   # Overrides the VI inside the config with the one passed in. Very strict about typing.

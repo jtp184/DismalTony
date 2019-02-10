@@ -7,7 +7,9 @@ module DismalTony # :nodoc:
 
     # Selects all inheritors of the Directive class that are defined as constants within this module.
     def self.all
-      constants.map { |c| const_get(c) }.select { |c| c <= DismalTony::Directive }
+      constants.map { |c| const_get(c) }.select do |c|
+        c <= DismalTony::Directive
+      end
     end
 
     # Using #all, returns an each iterator which is passed the block +blk+
@@ -59,7 +61,11 @@ module DismalTony # :nodoc:
       apply_parsing_strategies(qry)
       match_criteria.map do |crit|
         pat = /{.*}/
-        x = File.readlines(crit.predicate.source_location[0])[crit.predicate.source_location[1] - 1].slice(pat)
+        x =
+          File.readlines(crit.predicate.source_location[0])[
+            crit.predicate.source_location[1] - 1
+          ]
+            .slice(pat)
         [crit.priority, x, crit.predicate.call(qry)]
       end
     end
@@ -138,7 +144,9 @@ module DismalTony # :nodoc:
     # the #run method for some syntactic sugar.
     def call(mtd = :run)
       fin = method(mtd).call
-      raise "No response (#{fin.inspect})" unless fin.respond_to? :outgoing_message
+      unless fin.respond_to? :outgoing_message
+        raise "No response (#{fin.inspect})"
+      end
 
       @response = fin
       self

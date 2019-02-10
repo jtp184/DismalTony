@@ -21,19 +21,28 @@ module DismalTony # :nodoc:
     # * +:return_interface+ - The interface to route conversation back through. Defaults to the ConsoleInterface.
     # * +:user+ - the UserIdentity of who is using this VI
     def initialize(**opts)
-      @data_store = opts.fetch(:data_store, DismalTony::DataStore.new(vi_name: name))
-      @user = opts.fetch(:user, @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT)
-      @name = opts.fetch(:name, @data_store&.opts&.[](:vi_name) || 'Tony').freeze
-      @return_interface = opts.fetch(:return_interface, DismalTony::ConsoleInterface.new)
+      @data_store =
+        opts.fetch(:data_store, DismalTony::DataStore.new(vi_name: name))
+      @user =
+        opts.fetch(
+          :user, @data_store&.users&.first || DismalTony::UserIdentity::DEFAULT
+        )
+      @name =
+        opts.fetch(:name, @data_store&.opts&.[](:vi_name) || 'Tony').freeze
+      @return_interface =
+        opts.fetch(:return_interface, DismalTony::ConsoleInterface.new)
       @directives = opts.fetch(:directives, DismalTony::Directives.all)
     end
 
     # Takes the module level VI and duplicates it, overriding its values with ones from +opts+
     def self.with(**opts)
       DismalTony::VIBase.new(
-        user: (opts[:user] || DismalTony.vi.user || DismalTony::UserIdentity::DEFAULT),
+        user:
+          (opts[:user] || DismalTony.vi.user ||
+            DismalTony::UserIdentity::DEFAULT),
         name: (opts[:name] || DismalTony.vi.name),
-        return_interface: (opts[:return_interface] || DismalTony.vi.return_interface),
+        return_interface:
+          (opts[:return_interface] || DismalTony.vi.return_interface),
         directives: (opts[:directives] || DismalTony.vi.directives),
         data_store: (opts[:data_store] || DismalTony.vi.data_store)
       )
@@ -41,7 +50,9 @@ module DismalTony # :nodoc:
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it.
     def say_through(interface, str)
-      interface.send(DismalTony::Formatter.format(str, interface.default_format))
+      interface.send(
+        DismalTony::Formatter.format(str, interface.default_format)
+      )
     end
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it, with the options +opts+
@@ -51,7 +62,9 @@ module DismalTony # :nodoc:
 
     # Simplest dialog function. Sends the message +str+ back through VIBase.return_interface
     def say(str)
-      return_interface.send(DismalTony::Formatter.format(str, return_interface.default_format))
+      return_interface.send(
+        DismalTony::Formatter.format(str, return_interface.default_format)
+      )
     end
 
     # Simple utility function to combine the input HandledResponse and the
@@ -73,17 +86,20 @@ module DismalTony # :nodoc:
         if response.format.empty?
           say response.outgoing_message
         else
-          say_opts(return_interface, response.outgoing_message, apply_format(response))
+          say_opts(
+            return_interface, response.outgoing_message, apply_format(response)
+          )
         end
       end
 
       dr = nil
 
-      final_result = if result.respond_to?(:data_representation)
-                       dr = result.data_representation
-                     else
-                       DismalTony::Formatter.format(response.to_s, apply_format(response))
-      end
+      final_result =
+        if result.respond_to?(:data_representation)
+          dr = result.data_representation
+        else
+          DismalTony::Formatter.format(response.to_s, apply_format(response))
+        end
 
       data_store.on_query(response: response, user: @user, data: dr)
       final_result

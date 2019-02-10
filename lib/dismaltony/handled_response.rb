@@ -33,13 +33,28 @@ module DismalTony # :nodoc:
 
     # Produces a new HandledResponse with a blank ConversationState and a return message of +rm+
     def self.finish(rm = '')
-      new_state = DismalTony::ConversationState.new(idle: true, use_next: nil, next_directive: nil, next_method: nil, data: nil, parse_next: true)
+      new_state =
+        DismalTony::ConversationState.new(
+          idle: true,
+          use_next: nil,
+          next_directive: nil,
+          next_method: nil,
+          data: nil,
+          parse_next: true
+        )
       new(rm, new_state)
     end
 
     # Creates a response whose ConversationState redirects control flow. Passes on next_directive, next_method, data, and parse_next via the +opts+ hash.
     def self.then_do(**opts)
-      new_state = DismalTony::ConversationState.new(idle: false, next_directive: opts[:directive].name, next_method: (opts[:method] || :run), data: opts[:data], parse_next: opts.fetch(:parse_next) { true })
+      new_state =
+        DismalTony::ConversationState.new(
+          idle: false,
+          next_directive: opts[:directive].name,
+          next_method: (opts[:method] || :run),
+          data: opts[:data],
+          parse_next: opts.fetch(:parse_next) { true }
+        )
       new(opts[:message], new_state)
     end
 
