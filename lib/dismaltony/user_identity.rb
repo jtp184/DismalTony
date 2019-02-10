@@ -8,19 +8,22 @@ module DismalTony # :nodoc:
     attr_reader :user_data
     # A ConversationState object corresponding to this user's conversation state.
     attr_reader :conversation_state
+    # A Directive-keyed collection of key-values for Directives to store user-level data on
+    attr_reader :directive_data
 
     # Options for +args+:
     #
     # * +:user_data+ - The hash to use. Defaults to an Empty hash.
     # * +:conversation_state+ - The ConversationState to use. Defaults to a blank, idle state.
+    # * +:directive_data+ - The collection of Directive user-level info. defaults to a hash.
     def initialize(**args)
-      @user_data = (args[:user_data] || {})
-      @conversation_state =
-        (args[:conversation_state] ||
-          DismalTony::ConversationState.new(idle: true, user_identity: self))
+      @user_data = args.fetch(:user_data, {})
+      @conversation_state = args.fetch(
+                                :conversation_state,
+                                DismalTony::ConversationState.new(idle: true, user_identity: self)
+                            )
 
-      possible = ('A'..'Z').to_a + ('a'..'z').to_a + ('0'..'9').to_a
-      # @user_data[:uuid] ||= (0..24).each_with_object([]) { |_n, i| i << possible.sample }.join
+      @directive_data = {}
       @user_data[:uuid] ||= SecureRandom.uuid
     end
 
