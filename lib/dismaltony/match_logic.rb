@@ -108,13 +108,28 @@ module DismalTony
       @@members << input if input <= DismalTony::MatchLogic
     end
 
+    # Highest level of presence detection, used for key words and phrases,
+    # and other imperatives.
+    class Uniquely < MatchLogic
+      def initialize(pre)
+        super(pre)
+        @priority = :uniquely
+        @success_incr = 7
+      end
+
+      def on_failure
+        raise MatchLogicFailure
+      end
+    end
+
     # Used for necessary presence detection. Raises a MatchLogicFailure error if it fails.
     # Keyword and priority is "must"
     class MustBe < MatchLogic
-      def initialize(pre) # :nodoc:
+      def initialize(pre)
+        # :nodoc:
         super(pre)
         @priority = :must
-        @success_incr = 3
+        @success_incr = 5
       end
 
       # raises a MatchLogicFailure.
@@ -123,53 +138,64 @@ module DismalTony
       end
     end
 
-    # Used for optimal presence detection. Logic criteria using the "should" method are counted for penalties,
+    # Used for optional presence detection. Logic criteria using the "should" method are counted for penalties,
     # but don't result in failure if unmatched.
     class ShouldBe < MatchLogic
-      def initialize(pre) # :nodoc:
+      def initialize(pre)
+        # :nodoc:
         super(pre)
         @priority = :should
+        @success_incr = 3
       end
     end
 
     # Used for possible presence detection. Logic criteria using the "could" method aren't counted for penalties, but
     # do increase certainty scores.
     class CouldBe < MatchLogic
-      def initialize(pre) # :nodoc:
+      def initialize(pre)
+        # :nodoc:
         super(pre)
         @priority = :could
         @penalty = false
       end
     end
 
-    # The "keyword" method is used for criteria which represent obvious clues that a Directive should be employed.
-    # Covers obvious named domain entities, and unambiguous verbs / symbols. Increases the certainty factor by 5x base,
-    # but does raise a MatchLogicFailure if not matched.
-    class IsKeyword < MatchLogic
-      def initialize(pre) # :nodoc:
-        super(pre)
-        @priority = :keyword
-        @success_incr = 5
-      end
-
-      # Raises a MatchLogicFailure if this does not match
-      def on_failure
-        raise MatchLogicFailure
-      end
-    end
-
-    # Inverse of MustBe. Raises an error if it succeeds, and increments the certainty by 1 in the case where it fails.
+    # Inverse of MustBe. Raises an error if it succeeds, and increments the certainty by in the case where it fails.
     class DoesNot < MatchLogic
-      def initialize(pre) # :nodoc:
+      def initialize(pre)
+        # :nodoc:
         super(pre)
         @priority = :doesnt
         @success_incr = 0
-        @fails_incr = 1
+        @fails_incr = 5
       end
 
       # Raises a MatchLogicFailure if this matches.
       def on_succeed
         raise MatchLogicFailure
+      end
+    end
+
+    # Inverse of ShouldBe. Increments the certainty in the case where it fails.
+    class ShouldntBe < MatchLogic
+      def initialize(pre)
+        # :nodoc:
+        super(pre)
+        @priority = :shouldnt
+        @success_incr = 0
+        @fails_incr = 3
+      end
+    end
+
+    # Inverse of CouldBe. Increments the certainty in the case where it fails, but isn't counted for penalties.
+    class CouldntBe < MatchLogic
+      def initialize(pre)
+        # :nodoc:
+        super(pre)
+        @priority = :couldnt
+        @penalty = false
+        @success_incr = 0
+        @fails_incr = 1
       end
     end
   end

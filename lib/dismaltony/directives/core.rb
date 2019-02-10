@@ -15,7 +15,7 @@ module DismalTony::Directives
     end
 
     add_criteria do |qry|
-      qry << keyword { |q| q =~ /text/i }
+      qry << uniquely { |q| q =~ /text/i }
       qry << should { |q| q.root =~ /text/i }
       qry << should { |q| q.children_of(q.verb).any? { |w| w.pos == 'NUM' } }
       qry << could { |q| q =~ /send/i }
@@ -72,7 +72,7 @@ module DismalTony::Directives
     end
 
     add_criteria do |qry|
-      qry << keyword { |q| q =~ /diagnostic/i }
+      qry << uniquely { |q| q =~ /diagnostic/i }
       qry << must { |q| q.contains?(/run/i, /execute/i, /perform/i) }
     end
 

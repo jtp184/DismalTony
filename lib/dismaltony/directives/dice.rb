@@ -14,7 +14,7 @@ module DismalTony::Directives
     end
 
     add_criteria do |qry|
-      qry << keyword { |q| q =~ /\broll\b/i }
+      qry << uniquely { |q| q =~ /\broll\b/i }
       qry << must { |q| q =~ /(((a |\d+)d(\d+)(e)?(\+\d+|\-\d+)?)( \& | \+ )*)/i }
     end
 
