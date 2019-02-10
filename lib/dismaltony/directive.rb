@@ -93,7 +93,7 @@ module DismalTony # :nodoc:
     attr_reader :query
 
     # The hash of values captured and/or returned by this Directive.
-    attr_accessor :parameters
+    attr_accessor :fragements
 
     # The MatchLogic criteria objects used to verify whether a Query matches or not.
     attr_reader :match_criteria
@@ -108,10 +108,10 @@ module DismalTony # :nodoc:
       attr_reader :name #:nodoc:
       attr_reader :group #:nodoc:
       attr_reader :match_criteria #:nodoc:
-      # The default parameters set up by the class.
-      attr_reader :default_params
+      # The default fragements set up by the class.
+      attr_reader :default_frags
 
-      @default_params = {}
+      @default_frags = {}
 
       DismalTony::MatchLogicTypes.priorities.each do |label|
         define_method(label.to_sym) do |&b|
@@ -125,15 +125,15 @@ module DismalTony # :nodoc:
     def initialize(qry, vi)
       @name = (self.class.name || '')
       @group = (self.class.group || 'none')
-      @parameters = (self.class.default_params&.clone || {})
+      @fragements = (self.class.default_params&.clone || {})
       @match_criteria = (self.class.match_criteria || [])
       @query = qry
       @vi = vi
     end
 
-    # Searches the +parameters+ hash using +indx+
+    # Searches the +fragements+ hash using +indx+
     def [](indx)
-      @parameters[indx]
+      @fragements[indx]
     end
 
     # Overridden by child classes. The default method used by the

@@ -110,7 +110,7 @@ module DismalTony::Directives
 
     def run
       x = determine_intent
-      return x unless parameters[:info_type]
+      return x unless frags[:info_type]
 
       check_for_start_and_end
 
@@ -139,31 +139,31 @@ module DismalTony::Directives
       asking_for[:step_by_step] = query =~ /how do i get to/i || query.contains?(/navigate/i)
       asking_for[:distance] = query.contains?(/^distance$/i, /^far$/i, /^between$/i)
 
-      parameters[:info_type] = asking_for.find { |_k, v| v }.first
+      frags[:info_type] = asking_for.find { |_k, v| v }.first
 
-      if parameters[:info_type].nil?
+      if frags[:info_type].nil?
         DismalTony::HandledResponse.finish("~e:frown I'm sorry, I couldn't figure out what maps function you wanted. Try talking about directions, traffic, or distance")
       else
-        parameters[:info_type]
+        frags[:info_type]
       end
     end
 
     def confirm_start_and_end
       unresolved = []
 
-      if parameters[:start_address].nil?
+      if frags[:start_address].nil?
         unresolved << false
-        res = DismalTony::HandledResponse.then_do(message: '~e:mappin What is the start address of the route?', directive: self, method: receive_start_address, data: parameters, parse_next: false)
+        res = DismalTony::HandledResponse.then_do(message: '~e:mappin What is the start address of the route?', directive: self, method: receive_start_address, data: frags, parse_next: false)
         unresolved << res
       end
 
-      if parameters[:end_address].nil?
+      if frags[:end_address].nil?
         unresolved << false if unresolved.empty?
-        res = DismalTony::HandledResponse.then_do(message: '~e:worldmap What is the end address of the route?', directive: self, method: receive_end_address, data: parameters, parse_next: false)
+        res = DismalTony::HandledResponse.then_do(message: '~e:worldmap What is the end address of the route?', directive: self, method: receive_end_address, data: frags, parse_next: false)
         unresolved << res
       end
 
-      unresolved << true if parameters[:start_address] && parameters[:end_address]
+      unresolved << true if frags[:start_address] && frags[:end_address]
 
       unresolved
     end
@@ -176,22 +176,22 @@ module DismalTony::Directives
       s = check_shortcut(s) if s.count(' ') == 0
       e = check_shortcut(e) if e.count(' ') == 0
 
-      parameters[:start_address] ||= s
-      parameters[:end_address] ||= e
+      frags[:start_address] ||= s
+      frags[:end_address] ||= e
     end
 
     def receive_start_address
-      parameters[:start_address] = query.raw_text
+      frags[:start_address] = query.raw_text
       confirm_start_and_end
     end
 
     def receive_end_address
-      parameters[:end_address] = query.raw_text
+      frags[:end_address] = query.raw_text
       confirm_start_and_end
     end
 
     def choose_response
-      x, y = case parameters[:info_type]
+      x, y = case frags[:info_type]
              when :traffic_time
                get_traffic_time
              when :distance
@@ -255,7 +255,7 @@ module DismalTony::Directives
 
       say_this = ''
       say_this << "~e:#{moji_choice} "
-      say_this << "The traffic on the way to #{parameters[:end_address]} is #{badness_string}. It will take #{time_str(t)} to get there."
+      say_this << "The traffic on the way to #{frags[:end_address]} is #{badness_string}. It will take #{time_str(t)} to get there."
       [get_gmaps_data, DismalTony::HandledResponse.finish(say_this)]
     end
 
@@ -264,7 +264,7 @@ module DismalTony::Directives
       moji_choice = random_emoji('mappin', 'worldmap', 'think')
       say_this = ''
       say_this << "~e:#{moji_choice} "
-      say_this << "#{parameters[:end_address]} is #{d.convert('mi').round(2).to_f}mi away from #{parameters[:start_address]}."
+      say_this << "#{frags[:end_address]} is #{d.convert('mi').round(2).to_f}mi away from #{frags[:start_address]}."
       [get_gmaps_data, DismalTony::HandledResponse.finish(say_this)]
     end
 
@@ -274,7 +274,7 @@ module DismalTony::Directives
     end
 
     def get_gmaps_data
-      parameters[:gmaps_data] ||= gmaps_directions(start_address: parameters[:start_address], end_address: parameters[:end_address])
+      frags[:gmaps_data] ||= gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
     end
 
     def time_str(tim)

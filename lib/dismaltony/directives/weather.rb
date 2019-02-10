@@ -360,7 +360,7 @@ module DismalTony::DirectiveHelpers
         resp = api_request('q' => loc)
         raise ArgumentError if resp['weather']&.first.nil?
 
-        wc = data_struct_template.find(parameters[:id_code])
+        wc = data_struct_template.find(frags[:id_code])
 
         {
           city_name: resp['name'],

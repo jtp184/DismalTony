@@ -20,7 +20,7 @@ module DismalTony::Directives
 
     def run
       rolls = query.raw_text.scan(/(((a |\d+)d(\d+)(e)?(\+\d+|\-\d+)?)( \& | \+ )*)/i)
-      parameters[:result] = rolls.map! { |r| GamingDice.roll(r[0]) }
+      frags[:result] = rolls.map! { |r| GamingDice.roll(r[0]) }
       result_string = if rolls.length == 1
                         rolls.first
                       else
@@ -29,7 +29,7 @@ module DismalTony::Directives
 
       resp = '~e:dice '
       resp << "Okay! The result#{rolls.length == 1 ? ' is' : 's are'}: #{result_string}."
-      return_data(parameters[:result])
+      return_data(frags[:result])
       DismalTony::HandledResponse.finish(resp)
     end
   end

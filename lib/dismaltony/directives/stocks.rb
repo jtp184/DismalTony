@@ -103,22 +103,22 @@ module DismalTony::Directives
     end
 
     def run
-      parameters[:stock_id] = query.organization.text
-      prices = retrieve_data(symbol: parameters[:stock_id])
+      frags[:stock_id] = query.organization.text
+      prices = retrieve_data(symbol: frags[:stock_id])
 
-      parameters[:current_value] = prices.max_by(&:date)
+      frags[:current_value] = prices.max_by(&:date)
 
       return_data(OpenStruct.new)
 
-      data_representation.value = parameters[:current_value]
-      data_representation.price = parameters[:current_value].price
-      data_representation.symbol = parameters[:stock_id]
+      data_representation.value = frags[:current_value]
+      data_representation.price = frags[:current_value].price
+      data_representation.symbol = frags[:stock_id]
 
       answ, moj = price_comment(prices)
 
       conv = "~e:#{moj} "
       conv << synonym_for("today's").capitalize
-      conv << " stock price for #{parameters[:stock_id]} is "
+      conv << " stock price for #{frags[:stock_id]} is "
       conv << answ << '.'
       DismalTony::HandledResponse.finish(conv)
     end
@@ -197,16 +197,16 @@ module DismalTony::Directives
     end
 
     def run
-      parameters[:stock_id] ||= query.organization.text
+      frags[:stock_id] ||= query.organization.text
 
       num = query.quantity.text
       if num =~ /\d/
-        parameters[:shares_requested] = Integer(num.match(/\d+/).to_s)
+        frags[:shares_requested] = Integer(num.match(/\d+/).to_s)
       else
-        parameters[:shares_requested] = num.in_numbers
+        frags[:shares_requested] = num.in_numbers
       end
 
-      if parameters[:shares_requested] < 1
+      if frags[:shares_requested] < 1
         ask_for_number
       else
         finalize
@@ -216,24 +216,24 @@ module DismalTony::Directives
     private
 
     def finalize
-      parameters[:current_value] = retrieve_data(symbol: parameters[:stock_id]).first
+      frags[:current_value] = retrieve_data(symbol: frags[:stock_id]).first
 
       resp = nil
       resp = calculate_final_total
       return_data(OpenStruct.new)
 
-      data_representation[:stock_data] = parameters[:current_value]
-      data_representation[:shares_requested] = parameters[:shares_requested]
-      data_representation[:answer] = parameters[:final_total]
+      data_representation[:stock_data] = frags[:current_value]
+      data_representation[:shares_requested] = frags[:shares_requested]
+      data_representation[:answer] = frags[:final_total]
       data_representation[:to_int] = data_representation[:to_i] = data_representation[:answer]
 
       resp
     end
 
     def calculate_final_total
-      parameters[:final_total] = (parameters[:shares_requested] * parameters[:current_value].price)
+      frags[:final_total] = (frags[:shares_requested] * frags[:current_value].price)
       moj = random_emoji('chartup', 'lightbulb', 'magnifyingglass', 'moneywing', 'moneybag', 'pencil', 'think', 'tophat', 'monocle', 'toast')
-      x = DismalTony::HandledResponse.finish("~e:#{moj} #{parameters[:shares_requested]} shares of #{parameters[:stock_id]} stock #{synonym_for('is worth')} $#{parameters[:final_total]}")
+      x = DismalTony::HandledResponse.finish("~e:#{moj} #{frags[:shares_requested]} shares of #{frags[:stock_id]} stock #{synonym_for('is worth')} $#{frags[:final_total]}")
     end
 
     def ask_for_number
@@ -241,12 +241,12 @@ module DismalTony::Directives
         message: "~e:pound Please enter the number of shares you'd like to sum as a digit.",
         directive: self,
         method: :read_number,
-        data: parameters
+        data: frags
       )
     end
 
     def read_number
-      parameters[:shares_requested] ||= query.quantity.text.in_numbers
+      frags[:shares_requested] ||= query.quantity.text.in_numbers
       finalize
     rescue ArgumentError
       ask_for_number
