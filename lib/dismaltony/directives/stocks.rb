@@ -87,7 +87,7 @@ module DismalTony::Directives
     end
 
     add_criteria do |qry|
-      qry << keyword { |q| q =~ /stocks?/i }
+      qry << uniquely { |q| q =~ /stocks?/i }
       qry << must { |q| q.organization? }
     end
 
@@ -180,8 +180,8 @@ module DismalTony::Directives
     end
 
     add_criteria do |qry|
-      qry << keyword { |q| q =~ /stocks?/i }
-      qry << keyword { |q| q.quantity? }
+      qry << uniquely { |q| q =~ /stocks?/i }
+      qry << must { |q| q.quantity? }
       qry << must { |q| q.organization? }
     end
 

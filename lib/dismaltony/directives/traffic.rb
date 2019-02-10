@@ -95,7 +95,7 @@ module DismalTony::Directives
     end
 
     add_criteria do |qry|
-      qry << keyword { |q| q.contains?(/directions/i, /traffic/i, /long/i, /far/i, /navigate/i) }
+      qry << uniquely { |q| q.contains?(/directions/i, /traffic/i, /long/i, /far/i, /navigate/i) }
       qry << could { |q| q.contains?(/^from$/i, /^to$/i, /^between$/i) }
       qry << could { |q| q =~ /how do i get/i }
     end
