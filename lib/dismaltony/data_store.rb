@@ -186,12 +186,17 @@ module DismalTony # :nodoc:
 
     # Checks the internal +data_store+ to see if it responds to +name+, and passes the +params+ along.
     def method_missing(name, *params)
-      @data_store.respond_to?(name) ? @data_store.method(name).call(*params) : super
+      if @data_store.respond_to?(name)
+        @data_store.method(name).call(*params)
+      else
+        super
+      end
     end
   end
 
   # Uses Redis to store and retrieve user and directive data
   class RedisStore
+    OPTS_PREFIX = 'DismalTony:RedisStore:opts'.freeze
     # The environment options, which get reloaded from the db
     attr_reader :opts
 
@@ -229,7 +234,8 @@ module DismalTony # :nodoc:
 
     # Given a +uid+, this passes the +user+ for editing
     # inside the +block+. Then commits the changes.
-    def update_user(uid) # :yields: user
+    def update_user(uid)
+      # :yields: user
       u = select_user(uid)
       yield u
       commit_user(serialize_out(u))
@@ -285,7 +291,8 @@ module DismalTony # :nodoc:
     # will dig through the hash and return values.
     def read_data(dname, *ky)
       if ky.empty?
-        @redis.hgetall(directive_key(dname)).map { |_e, v| Psych.load(v) }.flatten
+        @redis.hgetall(directive_key(dname)).map { |_e, v| Psych.load(v) }
+          .flatten
       elsif ky.length == 1
         initial = ky.shift
         s = Psych.load(@redis.hget(directive_key(dname), initial))
@@ -317,13 +324,31 @@ module DismalTony # :nodoc:
     # Given a key-value pair +k+ and +v+, stores them in the db under the global
     # opts hash. Returns the whole array of opts
     def set_opt(k, v)
-      @redis.hset('DismalTony:RedisStore:opts', k.to_s, Psych.dump(v))
+      @redis.hset(OPTS_PREFIX, k.to_s, Psych.dump(v))
+      load_opts
+    end
+
+    # Removes the opt with key +k+ from the data store
+    def delete_opt(k)
+      @redis.hdel(OPTS_PREFIX, k)
+      load_opts
+    end
+
+    # Directly adds the key-value pair +k+ and +v+ to the env_vars hash in opts
+    def add_env_var(*glob)
+      raise ArgumentError 'Must be hash-like' unless glob.respond_to?(:to_h)
+      o = @redis.hget(OPTS_PREFIX, 'env_vars').clone
+      o = Psych.load(o)
+
+      glob.each_pair { |k, v| o[k.to_s] = v }
+
+      @redis.hset(OPTS_PREFIX, 'env_vars', Psych.dump(o))
       load_opts
     end
 
     # Reads the opts in from the database and replaces +opts+ with them.
     def load_opts
-      o = @redis.hgetall('DismalTony:RedisStore:opts').clone
+      o = @redis.hgetall(OPTS_PREFIX).clone
       o.transform_keys!(&:to_sym)
       o.transform_values! { |v| Psych.load(v) }
       o[:env_vars]&.each_pair { |key, val| ENV[key.to_s] = val }
