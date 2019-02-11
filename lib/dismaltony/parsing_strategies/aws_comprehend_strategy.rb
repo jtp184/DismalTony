@@ -4,7 +4,7 @@ module DismalTony
   module ParsingStrategies
     class ComprehendTopicStrategy < ParsingStrategy
       def self.call(q)
-        ComprehendTopicMap.new(fetch_entities(q), fetch_key_phrases(q))
+        ComprehendTopicMap.new(fetch_entities(q))
       end
 
       def self.value_class
@@ -19,6 +19,20 @@ module DismalTony
         qr = { language_code: 'en', text: q }
         aws_client.detect_entities(qr).entities
         .map { |a| ComprehendTopicEntity.new(a) }
+      end
+    end
+
+    class ComprehendKeyPhraseStrategy < ParsingStrategy
+      def self.call(q)
+        ComprehendKeyPhraseMap.new(fetch_key_phrases(q))
+      end
+
+      def self.value_class
+        ComprehendKeyPhraseMap
+      end
+
+      def self.aws_client
+        @aws_client ||= Aws::Comprehend::Client.new
       end
 
       def self.fetch_key_phrases(q)
@@ -99,7 +113,66 @@ module DismalTony
         text.match(txt)
       end
 
+      def also_in?(ocheck)
+        ocheck.find { |o| o.document_location == document_location }
+      rescue NoMethodError
+        nil          
+      end
+
       alias =~ match
+    end
+
+    # A collection of topic detection information from the AWS Comprehend api
+    class ComprehendTopicMap
+      # A collection of ComprehendTopicEntity objects
+      attr_reader :entities
+
+      # Takes in entities +es+ and stores them.
+      def initialize(es)
+        @entities = es
+      end
+
+      DismalTony::ParsingStrategies::ComprehendTopicEntity::ENTITY_TYPES.each do |label|
+        sing = case label
+        when :other
+          :other_entitity
+        else
+          label
+        end
+
+        plur = case sing
+        when :person
+          :people
+        when :quantity
+          :quantities
+        when :other_entity
+          :other_entitites
+        else
+          (sing.to_s << 's').to_sym
+        end
+
+        define_method(plur) do
+          r = entities.find_all { |j| j.type == label }
+        end
+
+        define_method(sing) do
+          entities.select { |j| j.type == label }.first
+        end
+
+        define_method((sing.to_s << '?').to_sym) do
+          entities.any? { |j| j.type == label }
+        end
+        
+        define_method((plur.to_s << '?').to_sym) do
+          r = entities.select { |j| j.type == label }
+          r.count > 1
+        end
+      end
+
+      # True if both subsets are empty
+      def empty?
+        entities.empty?
+      end
     end
 
     # A Key phrase, a noun phrase detected by the AWS Comprehend api to be
@@ -137,48 +210,26 @@ module DismalTony
         text.match(txt)
       end
 
+      def also_in?(ocheck)
+        ocheck.find { |o| o.document_location == document_location }
+      rescue NoMethodError
+        nil          
+      end
+
       alias =~ match
     end
 
-    # A collection of topic detection information from the AWS Comprehend api
-    class ComprehendTopicMap
-      # A collection of ComprehendTopicEntity objects
-      attr_reader :entities
+    class ComprehendKeyPhraseMap
       # A collection of ComprehendTopicKeyPhrase objects
       attr_reader :key_phrases
 
-      # Takes in entities +es+ and key_phrases +ks+
-      def initialize(es, ks)
-        @entities = es
+      # Takes in key phrases +ks+ and stores them.
+      def initialize(ks)
         @key_phrases = ks
       end
 
-      DismalTony::ParsingStrategies::ComprehendTopicEntity::ENTITY_TYPES.each do |label|
-        l = case label
-        when :person
-          :people
-        when :quantity
-          :quantities
-        else
-          (label.to_s << 's').to_sym
-        end
-        define_method(l) do
-          entities.select { |j| j.type == label }
-        end
-
-        define_method(label) do
-          entities.select { |j| j.type == label }.first
-        end
-
-        define_method((label.to_s << '?').to_sym) do
-          entities.select { |j| j.type == label }.any?
-        end
-
-      end
-
-      # True if both subsets are empty
-      def empty?
-        entities.empty? && key_phrases.empty?
+      def key_phrase
+        key_phrases.first
       end
     end
 
@@ -240,6 +291,24 @@ module DismalTony
         @tag = awse.part_of_speech.tag.downcase.to_sym
         @document_location = awse.begin_offset..awse.end_offset
       end
+
+      # The text content
+      def to_s
+        text
+      end
+
+      # The score
+      def to_f
+        score
+      end
+
+      def match?(txt)
+        text.match?(txt)
+      end
+
+      def match(txt)
+        text.match(txt)
+      end
     end
 
     # A Part-of-speech tag index for the query.
@@ -277,7 +346,8 @@ module DismalTony
         end
 
         define_method(plur_ques) do
-          pos_tags.any? { |t| t.tag == the_tag }
+          r = pos_tags.find_all? { |t| t.tag == the_tag }
+          r.count > 1
         end
       end
 

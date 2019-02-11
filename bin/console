@@ -43,6 +43,7 @@ end
 
 @test_strategies = [
   DismalTony::ParsingStrategies::ComprehendTopicStrategy,
+  DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy,
   DismalTony::ParsingStrategies::ComprehendSyntaxStrategy,
   DismalTony::ParsingStrategies::WatsonToneStrategy
 ]
