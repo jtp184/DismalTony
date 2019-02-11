@@ -1,4 +1,4 @@
-require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 require 'google_maps_service'
 require 'ruby-units'
 require 'duration'
@@ -84,14 +84,11 @@ module DismalTony::Directives
     set_name :traffic_report
     set_group :info
 
-    add_param :gmaps_data
-    add_param :start_address
-    add_param :end_address
-    add_param :info_type
-    add_param :step_index, 0
+    expect_frags :gmaps_data, :start_address, :end_address, :info_type
+    frag_default step_index: 0
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
     end
 
     add_criteria do |qry|

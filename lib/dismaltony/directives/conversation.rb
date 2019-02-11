@@ -1,4 +1,4 @@
-require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 
 module DismalTony::Directives
   class SendTextMessageDirective < DismalTony::Directive
@@ -6,17 +6,14 @@ module DismalTony::Directives
     set_name :send_text
     set_group :conversation
 
-    add_param :sendto
-    add_param :sendmsg
+    expect_frags :sendto, :sendmsg
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
     end
 
     add_criteria do |qry|
       qry << uniquely { |q| q =~ /text/i }
-      qry << should { |q| q.root =~ /text/i }
-      qry << should { |q| q.children_of(q.verb).any? { |w| w.pos == 'NUM' } }
       qry << could { |q| q =~ /send/i }
       qry << could { |q| q =~ /message/i }
     end
@@ -63,17 +60,16 @@ module DismalTony::Directives
     set_name :interactivesignup
     set_group :conversation
 
-    add_param :user_id
-    add_param :send_number
+    expect_frags :user_id, :send_number
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
     end
 
     add_criteria do |qry|
       qry << uniquely { |q| q =~ /invit(e|ation)/ }
       qry << must { |q| q =~ /send/ || q =~ /join/ }
-      qry << should { |q| !q['pos', 'NUM'].empty? }
+      qry << should { |q| q.numerals? }
     end
 
     def welcome_msg

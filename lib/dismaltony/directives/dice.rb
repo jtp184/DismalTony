@@ -1,4 +1,4 @@
-require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 require 'gaming_dice'
 
 module DismalTony::Directives
@@ -7,10 +7,10 @@ module DismalTony::Directives
     set_name :diceroll
     set_group :fun
 
-    add_param :result
+    expect_frags :result
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
     end
 
     add_criteria do |qry|

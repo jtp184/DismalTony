@@ -1,4 +1,4 @@
-require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 require 'json'
 require 'net/http'
 require 'open-uri'
@@ -358,7 +358,9 @@ module DismalTony::DirectiveHelpers
 
       def retrieve_weather(loc)
         resp = api_request('q' => loc)
-        raise ArgumentError if resp['weather']&.first.nil?
+        if resp['weather']&.first.nil?
+          raise IndexError, "No Weather in Response: #{resp.inspect}"
+        end
 
         wc = data_struct_template.find(frags[:id_code])
 
@@ -379,6 +381,7 @@ end
 module DismalTony::Directives
   class WeatherReportDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
+    include DismalTony::DirectiveHelpers::EmojiHelpers
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::DataStructHelpers
     include DismalTony::DirectiveHelpers::OpenWeatherServicesHelpers
@@ -387,8 +390,8 @@ module DismalTony::Directives
     set_group :info
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
-      use << DismalTony::ParsingStrategies::ComprehendStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
     end
 
     add_criteria do |qry|
@@ -402,6 +405,9 @@ module DismalTony::Directives
       return_data(req)
 
       DismalTony::HandledResponse.finish("The current weather in #{req[:city_name]} is #{req[:weather].flavor}.").with_format(use_icon: req[:weather].icon)
+    rescue IndexError
+      return_data(nil)
+      DismalTony::HandledResponse.finish("~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}.")
     end
   end
 
@@ -416,8 +422,8 @@ module DismalTony::Directives
     set_group :info
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
-      use << DismalTony::ParsingStrategies::ComprehendStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
     end
 
     add_criteria do |qry|
@@ -432,6 +438,9 @@ module DismalTony::Directives
 
       moj = temp_emoji(req[:temp])
       DismalTony::HandledResponse.finish("~e:#{moj} The temperature right now is around #{req[:temp]}˚F in #{req[:city_name]}")
+    rescue IndexError
+      return_data(nil)
+      DismalTony::HandledResponse.finish("~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}.")
     end
 
     def temp_emoji(tmp)
@@ -469,8 +478,8 @@ module DismalTony::Directives
     set_group :info
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
-      use << DismalTony::ParsingStrategies::ComprehendStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
     end
 
     add_criteria do |qry|
@@ -483,9 +492,11 @@ module DismalTony::Directives
       req = retrieve_weather(get_weather_city(query.location.text))
       return_data(req)
 
-      moj = random_emoji('americanflag', 'windblow', 'gust')
-      DismalTony::HandledResponse.finish("~e:#{moj} Thw wind is blowing at #{req[:wind_speed]}mph.")
-    end
+      moj = random_emoji('waterdrop', 'waterdrops')
+      DismalTony::HandledResponse.finish("~e:#{moj} The humidity is currently at #{req[:humidity]}\% in #{req[:city_name]}")
+    rescue IndexError
+      return_data(nil)
+      DismalTony::HandledResponse.finish("~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}.") end
   end
 
   class WindSpeedReportDirective < DismalTony::Directive
@@ -499,8 +510,8 @@ module DismalTony::Directives
     set_group :info
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
-      use << DismalTony::ParsingStrategies::ComprehendStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
     end
 
     add_criteria do |qry|
@@ -514,7 +525,10 @@ module DismalTony::Directives
       return_data(req)
 
       moj = random_emoji('americanflag', 'windblow', 'gust')
-      DismalTony::HandledResponse.finish("~e:#{moj} Thw wind is blowing at #{req[:wind_speed]}mph.")
+      DismalTony::HandledResponse.finish("~e:#{moj} The wind is blowing at #{req[:wind_speed]}mph in #{req[:city_name]}.")
+    rescue IndexError
+      return_data(nil)
+      DismalTony::HandledResponse.finish("~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}.")
     end
   end
 end

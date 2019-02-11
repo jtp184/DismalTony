@@ -25,6 +25,11 @@ module DismalTony # :nodoc:
       raw_text =~ check
     end
 
+    # Clones using the Marlshal dump / load trick.
+    def clone
+      Marshal.load(Marshal.dump(self))
+    end
+
     # Redefined to check first if +parsed_results+ can respond to +method_name+, and passes along +params+
     def method_missing(method_name, *params, &blk)
       super unless parsed_results.any? { |r| r.respond_to?(method_name) }

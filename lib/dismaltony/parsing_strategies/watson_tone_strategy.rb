@@ -17,6 +17,10 @@ module DismalTony
         WatsonToneMap.new(tn)
       end
 
+      def self.value_class
+        WatsonToneMap
+      end
+
       def self.watson
         return @watson if @watson
 

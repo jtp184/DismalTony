@@ -7,18 +7,20 @@ module DismalTony
     # Takes in a +query+ and set of +directives+, and checks to see the matches.
     # It automatically sorts by highest yielding Directive, and omits directives which returned nil.
     def self.match(query, directives)
-      succeeds = match!(query, directives)
+      succeeds, qry = match!(query, directives)
       succeeds.reject! { |_d, p| p.nil? }
       succeeds = succeeds.max_by(&:last)
       raise NoDirectiveError, 'No Matching Directive!' unless succeeds
 
-      succeeds.first
+      return succeeds.first, qry
     end
 
     # A debugging version of the #match function, this takes the same +query+ and +directives+
     # parameters and returns an array of the Directive and its corresponding yield.
     def self.match!(query, directives)
-      succeeds = directives.map { |d| [d, d =~ query] }
+      qry = apply_all_used_strategies(query, directives)
+      succeeds = directives.map { |d| [d, d =~ qry] }
+      return succeeds, qry
     end
 
     # Returns a Query from raw text +txt+ and VIBase +vi+'s user
@@ -29,11 +31,18 @@ module DismalTony
     # Takes a Query +query+ and a VIBase +vi+ and uses the +vi+ to
     # execute a matching directive for +query+
     def self.run_match(query, vi)
-      result = match(query, vi.directives)
-      result = result.from(result.apply_parsing_strategies(query), vi)
+      result, qry = match(query, vi.directives)
+      result = result.from(result.filter_parsing_strategies(qry), vi)
       result.call
     rescue NoDirectiveError
-      Directive.error(query, vi)
+      Directive.new(query, vi).tap { |e| e.instance_variable_set(:@response, HandledResponse.error) }
+    end
+
+    def self.apply_all_used_strategies(query, directives)
+      strats = directives.map(&:parsing_strategies).flatten.uniq
+      nq = query.clone
+      nq.parsed_results = strats.map { |s| s.call(query.raw_text) }
+      nq
     end
 
     # Given an input string +txt+ and an input VIBase +vi+, this function disambiguates forced
@@ -51,7 +60,7 @@ module DismalTony
         qry = st8.parse_next ? drek.apply_parsing_strategies(qry) : qry
 
         res = drek.new(qry, vi)
-        res.parameters = st8.data
+        res.fragments = st8.data
         res.call(st8.next_method.to_sym)
       end
     end

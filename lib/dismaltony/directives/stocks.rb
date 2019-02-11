@@ -1,4 +1,3 @@
-require 'dismaltony/parsing_strategies/parsey_parse_strategy'
 require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 require 'uri'
 require 'date'
@@ -78,12 +77,11 @@ module DismalTony::Directives
     set_name :get_stock_price
     set_group :info
 
-    add_param :stock_id
-    add_param :current_value
+    expect_frags :stock_id, :current_value
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
-      use << DismalTony::ParsingStrategies::ComprehendStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
     end
 
     add_criteria do |qry|
@@ -169,14 +167,11 @@ module DismalTony::Directives
     set_name :stock_math
     set_group :info
 
-    add_param :stock_id
-    add_param :current_value
-    add_param :shares_requested
-    add_param :final_total
+    expect_frags :stock_id, :current_value, :shares_requested, :final_total
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
-      use << DismalTony::ParsingStrategies::ComprehendStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
     end
 
     add_criteria do |qry|

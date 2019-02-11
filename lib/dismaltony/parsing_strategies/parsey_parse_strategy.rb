@@ -6,6 +6,10 @@ module DismalTony
       def self.call(q)
         ParseyParse.call(q)
       end
+
+      def self.value_class
+      	ParseyParse::Sentence
+      end
     end
   end
 end

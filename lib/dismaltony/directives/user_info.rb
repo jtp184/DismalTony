@@ -1,4 +1,4 @@
-require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 
 module DismalTony::Directives
   class RetrieveUserDataDirective < DismalTony::Directive
@@ -10,7 +10,7 @@ module DismalTony::Directives
     set_group :info
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
     end
 
     add_criteria do |qry|
@@ -71,12 +71,11 @@ module DismalTony::Directives
     set_group :info
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
     end
 
     add_criteria do |qry|
       qry << must { |q| q.contains?(/what/i) }
-      qry << must { |q| !Array(q.xpos('NNP')).empty? }
       qry << could { |q| q.contains?(/phone|number/i, /\bname\b/i, /birthday/i, /\bemail\b/i) }
       qry << doesnt { |q| q.contains?(/weather/i, /stocks/i) }
     end

@@ -1,4 +1,3 @@
-require 'dismaltony/parsing_strategies/parsey_parse_strategy'
 require 'duration'
 
 module DismalTony::Directives
@@ -9,14 +8,8 @@ module DismalTony::Directives
     set_name :hello
     set_group :core
 
-    use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
-    end
-
     add_criteria do |qry|
-      qry << must { |q| q.contains?(/hello/, /\bhi\b/, /greetings/) }
-      qry << should { |q| !q['rel', 'discourse'].empty? }
-      qry << could { |q| !q['xpos', 'UH'].empty? }
+      qry << must { |q| q =~ /hello/i || q =~ /\bhi\b/i || q =~ /greetings/i }
     end
 
     def run
@@ -50,13 +43,9 @@ module DismalTony::Directives
     set_name :selfdiagnostic
     set_group :debug
 
-    use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
-    end
-
     add_criteria do |qry|
       qry << uniquely { |q| q =~ /diagnostic/i }
-      qry << must { |q| q.contains?(/run/i, /execute/i, /perform/i) }
+      qry << must { |q| q =~ /run/i || q =~ /execute/i || q =~ /perform/i }
     end
 
     def run

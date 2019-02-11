@@ -44,16 +44,23 @@ module DismalTony # :nodoc:
         end
 
         # DSL function, adds a new entry to the +parameters+ hash keyed by +param+ and given a value of +initial+.
-        def add_param(param, initial = nil)
-          @default_params ||= {}
-          @default_params[param.to_sym] = initial
+        def frag_default(**these)
+
+          @default_frags ||= {}
+          @default_frags.merge(these)
         end
 
-        # DSL function, takes each key-value pair in +inputpar+ and adds a new entry to
-        # the +parameters+ hash keyed by +param+ and given a value of +initial+.
-        def add_params(inputpar)
-          inputpar.each do |ki, va|
-            @default_params[ki] = va
+        # DSL function, takes in +these+ fragments, either as an Array or Hash, and
+        # adds them to the defaults
+        def expect_frags(*these)
+          @default_frags ||= {}
+          these = these.first if these.one? && these.first.is_a?(Hash)
+
+          case these
+          when Array
+            these.each { |a| @default_frags[a.to_sym] = nil }
+          when Hash
+            these.each_pair { |a, b| @default_frags[a.to_sym] = b }
           end
         end
 

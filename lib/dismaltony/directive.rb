@@ -38,11 +38,10 @@ module DismalTony # :nodoc:
     def self.matches?(qry)
       return nil if match_criteria.empty?
 
-      apply_parsing_strategies(qry)
-
+      tq = filter_parsing_strategies(qry)
       certainty = 0.0
       match_criteria.each do |crit|
-        if crit.is_true?(qry)
+        if crit.is_true?(tq)
           crit.on_succeed
           certainty += crit
         else
@@ -58,7 +57,7 @@ module DismalTony # :nodoc:
     # Takes in the Query +qry+ and verbosely checks it against the +match_criteria+
     # including a string representation of the original code block.
     def self.test_matches(qry)
-      apply_parsing_strategies(qry)
+      tq = filter_parsing_strategies(qry)
       match_criteria.map do |crit|
         pat = /{.*}/
         x =
@@ -66,7 +65,7 @@ module DismalTony # :nodoc:
             crit.predicate.source_location[1] - 1
           ]
             .slice(pat)
-        [crit.priority, x, crit.predicate.call(qry)]
+        [crit.priority, x, crit.predicate.call(tq)]
       end
     end
 
@@ -74,6 +73,11 @@ module DismalTony # :nodoc:
       ps = parsing_strategies.map { |ps| ps.call(q.raw_text) }
       q.parsed_results = ps
       q
+    end
+
+    def self.filter_parsing_strategies(q)
+      vcl = parsing_strategies.map(&:value_class)
+      q.clone.tap { |c| c.parsed_results.select! { |pr| vcl.include?(pr.class) } }
     end
 
     class << self
@@ -93,7 +97,7 @@ module DismalTony # :nodoc:
     attr_reader :query
 
     # The hash of values captured and/or returned by this Directive.
-    attr_accessor :fragements
+    attr_accessor :fragments
 
     # The MatchLogic criteria objects used to verify whether a Query matches or not.
     attr_reader :match_criteria
@@ -108,7 +112,7 @@ module DismalTony # :nodoc:
       attr_reader :name #:nodoc:
       attr_reader :group #:nodoc:
       attr_reader :match_criteria #:nodoc:
-      # The default fragements set up by the class.
+      # The default fragments set up by the class.
       attr_reader :default_frags
 
       @default_frags = {}
@@ -125,15 +129,20 @@ module DismalTony # :nodoc:
     def initialize(qry, vi)
       @name = (self.class.name || '')
       @group = (self.class.group || 'none')
-      @fragements = (self.class.default_params&.clone || {})
+      @fragments = (self.class.default_frags&.clone || {})
       @match_criteria = (self.class.match_criteria || [])
       @query = qry
       @vi = vi
     end
 
-    # Searches the +fragements+ hash using +indx+
+    # Searches the +fragments+ hash using +indx+
     def [](indx)
-      @fragements[indx]
+      fragments[indx]
+    end
+
+    # Shorthand function
+    def frags
+      fragments
     end
 
     # Overridden by child classes. The default method used by the

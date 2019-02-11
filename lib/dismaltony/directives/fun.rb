@@ -1,17 +1,18 @@
-require 'dismaltony/parsing_strategies/parsey_parse_strategy'
+require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 
 module DismalTony::Directives
   class DrinkMixDirective < DismalTony::Directive
     set_name :drinkmix
     set_group :fun
-    add_param :drink
+
+    expect_frags :drink
 
     use_parsing_strategies do |use|
-      use << DismalTony::ParsingStrategies::ParseyParseStrategy
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
     end
 
     add_criteria do |qry|
-      qry << uniquely { |q| q.children_of(q.verb).any? { |c| c =~ /drink/i } }
+      qry << uniquely { |q| q =~ /drink/i } 
       qry << must { |q| q.verb&.any_of?(/want/i, /like/i, /mix/i, /make/i, /pick/i, /choose/i) }
       qry << should { |q| q =~ /please/i }
     end

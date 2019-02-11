@@ -41,6 +41,12 @@ rescue
   DismalTony::DataStore.new
 end
 
+@test_strategies = [
+  DismalTony::ParsingStrategies::ComprehendTopicStrategy,
+  DismalTony::ParsingStrategies::ComprehendSyntaxStrategy,
+  DismalTony::ParsingStrategies::WatsonToneStrategy
+]
+
 DismalTony.vi = DismalTony::VIBase.new(
   :data_store => @db,
   :user => @db.users&.first
@@ -62,7 +68,7 @@ end
 
 def self.Query(q)
   k = DismalTony::QueryResolver.create_query(q)
-  k.parsed_results = DismalTony::ParsingStrategies.all.map { |b| b.(q) }
+  k.parsed_results = @test_strategies.map { |b| b.(q) }
   k
 end
 
