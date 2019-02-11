@@ -13,6 +13,9 @@ module DismalTony::DirectiveHelpers
       end
 
       def data_struct_template
+        @data_struct_template if @data_struct_template
+        Struct::GoogleMapsRoute
+      rescue NameError
         @data_struct_template ||= Struct.new('GoogleMapsRoute', :distance, :duration, :start_address, :end_address, :steps, :raw) do
           def step_list
             outp = ''
@@ -45,15 +48,16 @@ module DismalTony::DirectiveHelpers
         req = gmaps_client.directions(
           opts.fetch(:start_address),
           opts.fetch(:end_address),
-          mode: opts.fetch(:mode) { 'driving' },
+          mode: opts.fetch(:mode, 'driving'),
+          departure_time: opts.fetch(:departure_time) { Time.now.to_i },
           alternatives: false
         ).first
         legs = req[:legs].first
 
         ds_args = []
 
-        ds_args << Unit.new("#{legs[:distance][:value]}m")
-        ds_args << Duration.new(second: legs[:duration][:value])
+        ds_args << Unit.new("#{legs[:distance][:value]}m").convert_to('mile').scalar.to_f.to_unit('mile')
+        ds_args << Duration.new(second: legs[:duration_in_traffic][:value])
         ds_args << legs[:start_address]
         ds_args << legs[:end_address]
         ds_args << legs[:steps]
@@ -74,27 +78,29 @@ module DismalTony::Directives
     include DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers
 
     PATIENCE_LIMITS = {
-      none: Duration.new(minutes: 10).freeze,
-      low: Duration.new(minutes: 20).freeze,
-      medium: Duration.new(minutes: 50).freeze,
-      high: Duration.new(minutes: 90).freeze,
-      very_high: Duration.new(hours: 2).freeze
+      none: 0.5,
+      low: 1.0,
+      medium: 2.0,
+      high: 3.0,
+      very_high: 4.0,
+      harrowing: 4.8
     }.freeze
 
     set_name :traffic_report
     set_group :info
 
-    expect_frags :gmaps_data, :start_address, :end_address, :info_type
-    frag_default step_index: 0
+    expect_frags :start_address, :end_address
 
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+      use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
     end
 
     add_criteria do |qry|
-      qry << uniquely { |q| q.contains?(/directions/i, /traffic/i, /long/i, /far/i, /navigate/i) }
-      qry << could { |q| q.contains?(/^from$/i, /^to$/i, /^between$/i) }
-      qry << could { |q| q =~ /how do i get/i }
+      qry << uniquely { |q| q.contains?(/traffic/i) }
+      qry << must { |q| q.locations? }
+      qry << could { |q| q.contains?(/^time$/i, /^bad$/i, /^time$/i, /^long$/i) }
     end
 
     add_synonyms do |make|
@@ -106,115 +112,17 @@ module DismalTony::Directives
     end
 
     def run
-      x = determine_intent
-      return x unless frags[:info_type]
-
-      check_for_start_and_end
-
-      y = confirm_start_and_end
-      confirmed = y.shift
-
-      resp = if confirmed
-               data_rep, r = choose_response
-
-               return_data(data_rep)
-               r
-             else
-               y.shift
-      end
-
-      resp
+      frags[:start_address] = query.locations.first.text
+      frags[:end_address] = query.locations.last.text
+      get_traffic_time
     end
 
     private
 
-    def determine_intent
-      asking_for = {}
-
-      asking_for[:traffic_time] = query.contains?(/^time$/i, /^bad$/i, /^time$/i, /^long$/i, /^traffic$/i)
-      asking_for[:directions] = query =~ /give me/i || query.contains?(/^directions$/i)
-      asking_for[:step_by_step] = query =~ /how do i get to/i || query.contains?(/navigate/i)
-      asking_for[:distance] = query.contains?(/^distance$/i, /^far$/i, /^between$/i)
-
-      frags[:info_type] = asking_for.find { |_k, v| v }.first
-
-      if frags[:info_type].nil?
-        DismalTony::HandledResponse.finish("~e:frown I'm sorry, I couldn't figure out what maps function you wanted. Try talking about directions, traffic, or distance")
-      else
-        frags[:info_type]
-      end
-    end
-
-    def confirm_start_and_end
-      unresolved = []
-
-      if frags[:start_address].nil?
-        unresolved << false
-        res = DismalTony::HandledResponse.then_do(message: '~e:mappin What is the start address of the route?', directive: self, method: receive_start_address, data: frags, parse_next: false)
-        unresolved << res
-      end
-
-      if frags[:end_address].nil?
-        unresolved << false if unresolved.empty?
-        res = DismalTony::HandledResponse.then_do(message: '~e:worldmap What is the end address of the route?', directive: self, method: receive_end_address, data: frags, parse_next: false)
-        unresolved << res
-      end
-
-      unresolved << true if frags[:start_address] && frags[:end_address]
-
-      unresolved
-    end
-
-    def check_for_start_and_end
-      m = query.to_str.match(/(?:from|between) (.*) (?:to|and) (.*)/i)
-      s = m[1].gsub(/[\?\.\,\!]/, '')
-      e = m[2].gsub(/[\?\.\,\!]/, '')
-
-      s = check_shortcut(s) if s.count(' ') == 0
-      e = check_shortcut(e) if e.count(' ') == 0
-
-      frags[:start_address] ||= s
-      frags[:end_address] ||= e
-    end
-
-    def receive_start_address
-      frags[:start_address] = query.raw_text
-      confirm_start_and_end
-    end
-
-    def receive_end_address
-      frags[:end_address] = query.raw_text
-      confirm_start_and_end
-    end
-
-    def choose_response
-      x, y = case frags[:info_type]
-             when :traffic_time
-               get_traffic_time
-             when :distance
-               get_distance
-             when :directions
-               list_all_directions
-             when :step_by_step
-               page_directions
-      end
-      [x, y]
-    end
-
-    def list_all_directions
-      say_this = ''
-      say_this << "~e:#{random_emoji('mappin', 'worldmap', 'car', 'bus', 'globe')} "
-      say_this << "Okay! I'll list the directions for you."
-      say_this << "\n\n"
-      say_this << get_gmaps_data.step_list
-      [get_gmaps_data, DismalTony::HandledResponse.finish(say_this)]
-    end
-
-    def page_directions; end
-
     def get_traffic_time
-      req = get_gmaps_data
-      t = req.duration
+      req = gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
+      return_data(req)
+      t = (req.duration.total.to_f/60) / req.distance.scalar
 
       badness = TrafficReportDirective::PATIENCE_LIMITS.find_all do |_k, v|
         v < t
@@ -231,7 +139,7 @@ module DismalTony::Directives
                       random_emoji('frown', 'gate', 'car', 'hourglass', 'alarmclock', 'snail')
                     when :very_high
                       random_emoji('bomb', 'gate', 'car', 'hourglass', 'snail', 'frown', 'pickaxe')
-                    else
+                    when :harrowing
                       time_emoji
       end
 
@@ -246,32 +154,14 @@ module DismalTony::Directives
                          synonym_for 'high'
                        when :very_high
                          synonym_for 'very high'
-                       else
+                       when :harrowing
                          'harrowing'
       end
 
       say_this = ''
       say_this << "~e:#{moji_choice} "
-      say_this << "The traffic on the way to #{frags[:end_address]} is #{badness_string}. It will take #{time_str(t)} to get there."
-      [get_gmaps_data, DismalTony::HandledResponse.finish(say_this)]
-    end
-
-    def get_distance
-      req = get_gmaps_data
-      moji_choice = random_emoji('mappin', 'worldmap', 'think')
-      say_this = ''
-      say_this << "~e:#{moji_choice} "
-      say_this << "#{frags[:end_address]} is #{d.convert('mi').round(2).to_f}mi away from #{frags[:start_address]}."
-      [get_gmaps_data, DismalTony::HandledResponse.finish(say_this)]
-    end
-
-    def check_shortcut(addr = '')
-      srch = vi.user[(addr.gsub(/\.\?\,\!\'/i, '') + '_address').to_sym]
-      srch || addr
-    end
-
-    def get_gmaps_data
-      frags[:gmaps_data] ||= gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
+      say_this << "The traffic on the way to #{frags[:end_address]} is #{badness_string}. It will take #{time_str(req[:duration])} to get there."
+      DismalTony::HandledResponse.finish(say_this)
     end
 
     def time_str(tim)
@@ -282,5 +172,90 @@ module DismalTony::Directives
         tim.format('%m %~m')
       end
     end
+  end
+
+  class MapsDirectionsDirective < DismalTony::Directive
+    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
+    include DismalTony::DirectiveHelpers::DataStructHelpers
+    include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::EmojiHelpers
+    include DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers
+
+    set_name :maps_directions
+    set_group :info
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+      use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
+    end
+
+    add_criteria do |qry|
+      qry << uniquely { |q| q.contains?(/directions/i, /route/i, /how do i get to/i) }
+      qry << must { |q| q.locations? }
+    end
+
+    def run
+      frags[:start_address] = query.locations.first.text
+      frags[:end_address] = query.locations.last.text
+      list_all_directions
+    end
+
+    private
+
+    def list_all_directions
+      req = gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
+      return_data(req)
+
+      say_this = ''
+      say_this << "~e:#{random_emoji('mappin', 'worldmap', 'car', 'bus', 'globe')} "
+      say_this << "Okay! I'll list the directions for you."
+      say_this << "\n\n"
+      say_this << req.step_list
+
+      DismalTony::HandledResponse.finish(say_this)
+    end
+  end
+
+  class GetDistanceDirective < DismalTony::Directive
+    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
+    include DismalTony::DirectiveHelpers::DataStructHelpers
+    include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::EmojiHelpers
+    include DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers
+
+    set_name :maps_distance
+    set_group :info
+
+    use_parsing_strategies do |use|
+      use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+      use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
+    end
+
+    add_criteria do |qry|
+      qry << uniquely { |q| q.contains?(/^distance$/i, /^far$/i) }
+      qry << must { |q| q.locations? }
+    end
+
+    def run
+      frags[:start_address] = query.locations.first.text
+      frags[:end_address] = query.locations.last.text
+      get_distance
+    end
+
+    private
+
+    def get_distance
+      req = gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
+      return_data(req)
+
+      moji_choice = random_emoji('mappin', 'worldmap', 'think')
+      say_this = ''
+      say_this << "~e:#{moji_choice} "
+      say_this << "#{frags[:end_address]} is #{req[:distance]} away from #{frags[:start_address]}."
+      
+      DismalTony::HandledResponse.finish(say_this)
+    end   
   end
 end
