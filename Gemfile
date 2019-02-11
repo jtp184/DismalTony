@@ -20,8 +20,5 @@ require: false
   gem 'ibm_watson'
   gem 'aws-sdk', '~> 3'
   gem 'numbers_in_words'
-end
-
-group :runtime do
   gem 'ParseyParse', git: 'https://github.com/jtp184/ParseyParse'
 end
