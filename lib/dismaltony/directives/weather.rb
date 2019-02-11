@@ -392,12 +392,13 @@ module DismalTony::Directives
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
       use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+      use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
     end
 
     add_criteria do |qry|
       qry << uniquely { |q| q.contains?(/weather/i, /\brain/i) }
       qry << must(&:location?)
-      qry << should { |q| q.root =~ /weather/i }
+      qry << could { |q| q.key_phrases.any? { |ph| ph.text.match?(/\bweather\b/i) } }
     end
 
     def run
@@ -424,12 +425,14 @@ module DismalTony::Directives
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
       use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+      use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
     end
 
     add_criteria do |qry|
       qry << uniquely { |q| q.contains?(/temperature/i, /\bhot\b/i, /\bcold\b/i) }
       qry << must(&:location?)
       qry << could { |q| q.contains?(/\bhot\b/i, /\bcold\b/i) }
+      qry << could { |q| q.key_phrases.any? { |ph| ph.text.match?(/\btemperature\b/i) } }
     end
 
     def run
@@ -480,12 +483,14 @@ module DismalTony::Directives
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
       use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+      use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
     end
 
     add_criteria do |qry|
       qry << uniquely { |q| q.contains?(/humid(ity)?/i) }
       qry << must(&:location?)
       qry << could { |q| q.contains?(/level/i) }
+      qry << could { |q| q.key_phrases.any? { |ph| ph.text.match?(/\bhumid(ity)?\b/i) } }
     end
 
     def run
@@ -515,9 +520,10 @@ module DismalTony::Directives
     end
 
     add_criteria do |qry|
-      qry << uniquely { |q| q.contains?(/wind/i) }
+      qry << uniquely { |q| q.contains?(/\bwind\b/i) }
       qry << must(&:location?)
-      qry << could { |q| q.contains?(/blow/i, /fast/i) }
+      qry << could { |q| q.contains?(/\bblow/i, /fast/i) }
+      qry << could { |q| q.key_phrases.any? { |ph| ph.text.match?(/\bwind\b/i) } }
     end
 
     def run
