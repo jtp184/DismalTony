@@ -175,9 +175,10 @@ module DismalTony::Directives
     end
 
     add_criteria do |qry|
-      qry << uniquely { |q| q =~ /stocks?/i }
+      qry << uniquely { |q| q.contains?(/stocks?/i, /shares?/i) }
       qry << must { |q| q.quantity? }
       qry << must { |q| q.organization? }
+      qry << could { |q| q.contains(/shares?/i)}
     end
 
     add_synonyms do |make|
