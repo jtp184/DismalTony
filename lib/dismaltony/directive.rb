@@ -69,12 +69,14 @@ module DismalTony # :nodoc:
       end
     end
 
+    # Takes all parsing strategies and calls them on the string value of +q+ 
     def self.apply_parsing_strategies(q)
       ps = parsing_strategies.map { |ps| ps.call(q.raw_text) }
       q.parsed_results = ps
       q
     end
 
+    # Takes +q+ and selectively keeps the parsing strategies assigned by the Directive
     def self.filter_parsing_strategies(q)
       vcl = parsing_strategies.map(&:value_class)
       q.clone.tap { |c| c.parsed_results.select! { |pr| vcl.include?(pr.class) } }

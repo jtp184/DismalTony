@@ -196,9 +196,11 @@ module DismalTony # :nodoc:
 
   # Uses Redis to store and retrieve user and directive data
   class RedisStore
-    OPTS_PREFIX = 'DismalTony:RedisStore:opts'.freeze
     # The environment options, which get reloaded from the db
     attr_reader :opts
+
+    # The string that opts uses, to dry up opts operations
+    OPTS_PREFIX = 'DismalTony:RedisStore:opts'.freeze
 
     # takes in a :redis_config in +args+
     def initialize(args = {})

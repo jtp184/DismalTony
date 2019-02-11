@@ -38,6 +38,8 @@ module DismalTony
       Directive.new(query, vi).tap { |e| e.instance_variable_set(:@response, HandledResponse.error) }
     end
 
+    # Takes the strategies that are used by the +directives+, uniquifies them, and ensures
+    # the +query+ has results for those strategies.
     def self.apply_all_used_strategies(query, directives)
       strats = directives.map(&:parsing_strategies).flatten.uniq
       nq = query.clone

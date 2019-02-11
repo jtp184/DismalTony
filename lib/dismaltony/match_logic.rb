@@ -112,6 +112,7 @@ module DismalTony
     # and other imperatives.
     class Uniquely < MatchLogic
       def initialize(pre)
+        # :nodoc:
         super(pre)
         @priority = :uniquely
         @success_incr = 7
