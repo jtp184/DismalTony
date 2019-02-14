@@ -50,10 +50,9 @@ module DismalTony
         tones.max_by(&:score)
       end
 
-      [:sad, :frustrated, :satisfied, :excited, :polite, :impolite, :sympathetic, :neutral].each do |label|
+      %i[sad frustrated satisfied excited polite impolite sympathetic neutral].each do |label|
         define_method((label.to_s << '?').to_sym) { tones.any? { |t| t.to_sym == label } }
       end
-
     end
 
     class WatsonTone

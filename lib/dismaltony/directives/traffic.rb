@@ -13,7 +13,7 @@ module DismalTony::DirectiveHelpers
       end
 
       def data_struct_template
-        @data_struct_template if @data_struct_template
+        @data_struct_template unless @data_struct_template.nil?
         Struct::GoogleMapsRoute
       rescue NameError
         @data_struct_template ||= Struct.new('GoogleMapsRoute', :distance, :duration, :start_address, :end_address, :steps, :raw) do
@@ -99,7 +99,7 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << uniquely { |q| q.contains?(/traffic/i) }
-      qry << must { |q| q.locations? }
+      qry << must(&:locations?)
       qry << could { |q| q.contains?(/^time$/i, /^bad$/i, /^time$/i, /^long$/i) }
     end
 
@@ -122,7 +122,7 @@ module DismalTony::Directives
     def get_traffic_time
       req = gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
       return_data(req)
-      t = (req.duration.total.to_f/60) / req.distance.scalar
+      t = (req.duration.total.to_f / 60) / req.distance.scalar
 
       badness = TrafficReportDirective::PATIENCE_LIMITS.find_all do |_k, v|
         v < t
@@ -192,7 +192,7 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << uniquely { |q| q.contains?(/directions/i, /route/i, /how do i get to/i) }
-      qry << must { |q| q.locations? }
+      qry << must(&:locations?)
     end
 
     def run
@@ -235,7 +235,7 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << uniquely { |q| q.contains?(/^distance$/i, /^far$/i) }
-      qry << must { |q| q.locations? }
+      qry << must(&:locations?)
     end
 
     def run
@@ -254,8 +254,8 @@ module DismalTony::Directives
       say_this = ''
       say_this << "~e:#{moji_choice} "
       say_this << "#{frags[:end_address]} is #{req[:distance]} away from #{frags[:start_address]}."
-      
+
       DismalTony::HandledResponse.finish(say_this)
-    end   
+    end
   end
 end

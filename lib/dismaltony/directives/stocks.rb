@@ -10,7 +10,7 @@ require 'numbers_in_words/duck_punch'
 module DismalTony::DirectiveHelpers
   module StocksHelpers
     include HelperTemplate
-    
+
     module ClassMethods
       StockPrice = Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
         include Comparable
@@ -86,7 +86,7 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << uniquely { |q| q =~ /stocks?/i }
-      qry << must { |q| q.organization? }
+      qry << must(&:organization?)
     end
 
     add_synonyms do |make|
@@ -176,9 +176,9 @@ module DismalTony::Directives
 
     add_criteria do |qry|
       qry << uniquely { |q| q.contains?(/stocks?/i, /shares?/i) }
-      qry << must { |q| q.quantity? }
-      qry << must { |q| q.organization? }
-      qry << could { |q| q.contains(/shares?/i)}
+      qry << must(&:quantity?)
+      qry << must(&:organization?)
+      qry << could { |q| q.contains(/shares?/i) }
     end
 
     add_synonyms do |make|
@@ -196,11 +196,11 @@ module DismalTony::Directives
       frags[:stock_id] ||= query.organization.text
 
       num = query.quantity.text
-      if num =~ /\d/
-        frags[:shares_requested] = Integer(num.match(/\d+/).to_s)
-      else
-        frags[:shares_requested] = num.in_numbers
-      end
+      frags[:shares_requested] = if num =~ /\d/
+                                   Integer(num.match(/\d+/).to_s)
+                                 else
+                                   num.in_numbers
+                                 end
 
       if frags[:shares_requested] < 1
         ask_for_number

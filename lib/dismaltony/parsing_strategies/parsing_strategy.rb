@@ -16,6 +16,7 @@ module DismalTony
 
     class ParsingStrategy
       def self.call(_q); end
+
       def self.value_class; end
     end
   end

@@ -12,7 +12,7 @@ module DismalTony
       succeeds = succeeds.max_by(&:last)
       raise NoDirectiveError, 'No Matching Directive!' unless succeeds
 
-      return succeeds.first, qry
+      [succeeds.first, qry]
     end
 
     # A debugging version of the #match function, this takes the same +query+ and +directives+
@@ -20,7 +20,7 @@ module DismalTony
     def self.match!(query, directives)
       qry = apply_all_used_strategies(query, directives)
       succeeds = directives.map { |d| [d, d =~ qry] }
-      return succeeds, qry
+      [succeeds, qry]
     end
 
     # Returns a Query from raw text +txt+ and VIBase +vi+'s user

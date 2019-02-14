@@ -45,7 +45,6 @@ module DismalTony # :nodoc:
 
         # DSL function, adds a new entry to the +parameters+ hash keyed by +param+ and given a value of +initial+.
         def frag_default(**these)
-
           @default_frags ||= {}
           @default_frags.merge(these)
         end

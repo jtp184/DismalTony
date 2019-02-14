@@ -50,9 +50,7 @@ module DismalTony # :nodoc:
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it.
     def say_through(interface, str)
-      interface.send(
-        DismalTony::Formatter.format(str, interface.default_format)
-      )
+      say_opts(str, interface.default_format)
     end
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it, with the options +opts+
@@ -62,9 +60,7 @@ module DismalTony # :nodoc:
 
     # Simplest dialog function. Sends the message +str+ back through VIBase.return_interface
     def say(str)
-      return_interface.send(
-        DismalTony::Formatter.format(str, return_interface.default_format)
-      )
+      say_through(return_interface, str)
     end
 
     # Simple utility function to combine the input HandledResponse and the

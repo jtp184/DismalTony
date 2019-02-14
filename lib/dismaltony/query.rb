@@ -37,10 +37,9 @@ module DismalTony # :nodoc:
         raise NameError, "Multiple parsed results respond to ##{method_name}"
       end
 
-      parsed_results.select { |r| r.respond_to?(method_name) }.first.method(
-        method_name
-      )
-        .call(*params, &blk)
+      parsed_results.find { |r| r.respond_to?(method_name) }
+                    .method(method_name)
+                    .call(*params, &blk)
     end
 
     # Also checks +mname+ on parsed_results so as to be unsurprising

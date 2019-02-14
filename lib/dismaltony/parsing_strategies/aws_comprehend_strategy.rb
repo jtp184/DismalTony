@@ -18,7 +18,7 @@ module DismalTony
       def self.fetch_entities(q)
         qr = { language_code: 'en', text: q }
         aws_client.detect_entities(qr).entities
-        .map { |a| ComprehendTopicEntity.new(a) }
+                  .map { |a| ComprehendTopicEntity.new(a) }
       end
     end
 
@@ -38,7 +38,7 @@ module DismalTony
       def self.fetch_key_phrases(q)
         qr = { language_code: 'en', text: q }
         aws_client.detect_key_phrases(qr).key_phrases
-        .map { |a| ComprehendTopicKeyPhrase.new(a) }
+                  .map { |a| ComprehendTopicKeyPhrase.new(a) }
       end
     end
 
@@ -58,7 +58,7 @@ module DismalTony
       def self.fetch_syntax_labels(q)
         qr = { language_code: 'en', text: q }
         aws_client.detect_syntax(qr).syntax_tokens
-        .map { |a| ComprehendSpeechTag.new(a) }
+                  .map { |a| ComprehendSpeechTag.new(a) }
       end
     end
 
@@ -85,7 +85,6 @@ module DismalTony
         quantity
         title
       ].freeze
-
 
       # Takes in the Comprehend API's Entity type +awse+
       def initialize(awse)
@@ -116,7 +115,7 @@ module DismalTony
       def also_in?(ocheck)
         ocheck.find { |o| o.document_location == document_location }
       rescue NoMethodError
-        nil          
+        nil
       end
 
       alias =~ match
@@ -134,21 +133,21 @@ module DismalTony
 
       DismalTony::ParsingStrategies::ComprehendTopicEntity::ENTITY_TYPES.each do |label|
         sing = case label
-        when :other
-          :other_entitity
-        else
-          label
+               when :other
+                 :other_entitity
+               else
+                 label
         end
 
         plur = case sing
-        when :person
-          :people
-        when :quantity
-          :quantities
-        when :other_entity
-          :other_entitites
-        else
-          (sing.to_s << 's').to_sym
+               when :person
+                 :people
+               when :quantity
+                 :quantities
+               when :other_entity
+                 :other_entitites
+               else
+                 (sing.to_s << 's').to_sym
         end
 
         define_method(plur) do
@@ -162,7 +161,7 @@ module DismalTony
         define_method((sing.to_s << '?').to_sym) do
           entities.any? { |j| j.type == label }
         end
-        
+
         define_method((plur.to_s << '?').to_sym) do
           r = entities.select { |j| j.type == label }
           r.count > 1
@@ -213,7 +212,7 @@ module DismalTony
       def also_in?(ocheck)
         ocheck.find { |o| o.document_location == document_location }
       rescue NoMethodError
-        nil          
+        nil
       end
 
       alias =~ match
@@ -262,7 +261,7 @@ module DismalTony
         sconj
         sym
         verb
-      ]
+      ].freeze
 
       POS_LABELS = %i[
         adjective
@@ -282,7 +281,7 @@ module DismalTony
         subordinating
         symbol
         verb
-      ]
+      ].freeze
 
       # Builds from the +awse+ entity returned by the API
       def initialize(awse)
@@ -320,14 +319,14 @@ module DismalTony
         @pos_tags = tgs
       end
 
-      DismalTony::ParsingStrategies::ComprehendSpeechTag::POS_LABELS.each_with_index do |label,ix|
+      DismalTony::ParsingStrategies::ComprehendSpeechTag::POS_LABELS.each_with_index do |label, ix|
         plur = case label
-        when :auxiliary
-          :auxiliaries
-        else
-          (label.to_s << 's').to_sym
+               when :auxiliary
+                 :auxiliaries
+               else
+                 (label.to_s << 's').to_sym
         end
-        
+
         ques = (label.to_s << '?').to_sym
         plur_ques = (plur.to_s << '?').to_sym
 

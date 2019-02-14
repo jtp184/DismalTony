@@ -8,7 +8,7 @@ module DismalTony
       end
 
       def self.value_class
-      	ParseyParse::Sentence
+        ParseyParse::Sentence
       end
     end
   end

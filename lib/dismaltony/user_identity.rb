@@ -19,9 +19,9 @@ module DismalTony # :nodoc:
     def initialize(**args)
       @user_data = args.fetch(:user_data, {})
       @conversation_state = args.fetch(
-                                :conversation_state,
-                                DismalTony::ConversationState.new(idle: true, user_identity: self)
-                            )
+        :conversation_state,
+        DismalTony::ConversationState.new(idle: true, user_identity: self)
+      )
 
       @directive_data = {}
       @user_data[:uuid] ||= SecureRandom.uuid

@@ -29,7 +29,7 @@ module DismalTony::Directives
           )
         resp =
           "#{synonym_for('hello').capitalize}#{if (0..100).to_a.sample < 75
-            ', ' + query.user['nickname']
+                                                 ', ' + query.user['nickname']
           end}#{['!', '.'].sample}"
         DismalTony::HandledResponse.finish("~e:#{moj} #{resp}")
       end
