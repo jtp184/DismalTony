@@ -16,21 +16,19 @@ module DismalTony::Directives
       if /how are you/.match?(query)
         DismalTony::HandledResponse.finish("~e:thumbsup I'm doing well!")
       else
-        moj =
-          random_emoji(
-            'wave',
-            'smile',
-            'rocket',
-            'star',
-            'snake',
-            'cat',
-            'octo',
-            'spaceinvader'
-          )
-        resp =
-          "#{synonym_for('hello').capitalize}#{if (0..100).to_a.sample < 75
-                                                 ', ' + query.user['nickname']
-          end}#{['!', '.'].sample}"
+        moj = random_emoji(
+          'wave',
+          'smile',
+          'rocket',
+          'star',
+          'snake',
+          'cat',
+          'octo',
+          'spaceinvader'
+        )
+        resp = "#{synonym_for('hello').capitalize}"
+        resp << ', ' << query.user[:nickname] if rand(4) <= 2
+        resp << ['!', '.'].sample
         DismalTony::HandledResponse.finish("~e:#{moj} #{resp}")
       end
     end
@@ -49,13 +47,14 @@ module DismalTony::Directives
     end
 
     def run
-      good_moj = random_emoji('tophat', 'thumbsup', 'star', 'checkbox', 'chartup') if ParseyParse.run_parser('Diagnostic successful')
+      good_moj = random_emoji('tophat', 'thumbsup', 'star', 'checkbox', 'chartup')
       return_string = "Diagnostic Successful!\n\n"
       return_string << "    Time: #{Time.now.strftime('%F %l:%M%P')}\n"
       return_string << "    VI: #{vi.name}\n"
       return_string << "    Version: #{DismalTony::VERSION}\n"
       return_string << "    User: #{vi.user['nickname']}\n"
       return_string << "    Directives: #{vi.directives.length}\n"
+      return_string << "    Parsing Strategies: #{DismalTony::ParsingStrategies.all.count}\n"
       DismalTony::HandledResponse.finish("~e:#{good_moj} #{return_string}")
     rescue StandardError
       bad_moj = random_emoji('cancel', 'caution', 'alarmbell', 'thumbsdown', 'thermometer', 'worried')
