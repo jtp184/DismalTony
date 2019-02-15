@@ -134,7 +134,7 @@ module DismalTony
       DismalTony::ParsingStrategies::ComprehendTopicEntity::ENTITY_TYPES.each do |label|
         sing = case label
                when :other
-                 :other_entitity
+                 :other_entity
                else
                  label
         end
@@ -145,7 +145,7 @@ module DismalTony
                when :quantity
                  :quantities
                when :other_entity
-                 :other_entitites
+                 :other_entities
                else
                  (sing.to_s << 's').to_sym
         end
