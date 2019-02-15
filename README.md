@@ -145,7 +145,7 @@ def the_action
 
   DismalTony::HandledResponse.then_do(
     message: 'Okay! How many should I order?',
-    directive: DismalTony::DirectivesOrderCountDirective,
+    directive: DismalTony::Directives::OrderCountDirective,
     method: :set_count
     data: fragments
   )
