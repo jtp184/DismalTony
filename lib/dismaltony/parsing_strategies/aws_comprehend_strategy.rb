@@ -308,6 +308,10 @@ module DismalTony
       def match(txt)
         text.match(txt)
       end
+
+      def any_of?(*various)
+        various.any? { |a| a.match?(text) }
+      end
     end
 
     # A Part-of-speech tag index for the query.
