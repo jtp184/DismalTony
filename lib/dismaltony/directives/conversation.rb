@@ -6,137 +6,123 @@ module DismalTony::Directives
     set_name :send_text
     set_group :conversation
 
-    expect_frags :sendto, :sendmsg
+    expect_frags :send_to, :message
 
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+      use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
     end
 
     add_criteria do |qry|
-      qry << uniquely { |q| q =~ /text/i }
-      qry << could { |q| q =~ /send/i }
-      qry << could { |q| q =~ /message/i }
-    end
-
-    def get_tel
-      frags[:sendto] = query.raw_text
-      DismalTony::HandledResponse.then_do(directive: self, method: :get_msg, message: '~e:speechbubble Okay, what shall I say to them?', parse_next: false, data: frags)
-    end
-
-    def get_msg
-      frags[:sendmsg] = query.raw_text
-      vi.say_through(DismalTony::SMSInterface.new(frags[:sendto]), frags[:sendmsg])
-      DismalTony::HandledResponse.finish('~e:speechbubble Okay! I sent the message.')
+      qry << uniquely { |q| q.key_phrases.map(&:text).any? { |t| t =~ /text/i || t =~ /message/i } }
+      qry << must { |q| q.other_entity? }
+      qry << must { |q| q.other_entity&.text&.match?(/\d{10}/) }
+      qry << should { |q| q.contains?(/\bsays? /i) }
     end
 
     def run
-      resp = nil
-      frags[:sendto] = query['pos', 'NUM'].first&.to_s
-      if frags[:sendto].nil?
-        frags[:sendto] = if /^me$/i.match?(query.children_of(query.verb)&.first)
-                                query.user[:phone]
-                              elsif /[a-z]*/i.match?(query.children_of(query.verb)&.first)
-                                # Code for if it's a name
-                                nil
-                              end
-      else
-        resp = DismalTony::HandledResponse.finish("~e:frown That isn't a valid phone number!") if (frags[:sendto] =~ /^\d{10}$/).nil?
-                          end
-
-      return resp if resp
-
-      if frags[:sendto].nil?
-        resp = DismalTony::HandledResponse.then_do(directive: self, method: :get_tel, message: '~e:pound Okay, to what number should I send the message?', parse_next: false, data: frags) if frags[:sendto].nil?
-      else
-        frags[:sendmsg] = query.raw_text.split(query['pos', 'VERB'].select { |w| w.any_of?(/says/i, /say/i) }.first.to_s << ' ')[1]
-        vi.say_through(DismalTony::SMSInterface.new(frags[:sendto]), frags[:sendmsg])
-        resp = DismalTony::HandledResponse.finish('~e:thumbsup Okay! I sent the message.')
-      end
-      resp
-                        end
+      frags[:send_to] = query.other_entity.text
+      frags[:message] = query.raw_text.split(/\bsays? /i)[1]
+      vi.say_through(DismalTony::SMSInterface.new(frags[:send_to]), frags[:message])
+      return_data(frags)
+      DismalTony::HandledResponse.finish('~e:thumbsup Okay! I sent the message.')
+    end
   end
 
   class InteractiveSignupDirective < DismalTony::Directive
-    set_name :interactivesignup
+    set_name :interactive_signup
     set_group :conversation
 
-    expect_frags :user_id, :send_number
+    expect_frags :phone, :first_name, :last_name, :nickname, :uuid
 
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+      use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
     end
 
     add_criteria do |qry|
       qry << uniquely { |q| q =~ /invit(e|ation)/ }
       qry << must { |q| q =~ /send/ || q =~ /join/ }
-      qry << should { |q| q.numerals? }
-    end
-
-    def welcome_msg
-      moj = %w[exclamationmark present scroll speechbubble wave envelopearrow]
-        .sample
-      "~e:#{moj} Hello! I'm #{vi
-        .name}, a Virtual Intelligence. What is your name?"
-    end
-
-    def finish_msg
-      moj = %w[wave smile envelopeheart checkbox thumbsup star toast].sample
-      "~e:#{moj} Greetings, #{frags[:user_id][:nickname]}!"
-    end
-
-    def return_cs
-      cs =
-        DismalTony::ConversationState.new(
-          next_directive: self, next_method: :get_name, parse_next: false
-        )
-    end
-
-    def get_last_name
-      the_user = vi.data_store.select { |u| u == frags[:user_id] }
-      frags[:user_id][:last_name] = query.raw_text
-      the_user.modify_user_data(frags[:user_id].user_data)
-      DismalTony::HandledResponse.finish(finish_msg)
-    end
-
-    def get_name
-      if /\s/.match?(query.raw_text)
-        the_user = vi.data_store.select { |u| u == frags[:user_id] }
-        frags[:user_id][:first_name] = query.raw_text.split(' ')[0]
-        frags[:user_id][:last_name] = query.raw_text.split(' ')[1]
-
-        frags[:user_id][:nickname] = frags[:user_id][:first_name]
-        the_user.modify_user_data(frags[:user_id].user_data)
-        DismalTony::HandledResponse.finish(finish_msg)
-      else
-        frags[:user_id][:first_name] = query.raw_text
-        frags[:user_id][:nickname] = frags[:user_id][:first_name]
-        the_user.modify_user_data(frags[:user_id].user_data)
-        DismalTony::HandledResponse.then_do(
-          directive: self,
-          method: :get_last_name,
-          data: frags,
-          parse_next: false,
-          message: 'Okay! And what is your last name?'
-        )
-      end
+      qry << must { |q| q.other_entity&.text&.match?(/\d{10}/) }
+      qry << must { |q| q.other_entity? }
     end
 
     def run
-      frags[:send_number] = '+1' << query['pos', 'NUM'].first.to_s
-      ncs = query.previous_state.clone
-      ncs.merge(return_cs)
-      frags[:user_id] =
-        DismalTony::UserIdentity.new(
-          user_data: { phone: frags[:send_number] },
-          conversation_state: ncs
-        )
-      vi.data_store.new_user(user_data: frags[:user_id].user_data)
-      vi.say_through(
-        DismalTony::SMSInterface.new(frags[:send_number]), welcome_msg
-      )
+      frags[:phone] = q.other_entity.text
+      
+      noob = vi.data_store.new_user(blank_user)
+      frags[:uuid] = noob[:uuid]
+
+      vi.say_through(DismalTony::SMSInterface.new(frags[:send_number]), welcome_msg)
+      
+      moj = positive_emoji
       DismalTony::HandledResponse.finish(
-        "~e:thumbsup Okay! I sent the message to #{frags[:send_number]}"
+        "~e:#{moj} Okay! I sent the message to #{frags[:send_number]}"
       )
+    end
+
+    def get_last_name
+      frags[:last_name] = query.raw_text
+      DismalTony::HandledResponse.then_do(
+        message: "~e:pencil Okay! And what is your complete last name?",
+        next_directive: self,
+        method: :get_nickname,
+        data: frags
+      )
+    end
+
+    def get_first_name
+      frags[:first_name] = query.raw_text
+      DismalTony::HandledResponse.then_do(
+        message: "~e:thumbsup Okay! And what is your complete last name?",
+        next_directive: self,
+        method: :get_first_name,
+        data: frags
+      )
+    end
+
+    def get_nickname
+      frags[:nickname] = query.raw_text
+
+      vi.data_store.update_user(frags[:uuid]) do |usr|
+        usr[:first_name] = frags[:first_name]
+        usr[:last_name] = frags[:last_name]
+        usr[:nickname] = frags[:nickname]
+      end
+
+      DismalTony::HandledResponse.finish(finish_msg)
+    end
+    
+    private
+
+    def blank_user
+      DismalTony::UserIdentity.new(
+        user_data: { phone: frags[:phone] },
+        conversation_state: begin_cs
+      )
+    end
+
+    def welcome_msg
+      moj = random_emoji('exclamationmark', 'present', 'scroll', 'speechbubble', 'wave', 'envelopearrow')
+      "~e:#{moj} Hello! I'm #{vi.name}"
+      ", a Virtual Intelligence. I'm going to take you through "
+      "interactively signing up to use my services. Let's begin with your full first name."
+    end
+
+    def finish_msg
+      moj = random_emoji('wave', 'smile', 'envelopeheart', 'checkbox', 'thumbsup', 'star', 'toast')
+      "~e:#{moj} Congratulations, #{frags[:user_id][:nickname]}. You're all ready!"
+    end
+
+    def begin_cs
+      cs =
+        DismalTony::ConversationState.new(
+          next_directive: self,
+          next_method: :get_first_name,
+          data: frags,
+          parse_next: false
+        )
     end
   end
 end
