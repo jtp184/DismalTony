@@ -50,7 +50,7 @@ module DismalTony # :nodoc:
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it.
     def say_through(interface, str)
-      say_opts(str, interface.default_format)
+      say_opts(interface, str, interface.default_format)
     end
 
     # Sends the message +str+ back through the DialogInterface +interface+, after calling DismalTony::Formatter.format on it, with the options +opts+
