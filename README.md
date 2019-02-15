@@ -122,6 +122,50 @@ module DismalTony::Directives
   end
 ```
 
+The salient parts of the Directive is that it must extend Directive, and be namespaced under Directives. This enables the built in enumeration to find it. A criteria block is also required, the more specific the better.
+
+The run method is what is initially called when the directive is determined to be the correct one for the query. All Directive methods intended to be routed to by the QueryResolver must return a HandledResponse object, which carries the message to respond with as well as potential re-routing logic for multi-step queries.
+
+## Fragments
+
+The fragments data structure within Directives is intended to persist information across method calls, and between multi-step queries. It's easily accessed inside the Directive, and has some DSL methods to idiomatically write to it.
+
+```ruby
+# Declare expectations
+expect_frags :product_number, :date
+
+# Specify defaults
+frag_default order: :asc
+
+def the_action
+  # Access the structure
+  fragments[:date] = Time.now
+  # Also has a shortcut
+  frags[:product_number] = '9466'
+
+  DismalTony::HandledResponse.then_do(
+    message: 'Okay! How many should I order?',
+    directive: DismalTony::DirectivesOrderCountDirective,
+    method: :set_count
+    data: fragments
+  )
+end
+```
+
+## Handled Responses
+There are two primary HandledResponses, `.finish` and `.then_do`. The former takes a single message argument, and resets the User's ConverstationState to a neutral one. The latter specifies next steps like directive, method, and data to pass between the Directive calls. 
+
+```ruby
+DismalTony::HandledResponse.finish('This is a simple response!')
+
+DismalTony::HandledResponse.then_do(
+        message: "~e:caution Please enter command code.",
+        next_directive: self,
+        method: :get_command_code,
+        data: frags
+      )
+```
+
 ## Storing Data
 The DismalTony system allows you to store your users and user-data (necessary for multi-stage handlers) in different ways. 
 
