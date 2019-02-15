@@ -53,52 +53,74 @@ cassie.('Hello, Cassie!')
 
 The VI consists of a name, a return_interface to reply across, its known Directives, and a DataStore to retain its memories. All of these pieces are modular, and designed to be interchanged to fit your workflow. 
 
+## Parsing Strategies
+
+A Query object by default only contains the text value of the input. A Directive defines one or more Parsing Strategies that should be applied to the Query, whose methods are magically aliased onto the Query object for easy predicate matching. 
+
+Built in are strategies for ParseyParse, my ParseyMcParseface decoder, as well as AWS Comprehend strategies for syntax, key phrases, and topic entities, and an IBM Watson Tone analyzer strategy.
+
+```ruby
+use_parsing_strategies do |use|
+  use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
+  use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+  use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
+end
+```
+
+## Match Logic
+
+Match Logic handlers are special keywords within the DSL which specify a truthy Proc to check the Query against and a priority to assign the match. The QueryResolver uses this to choose which Directive to activate on a query. Each Directive specifies its own Match Logics in a criteria block
+
+```ruby
+add_criteria do |qry|
+  # Uniquely has the highest priority
+  qry << uniquely { |q| q.contains?(/stocks?/i, /shares?/i) }
+  # Uniquely and Must both cause a Directive to fail to match if their predicates don't
+  qry << must(&:quantity?)
+  qry << must(&:organization?)
+  # A Could adds to the score but doesn't reduce it if unmatched
+  qry << could { |q| q.contains(/shares?/i) }
+end
+```
+
 ## Writing a Directive
 
 Directives are classes that you define in blocks, either one to a file or as many in one file as you'd like, dynamically or in static files that can be loaded in. Here is an example, the built in greeting Directive.
 ```ruby
 module DismalTony::Directives
   class GreetingDirective < DismalTony::Directive
-    # Sets the name of the directive. Must be unique.
+    include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::EmojiHelpers
+
     set_name :hello
-    # Sets the group of the directive
-    set_group :conversation
+    set_group :core
 
-
-    # a block that yields an array to add new match logic criteria to.
     add_criteria do |qry|
-      # the methods are generated from different MatchLogic classes 
-      # which adjust how certain the VI is that it's correct in using this Directive
-      qry << must { |q| q.contains?(/hello/i) || q.contains?(/greetings/i) }
-      qry << should { |q| !q['rel', 'discourse'].empty?}
-      qry << should { |q| !q['xpos', 'UH'].empty?}
+      qry << must { |q| q =~ /hello/i || q =~ /\bhi\b/i || q =~ /greetings/i }
     end
 
-    # Every Directive has a run method, which does all of the work
-    # of taking in the query and necessarily returning a HandledResponse as a result.
     def run
-      # Uses built in query method
-      if query =~ /how are you/i
+      if /how are you/.match?(query)
         DismalTony::HandledResponse.finish("~e:thumbsup I'm doing well!")
       else
-        DismalTony::HandledResponse.finish([
-          '~e:wave Hello!',
-          '~e:smile Greetings!',
-          '~e:rocket Hi!',
-          "~e:star Hello, #{query.user['nickname']}!",
-          '~e:snake Greetings!',
-          '~e:cat Hi!',
-          "~e:octo Greetings, #{query.user['nickname']}!",
-          '~e:spaceinvader Hello!'
-          ].sample)
+        moj = random_emoji(
+          'wave',
+          'smile',
+          'rocket',
+          'star',
+          'snake',
+          'cat',
+          'octo',
+          'spaceinvader'
+        )
+        resp = "#{synonym_for('hello').capitalize}"
+        resp << ', ' << query.user[:nickname] if rand(4) <= 2
+        resp << ['!', '.'].sample
+        DismalTony::HandledResponse.finish("~e:#{moj} #{resp}")
       end
     end
   end
 ```
-
-DismalTony relies on you having [ParseyParse](http://github.com/jtp184/parseyparse) setup. If it doesn't detect a configured SyntaxNet, it will automatically decide it can't parse anything. See that repo for more information on configuring.
-
-Due to ParseyParse being a dependency, MatchLogic queries can use the Natural Language Understanding properties to parse upon, such as finding parts of speech, inter-word dependencies, and roots of sentences.
 
 ## Storing Data
 The DismalTony system allows you to store your users and user-data (necessary for multi-stage handlers) in different ways. 
@@ -124,14 +146,32 @@ Additionally, most Data Stores provide a `.save` or `.save(user)` function
 The base Datastore class is a non-persistent Data Store that functions fine in a REPL, but doesn't save anything. If you don't specify a data store to use, this is the default.
 
 #### YAMLStore
-The LocalStore class exports the user space as a YAML document.
+The YAMLStore class exports the user space as a YAML document.
 ```ruby
 # One that doesn't exist
-DismalTony::LocalStore.create_at('./store.yml')
+DismalTony::YAMLStore.create_at('./store.yml')
 
 # One that does!
-DismalTony::LocalStore.load_from('./store.yml')
+DismalTony::YAMLStore.load_from('./store.yml')
 ```
+
 If provided with a filepath during initialization, it will either create and load, or load that file. You can also call `.load` to load from the file specified by `local_store.filepath`.
 
 The LocalStore saves after every Query, but can be manually saved with `.save` which saves to its filepath variable.
+
+#### RedisStore
+The RedisStore is used to connect to a Redis server and store and recall data. In general, it uses Redis hashes and YAML serialization to store information.
+
+Due to its database backed nature, CRUD methods are necessary.
+
+```ruby
+jake = DismalTony.vi.data_store.select_user { |u| u[:last_name] = 'Berenson' }
+
+DismalTony.vi.data_store.update_user(jake[:uuid]) do |u|
+  u[:dogs_name] = 'Homer'
+end
+
+# Also sets env_vars
+
+DismalTony.vi.data_store.add_env_var(amazing_api_key: 'asef78a087a6098w273yrtkj')
+```
