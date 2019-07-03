@@ -48,8 +48,6 @@ module DismalTony
   def self.vi
     return config[:vi] if config[:vi]
 
-    data_store = config[:data_store]
-
     @@config[:vi] = DismalTony::VIBase.new(data_store: config[:data_store])
   end
 
@@ -58,6 +56,11 @@ module DismalTony
     raise TypeError, 'Not a VIBase!' unless vi.is_a? DismalTony::VIBase
 
     config[:vi] = vi
+  end
+
+  # Returns the Data Store attached to the inherent VI
+  def self.data_store
+    self.vi.data_store
   end
 
   # The main point of interaction. If +args+ is empty, it returns the same as #vi,

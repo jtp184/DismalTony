@@ -337,12 +337,12 @@ module DismalTony # :nodoc:
     end
 
     # Directly adds the key-value pair +k+ and +v+ to the env_vars hash in opts
-    def add_env_var(*glob)
+    def add_env_var(glob)
       raise ArgumentError 'Must be hash-like' unless glob.respond_to?(:to_h)
       o = @redis.hget(OPTS_PREFIX, 'env_vars').clone
-      o = Psych.load(o)
+      o = o ? Psych.load(o) : {}
 
-      glob.each_pair { |k, v| o[k.to_s] = v }
+      glob.to_h.each_pair { |k, v| o[k.to_s] = v }
 
       @redis.hset(OPTS_PREFIX, 'env_vars', Psych.dump(o))
       load_opts
