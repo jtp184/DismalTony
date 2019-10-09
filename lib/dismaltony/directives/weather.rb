@@ -517,6 +517,7 @@ module DismalTony::Directives
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
       use << DismalTony::ParsingStrategies::ComprehendTopicStrategy
+      use << DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy
     end
 
     add_criteria do |qry|
