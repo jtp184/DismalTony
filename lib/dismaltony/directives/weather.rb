@@ -362,7 +362,9 @@ module DismalTony::DirectiveHelpers
           raise IndexError, "No Weather in Response: #{resp.inspect}"
         end
 
-        wc = data_struct_template.find(frags[:id_code])
+        wc = data_struct_template.find(resp['weather'].first['id'])
+
+        binding.pry
 
         {
           city_name: resp['name'],
