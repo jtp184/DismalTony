@@ -344,7 +344,7 @@ module DismalTony::DirectiveHelpers
 
       def api_defaults_proc
         Proc.new do |adef|
-          adef[:APPID] = ENV['open_weather_api_key']
+          adef[:APPID] = ENV['OPEN_WEATHER_API_KEY'] || ENV['open_weather_api_key']
           adef[:units] = 'imperial'
         end
       end

@@ -25,8 +25,8 @@ module DismalTony
         return @watson if @watson
 
         @watson = IBMWatson::ToneAnalyzerV3.new(version: Date.new(2019, 1, 1).strftime('%Y-%m-%d'))
-        @watson.username = ENV['IBM_USERNAME']
-        @watson.password = ENV['IBM_PASSWORD']
+        @watson.username = ENV['IBM_USERNAME'] || ENV['ibm_username']
+        @watson.password = ENV['IBM_PASSWORD'] || ENV['ibm_password']
         @watson
       end
     end

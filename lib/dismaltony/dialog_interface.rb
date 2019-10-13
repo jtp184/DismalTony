@@ -41,8 +41,9 @@ module DismalTony # :nodoc:
 
     # Using +dest+ as its #destination, instanciates this Interface. Uses ENV vars for <tt>twilio_account_sid, twilio_auth_token</tt>
     def initialize(dest = nil)
-      twilio_account_sid = ENV['twilio_account_sid']
-      twilio_auth_token = ENV['twilio_auth_token']
+      twilio_account_sid = ENV['TWILIO_ACCOUNT_SID'] || ENV['twilio_account_sid']
+      twilio_auth_token = ENV['TWILIO_AUTH_TOKEN'] || ENV['twilio_auth_token']
+      @number = ENV['TWILIO_PHONE_NUMBER'] || ENV['twilio_phone_number']
       @client = Twilio::REST::Client.new twilio_account_sid, twilio_auth_token
       @destination = dest
     end
@@ -54,7 +55,7 @@ module DismalTony # :nodoc:
 
       if msg.chars.length < 1600
         @client.api.account.messages.create(
-          from: ENV['twilio_phone_number'], to: destination, body: msg
+          from: @number, to: destination, body: msg
         )
       else
         count_it = (msg.chars.length / 1600) + 1
@@ -63,7 +64,7 @@ module DismalTony # :nodoc:
 
         count_it.times do
           @client.api.account.messages.create(
-            from: ENV['twilio_phone_number'], to: destination, body: msg[si..ei]
+            from: @number, to: destination, body: msg[si..ei]
           )
           si += 1600
           ei += 1600
@@ -76,7 +77,7 @@ module DismalTony # :nodoc:
       return nil if msg =~ /^ *$/
 
       @client.api.account.messages.create(
-        from: ENV['twilio_phone_number'], to: num, body: msg
+        from: @number, to: num, body: msg
       )
     end
   end

@@ -97,7 +97,7 @@ module DismalTony::Directives
 
     set_api_defaults do |adef|
       adef[:function] = 'TIME_SERIES_DAILY'
-      adef[:apikey] = ENV['alpha_vantage_key']
+      adef[:apikey] = ENV['ALPHA_VANTAGE_KEY'] || ENV['alpha_vantage_key']
     end
 
     def run
@@ -189,7 +189,7 @@ module DismalTony::Directives
 
     set_api_defaults do |adef|
       adef[:function] = 'TIME_SERIES_DAILY'
-      adef[:apikey] = ENV['alpha_vantage_key']
+      adef[:apikey] = ENV['ALPHA_VANTAGE_KEY'] || ENV['alpha_vantage_key']
     end
 
     def run
