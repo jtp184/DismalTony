@@ -154,7 +154,7 @@ module DismalTony # :nodoc:
     # Executes a method +mtd+ on this directive. Defaults to executing
     # the #run method for some syntactic sugar.
     def call(mtd = :run)
-      fin = method(mtd).call
+      fin = send(mtd)
       unless fin.respond_to? :outgoing_message
         raise "No response (#{fin.inspect})"
       end
