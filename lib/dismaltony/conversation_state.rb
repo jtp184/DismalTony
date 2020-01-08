@@ -20,11 +20,11 @@ module DismalTony # :nodoc:
     def initialize(args = {})
       @options = {}
       @options[:last_received_time] = args.fetch(:last_received_time) { nil }
-      @options[:idle] = args.fetch(:idle) { nil }
+      @options[:idle] = args.fetch(:idle) { true }
       @options[:next_directive] = args.fetch(:next_directive) { nil }
       @options[:next_method] = args.fetch(:next_method) { nil }
       @options[:data] = args.fetch(:data) { nil }
-      @options[:parse_next] = args.fetch(:parse_next) { nil }
+      @options[:parse_next] = args.fetch(:parse_next) { true }
     end
 
     # Clones using the Marlshal dump / load trick.
