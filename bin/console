@@ -58,10 +58,10 @@ DismalTony.vi = DismalTony::VIBase.new(
 def self.interactive(debug = false)
   puts
   loop do
-    print "[#{DismalTony::Formatter.emoji('laptop')}  ): "
+    print "[#{DismalTony::Formatter.emoji('laptop')}  ]: "
     inp = gets.chomp
     puts
-    res = @tony.(inp)
+    res = DismalTony.(inp)
     puts
     @last = res if debug
   end
