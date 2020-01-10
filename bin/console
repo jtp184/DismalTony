@@ -55,6 +55,9 @@ DismalTony.vi = DismalTony::VIBase.new(
 
 @last = nil
 
+@current_state = -> { DismalTony.vi.user.state }.call
+@reset_state = -> { @db.update_user(DismalTony.vi.user[:uuid]) { |u| u.state.merge! DismalTony::ConversationState.new } }.call
+
 def self.interactive(debug = false)
   puts
   loop do
