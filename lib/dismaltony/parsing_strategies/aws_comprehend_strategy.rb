@@ -164,7 +164,7 @@ module DismalTony
 
         define_method((plur.to_s << '?').to_sym) do
           r = entities.select { |j| j.type == label }
-          r.count > 1
+          r.count > 0
         end
       end
 
