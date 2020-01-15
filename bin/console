@@ -55,9 +55,6 @@ DismalTony.vi = DismalTony::VIBase.new(
 
 @last = nil
 
-@current_state = -> { DismalTony.vi.user.state }.call
-@reset_state = -> { @db.update_user(DismalTony.vi.user[:uuid]) { |u| u.state.merge! DismalTony::ConversationState.new } }.call
-
 def self.interactive(debug = false)
   puts
   loop do
@@ -74,6 +71,16 @@ def self.Query(q)
   k = DismalTony::QueryResolver.create_query(q)
   k.parsed_results = @test_strategies.map { |b| b.(q) }
   k
+end
+
+def self.current_state
+  DismalTony.vi.user.state
+end
+
+def self.reset_state!
+  @db.update_user(DismalTony.vi.user[:uuid]) do |u|
+    u.state.merge!(DismalTony::ConversationState.new)
+  end
 end
 
 # (If you use this, don't forget to add pry to your Gemfile!)
