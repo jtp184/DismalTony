@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::ParsingStrategies</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::ParsingStrategies
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../files/lib/dismaltony/parsing_strategies/aws_comprehend_strategy_rb.html">lib/dismaltony/parsing_strategies/aws_comprehend_strategy.rb</a>
+</li>
+<li class='other'>
+<a href="../../files/lib/dismaltony/parsing_strategies/parsey_parse_strategy_rb.html">lib/dismaltony/parsing_strategies/parsey_parse_strategy.rb</a>
+</li>
+<li class='other'>
+<a href="../../files/lib/dismaltony/parsing_strategies/parsing_strategy_rb.html">lib/dismaltony/parsing_strategies/parsing_strategy.rb</a>
+</li>
+<li class='other'>
+<a href="../../files/lib/dismaltony/parsing_strategies/watson_tone_strategy_rb.html">lib/dismaltony/parsing_strategies/watson_tone_strategy.rb</a>
+</li>
+<li>
+<a class='show' href='#' onclick='this.parentNode.parentNode.className += &quot; expanded&quot;; this.parentNode.removeChild(this); return false'>show all</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>The self enumerating module containing all defined <a href="ParsingStrategies/ParsingStrategy.html"><code>ParsingStrategy</code></a> objects</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Class</h3>
+<ol>
+<li><a href="#method-c-all">all</a></li>
+<li><a href="#method-c-each">each</a></li>
+</ol>
+</div>
+<div id='context'>
+<div id='includes'>
+<h2>Included modules</h2>
+<ol>
+<li>Enumerable</li>
+</ol>
+</div>
+</div>
+<div id='class-list'>
+<h2>Classes and Modules</h2>
+<ol>
+<li><a href="ParsingStrategies/ComprehendKeyPhraseMap.html">DismalTony::ParsingStrategies::ComprehendKeyPhraseMap</a></li>
+<li><a href="ParsingStrategies/ComprehendKeyPhraseStrategy.html">DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy</a></li>
+<li><a href="ParsingStrategies/ComprehendSpeechTag.html">DismalTony::ParsingStrategies::ComprehendSpeechTag</a></li>
+<li><a href="ParsingStrategies/ComprehendSyntaxMap.html">DismalTony::ParsingStrategies::ComprehendSyntaxMap</a></li>
+<li><a href="ParsingStrategies/ComprehendSyntaxStrategy.html">DismalTony::ParsingStrategies::ComprehendSyntaxStrategy</a></li>
+<li><a href="ParsingStrategies/ComprehendTopicEntity.html">DismalTony::ParsingStrategies::ComprehendTopicEntity</a></li>
+<li><a href="ParsingStrategies/ComprehendTopicKeyPhrase.html">DismalTony::ParsingStrategies::ComprehendTopicKeyPhrase</a></li>
+<li><a href="ParsingStrategies/ComprehendTopicMap.html">DismalTony::ParsingStrategies::ComprehendTopicMap</a></li>
+<li><a href="ParsingStrategies/ComprehendTopicStrategy.html">DismalTony::ParsingStrategies::ComprehendTopicStrategy</a></li>
+<li><a href="ParsingStrategies/ParseyParseStrategy.html">DismalTony::ParsingStrategies::ParseyParseStrategy</a></li>
+<li><a href="ParsingStrategies/ParsingStrategy.html">DismalTony::ParsingStrategies::ParsingStrategy</a></li>
+<li><a href="ParsingStrategies/WatsonExcitedTone.html">DismalTony::ParsingStrategies::WatsonExcitedTone</a></li>
+<li><a href="ParsingStrategies/WatsonFrustratedTone.html">DismalTony::ParsingStrategies::WatsonFrustratedTone</a></li>
+<li><a href="ParsingStrategies/WatsonImpoliteTone.html">DismalTony::ParsingStrategies::WatsonImpoliteTone</a></li>
+<li><a href="ParsingStrategies/WatsonNeutralTone.html">DismalTony::ParsingStrategies::WatsonNeutralTone</a></li>
+<li><a href="ParsingStrategies/WatsonPoliteTone.html">DismalTony::ParsingStrategies::WatsonPoliteTone</a></li>
+<li><a href="ParsingStrategies/WatsonSadTone.html">DismalTony::ParsingStrategies::WatsonSadTone</a></li>
+<li><a href="ParsingStrategies/WatsonSatisfiedTone.html">DismalTony::ParsingStrategies::WatsonSatisfiedTone</a></li>
+<li><a href="ParsingStrategies/WatsonSympatheticTone.html">DismalTony::ParsingStrategies::WatsonSympatheticTone</a></li>
+<li><a href="ParsingStrategies/WatsonTone.html">DismalTony::ParsingStrategies::WatsonTone</a></li>
+<li><a href="ParsingStrategies/WatsonToneMap.html">DismalTony::ParsingStrategies::WatsonToneMap</a></li>
+<li><a href="ParsingStrategies/WatsonToneStrategy.html">DismalTony::ParsingStrategies::WatsonToneStrategy</a></li>
+</ol>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-all'>
+<a name='method-c-all'></a>
+<div class='synopsis'>
+<span class='name'>all</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Selects all inheritors of the <a href="Directive.html"><code>Directive</code></a> class that are defined as constants within this module.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-all-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-all-source'><span class="ruby-comment"># File lib/dismaltony/parsing_strategies/parsing_strategy.rb, line 9</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>&#x000A;  <span class="ruby-identifier">constants</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">c</span>) }.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">&lt;</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">ParsingStrategies</span><span class="ruby-operator">::</span><span class="ruby-constant">ParsingStrategy</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-each'>
+<a name='method-c-each'></a>
+<div class='synopsis'>
+<span class='name'>each</span>
+<span class='arguments'>(&blk)</span>
+
+</div>
+<div class='description'>
+
+<p>Using all, returns an each iterator which is passed the block <code>blk</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-each-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-each-source'><span class="ruby-comment"># File lib/dismaltony/parsing_strategies/parsing_strategy.rb, line 14</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;  <span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

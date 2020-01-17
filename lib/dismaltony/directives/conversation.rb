@@ -1,8 +1,10 @@
 require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 
-module DismalTony::Directives
+module DismalTony::Directives # :nodoc:
+  # Uses Twilio to send text messages
   class SendTextMessageDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
+
     set_name :send_text
     set_group :conversation
 
@@ -21,16 +23,22 @@ module DismalTony::Directives
       qry << should { |q| q.contains?(/\bsays? /i) }
     end
 
+    # Detects the sending number and message, and sends it through a new SMSInterface
     def run
       frags[:send_to] = query.other_entity.text
       frags[:message] = query.raw_text.split(/\bsays? /i)[1]
+
       vi.say_through(DismalTony::SMSInterface.new(frags[:send_to]), frags[:message])
+      
       return_data(frags)
       DismalTony::HandledResponse.finish('~e:thumbsup Okay! I sent the message.')
     end
   end
 
+  # Handles inviting and onboarding users
   class InteractiveSignupDirective < DismalTony::Directive
+    include DismalTony::DirectiveHelpers::InterrogativeHelpers
+
     set_name :interactive_signup
     set_group :conversation
 
@@ -48,20 +56,27 @@ module DismalTony::Directives
       qry << must { |q| q.other_entity? }
     end
 
+    # Entry point, takes in the phone number and starts a new user for it
     def run
-      frags[:phone] = q.other_entity.text
+      frags[:phone] = q.other_entity
+                       .text
       
       noob = vi.data_store.new_user(blank_user)
       frags[:uuid] = noob[:uuid]
 
-      vi.say_through(DismalTony::SMSInterface.new(frags[:send_number]), welcome_msg)
+      vi.say_through(
+        DismalTony::SMSInterface.new(frags[:send_number]),
+        welcome_msg
+      )
       
       moj = positive_emoji
+
       DismalTony::HandledResponse.finish(
         "~e:#{moj} Okay! I sent the message to #{frags[:send_number]}"
       )
     end
 
+    ### TOREPLACE
     def get_last_name
       frags[:last_name] = query.raw_text
       DismalTony::HandledResponse.then_do(
@@ -72,6 +87,7 @@ module DismalTony::Directives
       )
     end
 
+    ### TOREPLACE
     def get_first_name
       frags[:first_name] = query.raw_text
       DismalTony::HandledResponse.then_do(
@@ -82,6 +98,7 @@ module DismalTony::Directives
       )
     end
 
+    ### TOREPLACE
     def get_nickname
       frags[:nickname] = query.raw_text
 
@@ -96,6 +113,8 @@ module DismalTony::Directives
     
     private
 
+    # Creates a UserIdentity with the phone number in fragments, and the
+    # basic conversation state from begin_cs
     def blank_user
       DismalTony::UserIdentity.new(
         user_data: { phone: frags[:phone] },
@@ -103,18 +122,21 @@ module DismalTony::Directives
       )
     end
 
+    # The welcome message
     def welcome_msg
       moj = random_emoji('exclamationmark', 'present', 'scroll', 'speechbubble', 'wave', 'envelopearrow')
-      "~e:#{moj} Hello! I'm #{vi.name}"
-      ", a Virtual Intelligence. I'm going to take you through "
+      "~e:#{moj} Hello! I'm #{vi.name}" \
+      ", a Virtual Intelligence. I'm going to take you through " \
       "interactively signing up to use my services. Let's begin with your full first name."
     end
 
+    # The finish message
     def finish_msg
       moj = random_emoji('wave', 'smile', 'envelopeheart', 'checkbox', 'thumbsup', 'star', 'toast')
       "~e:#{moj} Congratulations, #{frags[:user_id][:nickname]}. You're all ready!"
     end
 
+    # A ConversationState that points back to this Directive to continue the process
     def begin_cs
       cs =
         DismalTony::ConversationState.new(

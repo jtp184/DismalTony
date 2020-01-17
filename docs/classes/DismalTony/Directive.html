@@ -39,14 +39,15 @@ Superclass:
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Respresents a response to an incoming query.  Handles providing match
-conditions as well as what to do when matched</p>
+<p>Respresents a response to an incoming query. Handles providing match conditions as well as what to do when matched</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Class</h3>
 <ol>
-<li><a href="#attribute-c-default_params">default_params</a></li>
+<li><a href="#method-c-apply_parsing_strategies">apply_parsing_strategies</a></li>
+<li><a href="#attribute-c-default_frags">default_frags</a></li>
+<li><a href="#method-c-filter_parsing_strategies">filter_parsing_strategies</a></li>
 <li><a href="#method-c-matches-3F">matches?</a></li>
 <li><a href="#method-c-new">new</a></li>
 <li><a href="#method-c-test_matches">test_matches</a></li>
@@ -55,12 +56,13 @@ conditions as well as what to do when matched</p>
 <ol>
 <li><a href="#method-i-5B-5D">[]</a></li>
 <li><a href="#method-i-call">call</a></li>
+<li><a href="#attribute-i-fragments">fragments</a></li>
+<li><a href="#method-i-frags">frags</a></li>
 <li><a href="#attribute-i-group">group</a></li>
 <li><a href="#attribute-i-match_criteria">match_criteria</a></li>
 <li><a href="#attribute-i-name">name</a></li>
-<li><a href="#attribute-i-parameters">parameters</a></li>
 <li><a href="#attribute-i-query">query</a></li>
-<li><a href="#method-i-response">response</a></li>
+<li><a href="#attribute-i-response">response</a></li>
 <li><a href="#method-i-run">run</a></li>
 <li><a href="#method-i-to_s">to_s</a></li>
 <li><a href="#attribute-i-vi">vi</a></li>
@@ -93,11 +95,20 @@ conditions as well as what to do when matched</p>
 <table>
 <tr class='top-aligned-row context-row'>
 <td class='context-item-name'>
-<a name='attribute-c-default_params'>default_params</a>
+<a name='attribute-c-default_frags'>default_frags</a>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>The default parameters set up by the class.</p>
+<p>The default fragments set up by the class.</p>
+</td>
+</tr>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-fragments'>fragments</a>
+</td>
+<td class='context-item-value'>[RW]</td>
+<td class='context-item-desc'>
+<p>The hash of values captured and/or returned by this <a href="Directive.html"><code>Directive</code></a>.</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -106,9 +117,7 @@ conditions as well as what to do when matched</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>The group this <a href="Directive.html">Directive</a> belongs to. Can be
-used to selectively load some but not all <a
-href="Directives.html">Directives</a>.</p>
+<p>The group this <a href="Directive.html"><code>Directive</code></a> belongs to. Can be used to selectively load some but not all <a href="Directives.html"><code>Directives</code></a>.</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -117,8 +126,7 @@ href="Directives.html">Directives</a>.</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>The <a href="MatchLogic.html">MatchLogic</a> criteria objects used to
-verify whether a <a href="Query.html">Query</a> matches or not.</p>
+<p>The <a href="MatchLogic.html"><code>MatchLogic</code></a> criteria objects used to verify whether a <a href="Query.html"><code>Query</code></a> matches or not.</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -127,18 +135,7 @@ verify whether a <a href="Query.html">Query</a> matches or not.</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>The name of the <a href="Directive.html">Directive</a>, used to uniquely
-identify it.</p>
-</td>
-</tr>
-<tr class='top-aligned-row context-row'>
-<td class='context-item-name'>
-<a name='attribute-i-parameters'>parameters</a>
-</td>
-<td class='context-item-value'>[RW]</td>
-<td class='context-item-desc'>
-<p>The hash of values captured and/or returned by this <a
-href="Directive.html">Directive</a>.</p>
+<p>The name of the <a href="Directive.html"><code>Directive</code></a>, used to uniquely identify it.</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -147,7 +144,16 @@ href="Directive.html">Directive</a>.</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>the <a href="Query.html">Query</a> evaluated by this directive.</p>
+<p>the <a href="Query.html"><code>Query</code></a> evaluated by this directive.</p>
+</td>
+</tr>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-response'>response</a>
+</td>
+<td class='context-item-value'>[R]</td>
+<td class='context-item-desc'>
+<p>The <a href="HandledResponse.html"><code>HandledResponse</code></a> produced during the <a href="Directive.html"><code>Directive</code></a></p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -156,7 +162,7 @@ href="Directive.html">Directive</a>.</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>The VI used to evaluate this <a href="Query.html">Query</a>.</p>
+<p>The VI used to evaluate this <a href="Query.html"><code>Query</code></a>.</p>
 </td>
 </tr>
 </table>
@@ -164,6 +170,44 @@ href="Directive.html">Directive</a>.</p>
 </div>
 <div id='methods'>
 <h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-apply_parsing_strategies'>
+<a name='method-c-apply_parsing_strategies'></a>
+<div class='synopsis'>
+<span class='name'>apply_parsing_strategies</span>
+<span class='arguments'>(q)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes all parsing strategies and calls them on the string value of <code>q</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-apply_parsing_strategies-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-apply_parsing_strategies-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 73</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">apply_parsing_strategies</span>(<span class="ruby-identifier">q</span>)&#x000A;  <span class="ruby-identifier">ps</span> = <span class="ruby-identifier">parsing_strategies</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">ps</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ps</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">q</span>.<span class="ruby-identifier">raw_text</span>) }&#x000A;  <span class="ruby-identifier">q</span>.<span class="ruby-identifier">parsed_results</span> = <span class="ruby-identifier">ps</span>&#x000A;  <span class="ruby-identifier">q</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-filter_parsing_strategies'>
+<a name='method-c-filter_parsing_strategies'></a>
+<div class='synopsis'>
+<span class='name'>filter_parsing_strategies</span>
+<span class='arguments'>(q)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes <code>q</code> and selectively keeps the parsing strategies assigned by the <a href="Directive.html"><code>Directive</code></a></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-filter_parsing_strategies-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-filter_parsing_strategies-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 80</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">filter_parsing_strategies</span>(<span class="ruby-identifier">q</span>)&#x000A;  <span class="ruby-identifier">vcl</span> = <span class="ruby-identifier">parsing_strategies</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:value_class</span>)&#x000A;  <span class="ruby-identifier">q</span>.<span class="ruby-identifier">clone</span>.<span class="ruby-identifier">tap</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">parsed_results</span>.<span class="ruby-identifier">select!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">pr</span><span class="ruby-operator">|</span> <span class="ruby-identifier">vcl</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-identifier">pr</span>.<span class="ruby-identifier">class</span>) } }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
 <div class='method public-class' id='method-method-c-matches-3F'>
 <a name='method-c-matches-3F'></a>
 <div class='synopsis'>
@@ -173,19 +217,14 @@ href="Directive.html">Directive</a>.</p>
 </div>
 <div class='description'>
 
-<p>A core function which confirms if the <a href="Query.html">Query</a>
-<code>qry</code> can be served by this directive. Iterates through the
-<code>match_criteria</code>, and tallies a certainty index. Some
-MatchCriteria  may throw a <a
-href="MatchLogicFailure.html">MatchLogicFailure</a> error, which causes
-this function to return a nil</p>
+<p>A core function which confirms if the <a href="Query.html"><code>Query</code></a> <code>qry</code> can be served by this directive. Iterates through the <code>match_criteria</code>, and tallies a certainty index. Some MatchCriteria may throw a <a href="MatchLogicFailure.html"><code>MatchLogicFailure</code></a> error, which causes this function to return a nil</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-matches-3F-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-matches-3F-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 37</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">matches?</span>(<span class="ruby-identifier">qry</span>)&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">match_criteria</span>.<span class="ruby-identifier">empty?</span>&#x000A;&#x000A;  <span class="ruby-identifier">certainty</span> = <span class="ruby-value">0.0</span>&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">match_criteria</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">crit</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-keyword">if</span> <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">is_true?</span>(<span class="ruby-identifier">qry</span>)&#x000A;      <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">on_succeed</span>&#x000A;      <span class="ruby-identifier">certainty</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">crit</span>&#x000A;    <span class="ruby-keyword">else</span>&#x000A;      <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">on_failure</span>&#x000A;      <span class="ruby-identifier">certainty</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">fail</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">certainty</span> <span class="ruby-operator">/</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">match_criteria</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:penalty?</span>).<span class="ruby-identifier">length</span>.<span class="ruby-identifier">to_f</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">MatchLogicFailure</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-matches-3F-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 38</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">matches?</span>(<span class="ruby-identifier">qry</span>)&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">match_criteria</span>.<span class="ruby-identifier">empty?</span>&#x000A;&#x000A;  <span class="ruby-identifier">tq</span> = <span class="ruby-identifier">filter_parsing_strategies</span>(<span class="ruby-identifier">qry</span>)&#x000A;  <span class="ruby-identifier">certainty</span> = <span class="ruby-value">0.0</span>&#x000A;  <span class="ruby-identifier">match_criteria</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">crit</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-keyword">if</span> <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">is_true?</span>(<span class="ruby-identifier">tq</span>)&#x000A;      <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">on_succeed</span>&#x000A;      <span class="ruby-identifier">certainty</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">crit</span>&#x000A;    <span class="ruby-keyword">else</span>&#x000A;      <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">on_failure</span>&#x000A;      <span class="ruby-identifier">certainty</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">fail</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">certainty</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">match_criteria</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:penalty?</span>).<span class="ruby-identifier">length</span>.<span class="ruby-identifier">to_f</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">MatchLogicFailure</span>&#x000A;  <span class="ruby-keyword">nil</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-new'>
@@ -197,16 +236,14 @@ this function to return a nil</p>
 </div>
 <div class='description'>
 
-<p>Takes in the <a href="Query.html">Query</a> <code>qry</code> and <a
-href="VIBase.html">VIBase</a> <code>vi</code> and sets its values, 
-inheriting from class-instance variables when apropriate.</p>
+<p>Takes in the <a href="Query.html"><code>Query</code></a> <code>qry</code> and <a href="VIBase.html"><code>VIBase</code></a> <code>vi</code> and sets its values, inheriting from class-instance variables when apropriate.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-new-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 109</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">qry</span>, <span class="ruby-identifier">vi</span>)&#x000A;  <span class="ruby-ivar">@name</span> = (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span>)&#x000A;  <span class="ruby-ivar">@group</span> = (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">group</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;none&#39;</span>)&#x000A;  <span class="ruby-ivar">@parameters</span> = (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">default_params</span>&amp;.<span class="ruby-identifier">clone</span> <span class="ruby-operator">||</span> {})&#x000A;  <span class="ruby-ivar">@match_criteria</span> = (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">match_criteria</span> <span class="ruby-operator">||</span> [] )&#x000A;  <span class="ruby-ivar">@query</span> = <span class="ruby-identifier">qry</span>&#x000A;  <span class="ruby-ivar">@vi</span> = <span class="ruby-identifier">vi</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 131</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">qry</span>, <span class="ruby-identifier">vi</span>)&#x000A;  <span class="ruby-ivar">@name</span> = (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span>)&#x000A;  <span class="ruby-ivar">@group</span> = (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">group</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;none&#39;</span>)&#x000A;  <span class="ruby-ivar">@fragments</span> = (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">default_frags</span>&amp;.<span class="ruby-identifier">clone</span> <span class="ruby-operator">||</span> {})&#x000A;  <span class="ruby-ivar">@match_criteria</span> = (<span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">match_criteria</span> <span class="ruby-operator">||</span> [])&#x000A;  <span class="ruby-ivar">@query</span> = <span class="ruby-identifier">qry</span>&#x000A;  <span class="ruby-ivar">@vi</span> = <span class="ruby-identifier">vi</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-test_matches'>
@@ -218,16 +255,14 @@ inheriting from class-instance variables when apropriate.</p>
 </div>
 <div class='description'>
 
-<p>Takes in the <a href="Query.html">Query</a> <code>qry</code> and verbosely
-checks it against the <code>match_criteria</code>  including a string
-representation of the original code block.</p>
+<p>Takes in the <a href="Query.html"><code>Query</code></a> <code>qry</code> and verbosely checks it against the <code>match_criteria</code> including a string representation of the original code block.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-test_matches-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-test_matches-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 57</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">test_matches</span>(<span class="ruby-identifier">qry</span>)&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">match_criteria</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">crit</span><span class="ruby-operator">|</span> &#x000A;    <span class="ruby-identifier">pat</span> = <span class="ruby-regexp">/{.*}/</span>&#x000A;    <span class="ruby-identifier">x</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">readlines</span>(<span class="ruby-identifier">crit</span>.<span class="ruby-identifier">predicate</span>.<span class="ruby-identifier">source_location</span>[<span class="ruby-value">0</span>])[<span class="ruby-identifier">crit</span>.<span class="ruby-identifier">predicate</span>.<span class="ruby-identifier">source_location</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">-</span> <span class="ruby-value">1</span>].<span class="ruby-identifier">slice</span>(<span class="ruby-identifier">pat</span>)&#x000A;    [<span class="ruby-identifier">crit</span>.<span class="ruby-identifier">priority</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">predicate</span>.(<span class="ruby-identifier">qry</span>)]&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-test_matches-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 59</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">test_matches</span>(<span class="ruby-identifier">qry</span>)&#x000A;  <span class="ruby-identifier">tq</span> = <span class="ruby-identifier">filter_parsing_strategies</span>(<span class="ruby-identifier">qry</span>)&#x000A;  <span class="ruby-identifier">match_criteria</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">crit</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">pat</span> = <span class="ruby-regexp">/{.*}/</span>&#x000A;    <span class="ruby-identifier">x</span> =&#x000A;      <span class="ruby-constant">File</span>.<span class="ruby-identifier">readlines</span>(<span class="ruby-identifier">crit</span>.<span class="ruby-identifier">predicate</span>.<span class="ruby-identifier">source_location</span>[<span class="ruby-value">0</span>])[&#x000A;        <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">predicate</span>.<span class="ruby-identifier">source_location</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">-</span> <span class="ruby-value">1</span>&#x000A;      ]&#x000A;        .<span class="ruby-identifier">slice</span>(<span class="ruby-identifier">pat</span>)&#x000A;    [<span class="ruby-identifier">crit</span>.<span class="ruby-identifier">priority</span>, <span class="ruby-identifier">x</span>, <span class="ruby-identifier">crit</span>.<span class="ruby-identifier">predicate</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">tq</span>)]&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <h2>Public Instance methods</h2>
@@ -240,14 +275,14 @@ representation of the original code block.</p>
 </div>
 <div class='description'>
 
-<p>Searches the <code>parameters</code> hash using <code>indx</code></p>
+<p>Searches the <code>fragments</code> hash using <code>indx</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-5B-5D-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-5B-5D-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 119</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">[]</span>(<span class="ruby-identifier">indx</span>)&#x000A;  <span class="ruby-ivar">@parameters</span>[<span class="ruby-identifier">indx</span>]&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-5B-5D-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 141</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">[]</span>(<span class="ruby-identifier">indx</span>)&#x000A;  <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">indx</span>]&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-call'>
@@ -259,35 +294,33 @@ representation of the original code block.</p>
 </div>
 <div class='description'>
 
-<p>Executes a method <code>mtd</code> on this directive. Defaults to executing
-the <a href="Directive.html#method-i-run">run</a> method for some syntactic
-sugar.</p>
+<p>Executes a method <code>mtd</code> on this directive. Defaults to executing the <a href="Directive.html#method-i-run"><code>run</code></a> method for some syntactic sugar.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-call-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-call-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 134</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-identifier">mtd</span> = <span class="ruby-value">:run</span>)&#x000A;  <span class="ruby-identifier">fin</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">mtd</span>).<span class="ruby-identifier">call</span>&#x000A;  <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;No response (#{fin.inspect})&quot;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">fin</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:outgoing_message</span>&#x000A;  <span class="ruby-ivar">@query</span>.<span class="ruby-identifier">complete</span>(<span class="ruby-keyword">self</span>, <span class="ruby-identifier">fin</span>)&#x000A;  <span class="ruby-keyword">self</span> &#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-call-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 156</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">call</span>(<span class="ruby-identifier">mtd</span> = <span class="ruby-value">:run</span>)&#x000A;  <span class="ruby-identifier">fin</span> = <span class="ruby-identifier">send</span>(<span class="ruby-identifier">mtd</span>)&#x000A;  <span class="ruby-keyword">unless</span> <span class="ruby-identifier">fin</span>.<span class="ruby-identifier">respond_to?</span> <span class="ruby-value">:outgoing_message</span>&#x000A;    <span class="ruby-identifier">raise</span> <span class="ruby-node">&quot;No response (#{fin.inspect})&quot;</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-ivar">@response</span> = <span class="ruby-identifier">fin</span>&#x000A;  <span class="ruby-keyword">self</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
-<div class='method public-instance' id='method-method-i-response'>
-<a name='method-i-response'></a>
+<div class='method public-instance' id='method-method-i-frags'>
+<a name='method-i-frags'></a>
 <div class='synopsis'>
-<span class='name'>response</span>
+<span class='name'>frags</span>
 <span class='arguments'>()</span>
 
 </div>
 <div class='description'>
 
-<p>Returns the response from this directive&#39;s <code>query</code></p>
+<p>Shorthand function</p>
 
 </div>
 <div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-response-source&#39;); return false'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-frags-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-response-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 124</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">response</span>&#x000A;  <span class="ruby-identifier">query</span>.<span class="ruby-identifier">response</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-frags-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 146</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">frags</span>&#x000A;  <span class="ruby-identifier">fragments</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-run'>
@@ -299,16 +332,14 @@ sugar.</p>
 </div>
 <div class='description'>
 
-<p>Overridden by child classes. The default method used by the  <a
-href="Directive.html#method-i-call">call</a> function to respond to a
-matched <a href="Query.html">Query</a>.</p>
+<p>Overridden by child classes. The default method used by the <a href="Directive.html#method-i-call"><code>call</code></a> function to respond to a matched <a href="Query.html"><code>Query</code></a>.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 130</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>; <span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 152</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>; <span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-to_s'>
@@ -327,7 +358,7 @@ matched <a href="Query.html">Query</a>.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-to_s-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-to_s-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 142</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_s</span>&#x000A;  <span class="ruby-identifier">query</span>.<span class="ruby-identifier">complete?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">super</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-to_s-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 167</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">to_s</span>&#x000A;  <span class="ruby-identifier">query</span>.<span class="ruby-identifier">complete?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">response</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">super</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

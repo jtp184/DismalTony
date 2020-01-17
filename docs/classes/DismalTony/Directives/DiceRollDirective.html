@@ -38,12 +38,19 @@ Superclass:
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>Rolls dice using GamingDice</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
 <li><a href="#method-i-run">run</a></li>
+</ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-didnt_work">didnt_work</a></li>
+<li><a href="#method-i-malformed-3F">malformed?</a></li>
 </ol>
 </div>
 <div id='context'>
@@ -51,6 +58,7 @@ Superclass:
 <h2>Included modules</h2>
 <ol>
 <li><a href="../DirectiveHelpers/DataRepresentationHelpers.html">DismalTony::DirectiveHelpers::DataRepresentationHelpers</a></li>
+<li><a href="../DirectiveHelpers/EmojiHelpers.html">DismalTony::DirectiveHelpers::EmojiHelpers</a></li>
 </ol>
 </div>
 </div>
@@ -66,12 +74,53 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>Uses a regular expression to detect dice strings and segment the components</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/dice.rb, line 16</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">rolls</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>.<span class="ruby-identifier">scan</span>(<span class="ruby-regexp">/(((a |\d+)d(\d+)(e)?(\+\d+|\-\d+)?)( \&amp; | \+ )*)/i</span>)&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:result</span>] = <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-constant">GamingDice</span>.<span class="ruby-identifier">roll</span>(<span class="ruby-identifier">r</span>[<span class="ruby-value">0</span>]) }&#x000A;  <span class="ruby-identifier">result_string</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;                    <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">first</span>&#x000A;                  <span class="ruby-keyword">else</span>&#x000A;                    <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39;, &#39;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-string">&#39;~e:dice &#39;</span>&#x000A;  <span class="ruby-identifier">resp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Okay! The result#{rolls.length == 1 ? &#39; is&#39; : &#39;s are&#39;}: #{result_string}.&quot;</span>&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:result</span>])&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">resp</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/dice.rb, line 19</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">rolls</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>.<span class="ruby-identifier">scan</span>(<span class="ruby-regexp">/(((a |\d+)d(\d+)(e)?(\+\d+|\-\d+)?)( \&amp; | \+ )*)/i</span>)&#x000A;  &#x000A;  <span class="ruby-identifier">dice_result</span> = <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">r</span><span class="ruby-operator">|</span> <span class="ruby-constant">GamingDice</span>.<span class="ruby-identifier">roll</span>(<span class="ruby-identifier">r</span>[<span class="ruby-value">0</span>]) }&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">didnt_work</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">malformed?</span>(<span class="ruby-identifier">dice_result</span>)&#x000A;&#x000A;  <span class="ruby-identifier">result_string</span> = <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">one?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">first</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">rolls</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&#39;, &#39;</span>)&#x000A;&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-string">&#39;~e:dice &#39;</span>&#x000A;  <span class="ruby-identifier">resp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;Okay! The result#{rolls.one? ? &#39; is&#39; : &#39;s are&#39;}: #{result_string}.&quot;</span>&#x000A;  &#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">dice_result</span>.<span class="ruby-identifier">one?</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">dice_result</span>.<span class="ruby-identifier">first</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">dice_result</span>)&#x000A;  &#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">resp</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-didnt_work'>
+<a name='method-i-didnt_work'></a>
+<div class='synopsis'>
+<span class='name'>didnt_work</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>A Response for if we knew to roll dice but couldn&#39;t resolve the string</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-didnt_work-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-didnt_work-source'><span class="ruby-comment"># File lib/dismaltony/directives/dice.rb, line 43</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">didnt_work</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{negative_emoji} Sorry, I couldn&#39;t parse that dice string.&quot;</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-malformed-3F'>
+<a name='method-i-malformed-3F'></a>
+<div class='synopsis'>
+<span class='name'>malformed?</span>
+<span class='arguments'>(dr)</span>
+
+</div>
+<div class='description'>
+
+<p>Ensures the dice string is not malformed</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-malformed-3F-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-malformed-3F-source'><span class="ruby-comment"># File lib/dismaltony/directives/dice.rb, line 38</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">malformed?</span>(<span class="ruby-identifier">dr</span>)&#x000A;  <span class="ruby-identifier">dr</span>.<span class="ruby-identifier">one?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">dr</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Array</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">dr</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">empty?</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

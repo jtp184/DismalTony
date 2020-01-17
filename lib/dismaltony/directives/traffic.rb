@@ -3,20 +3,24 @@ require 'google_maps_service'
 require 'ruby-units'
 require 'duration'
 
-module DismalTony::DirectiveHelpers
+module DismalTony::DirectiveHelpers # :nodoc:
+  # Service object that wraps GoogleMapsAPI
   module GoogleMapsServiceHelpers
     include HelperTemplate
 
+    # The Class methods of the helper, included on module inclusion
     module ClassMethods
+      # Yields the GoogleMapsService::Client object
       def gmaps_client
         @gmaps_client ||= GoogleMapsService::Client.new(key: ENV['google_maps_api_key'])
       end
 
+      # Defines the GoogleMapsRoute Struct
       def data_struct_template
-        @data_struct_template unless @data_struct_template.nil?
-        Struct::GoogleMapsRoute
+        return @data_struct_template unless @data_struct_template.nil?
       rescue NameError
         @data_struct_template ||= Struct.new('GoogleMapsRoute', :distance, :duration, :start_address, :end_address, :steps, :raw) do
+          # Emits each step
           def step_list
             outp = ''
             steps.each_with_index do |_slug, ix|
@@ -25,12 +29,14 @@ module DismalTony::DirectiveHelpers
             outp
           end
 
+          # Emits the step at +n+
           def step_string(n)
             i = steps[n][:html_instructions].clone
             i.gsub!(%r{<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)</\1>}i) { %(#{"\n\n" if Regexp.last_match(1) == 'div'}#{Regexp.last_match(2)}) }
             i
           end
 
+          # Gives a time for step +n+
           def time_string(n)
             i = steps[n][:duration][:text]
           end
@@ -38,12 +44,16 @@ module DismalTony::DirectiveHelpers
       end
     end
 
+    # The Instance methods of the helper, included on module inclusion
     module InstanceMethods
+      # The GoogleMapsAPI client, as yielded from the class 
       def gmaps_client
         @gmaps_client ||= self.class.gmaps_client
         @gmaps_client
       end
 
+      # Takes in mandatory options for +opts+ :start_address and :end_address
+      # , and optionally :mode and :departure_time, returns a GoogleMapsRoute
       def gmaps_directions(opts = {})
         req = gmaps_client.directions(
           opts.fetch(:start_address),
@@ -69,7 +79,8 @@ module DismalTony::DirectiveHelpers
   end
 end
 
-module DismalTony::Directives
+module DismalTony::Directives # :nodoc:
+  # Gets the traffic time
   class TrafficReportDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::DataStructHelpers
@@ -77,6 +88,7 @@ module DismalTony::Directives
     include DismalTony::DirectiveHelpers::EmojiHelpers
     include DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers
 
+    # Comparative array for how much traffic sucks
     PATIENCE_LIMITS = {
       none: 0.5,
       low: 1.0,
@@ -111,6 +123,7 @@ module DismalTony::Directives
       make[/^very high$/i] = ['backed up', 'very heavy', 'very high', 'highly dense', 'significant']
     end
 
+    # Gets both locations, gets traffic time for them
     def run
       frags[:start_address] = query.locations.first.text
       frags[:end_address] = query.locations.last.text
@@ -119,61 +132,73 @@ module DismalTony::Directives
 
     private
 
+    # Takes start and end address, converts it to directions, and takes the duration 
     def get_traffic_time
       req = gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
       return_data(req)
+
       t = (req.duration.total.to_f / 60) / req.distance.scalar
 
-      badness = TrafficReportDirective::PATIENCE_LIMITS.find_all do |_k, v|
-        v < t
-      end.last.first
+      lim = TrafficReportDirective::PATIENCE_LIMITS
 
-      moji_choice = case badness
-                    when :none
-                      random_emoji('100', 'star', 'thumbsup', 'car', 'clock', 'stopwatch')
-                    when :low
-                      random_emoji('clockface', 'stopwatch', 'mappin', 'worldmap', 'car')
-                    when :medium
-                      random_emoji('stopwatch', 'hourglass', 'alarmclock', 'worldmap', 'car', 'bus', '')
-                    when :high
-                      random_emoji('frown', 'gate', 'car', 'hourglass', 'alarmclock', 'snail')
-                    when :very_high
-                      random_emoji('bomb', 'gate', 'car', 'hourglass', 'snail', 'frown', 'pickaxe')
-                    when :harrowing
-                      time_emoji
-      end
+      badness = lim.find_all { |_k, v| v < t }
+                   .last
+                   .first
 
-      badness_string = case badness
-                       when :none
-                         synonym_for 'none'
-                       when :low
-                         synonym_for 'low'
-                       when :medium
-                         synonym_for 'medium'
-                       when :high
-                         synonym_for 'high'
-                       when :very_high
-                         synonym_for 'very high'
-                       when :harrowing
-                         'harrowing'
-      end
-
-      say_this = ''
-      say_this << "~e:#{moji_choice} "
-      say_this << "The traffic on the way to #{frags[:end_address]} is #{badness_string}. It will take #{time_str(req[:duration])} to get there."
-      DismalTony::HandledResponse.finish(say_this)
+      DismalTony::HandledResponse.finish(response_string(badness))
     end
 
-    def time_str(tim)
-      hrs = Integer(tim.format('%h'))
-      if hrs > 0
-        tim.format('%h %~h and %m %~m')
-      else
-        tim.format('%m %~m')
+    # Converts the patience limit +badness+ into an emoji
+    def emoji_choice(badness)
+      case badness
+      when :none
+        random_emoji('100', 'star', 'thumbsup', 'car', 'clock', 'stopwatch')
+      when :low
+        random_emoji('clockface', 'stopwatch', 'mappin', 'worldmap', 'car')
+      when :medium
+        random_emoji('stopwatch', 'hourglass', 'alarmclock', 'worldmap', 'car', 'bus', '')
+      when :high
+        random_emoji('frown', 'gate', 'car', 'hourglass', 'alarmclock', 'snail')
+      when :very_high
+        random_emoji('bomb', 'gate', 'car', 'hourglass', 'snail', 'frown', 'pickaxe')
+      when :harrowing
+        time_emoji
       end
+    end
+
+    # Converts the patience limit +badness+ into a representation of itself
+    def badness_string(badness)
+      case badness
+      when :none
+        synonym_for 'none'
+      when :low
+        synonym_for 'low'
+      when :medium
+        synonym_for 'medium'
+      when :high
+        synonym_for 'high'
+      when :very_high
+        synonym_for 'very high'
+      when :harrowing
+        'harrowing'
+      end
+    end
+
+    # Takes in +badness+ and returns a composite string
+    def response_string(badness)
+      s = ''
+      s << "~e:#{emoji_choice(badness)} "
+      s << "The traffic on the way to "
+      s << frags[:end_address]
+      s << " is "
+      s << badness_string(badness)}
+      s <<  ". It will take "
+      s << req[:duration].to_s
+      s << " to get there."
     end
   end
 
+  # Gets directions between locations
   class MapsDirectionsDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::DataStructHelpers
@@ -195,6 +220,7 @@ module DismalTony::Directives
       qry << must(&:locations?)
     end
 
+    # Gets start and end address, and lists directions
     def run
       frags[:start_address] = query.locations.first.text
       frags[:end_address] = query.locations.last.text
@@ -203,6 +229,7 @@ module DismalTony::Directives
 
     private
 
+    # Gets directions and also returns the step list
     def list_all_directions
       req = gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
       return_data(req)
@@ -217,6 +244,7 @@ module DismalTony::Directives
     end
   end
 
+  # Gets the distance between locations
   class GetDistanceDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::DataStructHelpers
@@ -238,6 +266,7 @@ module DismalTony::Directives
       qry << must(&:locations?)
     end
 
+    # Gets the start and end address and then gets the distance
     def run
       frags[:start_address] = query.locations.first.text
       frags[:end_address] = query.locations.last.text
@@ -246,6 +275,7 @@ module DismalTony::Directives
 
     private
 
+    # Gets the distance and returns a response describing it
     def get_distance
       req = gmaps_directions(start_address: frags[:start_address], end_address: frags[:end_address])
       return_data(req)

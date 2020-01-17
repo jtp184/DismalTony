@@ -39,9 +39,7 @@ Superclass:
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Represents the result of running VIBase#query! for a query. Functions as a
-rich join of the return message and the changed conversation state, with
-formatting options.</p>
+<p>Represents the result of running VIBase#query! for a query. Functions as a rich join of the return message and the changed conversation state, with formatting options.</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -75,8 +73,7 @@ formatting options.</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>A <a href="ConversationState.html">ConversationState</a> object
-representing the User&#39;s new state after running the query</p>
+<p>A <a href="ConversationState.html"><code>ConversationState</code></a> object representing the User&#39;s new state after running the query</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -111,8 +108,7 @@ representing the User&#39;s new state after running the query</p>
 </div>
 <div class='description'>
 
-<p>Returns the error response, which is the same as finish with a message of
-<code>&quot;~e:frown I&#39;m sorry, I didn&#39;t understand&#x000A;that!&quot;</code></p>
+<p>Returns the error response, which is the same as finish with a message of <code>&quot;~e:frown I&#39;m sorry, I didn&#39;t understand that!&quot;</code></p>
 
 </div>
 <div class='source'>
@@ -131,16 +127,14 @@ representing the User&#39;s new state after running the query</p>
 </div>
 <div class='description'>
 
-<p>Produces a new <a href="HandledResponse.html">HandledResponse</a> with a
-blank <a href="ConversationState.html">ConversationState</a> and a return
-message of <code>rm</code></p>
+<p>Produces a new <a href="HandledResponse.html"><code>HandledResponse</code></a> with a blank <a href="ConversationState.html"><code>ConversationState</code></a> and a return message of <code>rm</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-finish-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-finish-source'><span class="ruby-comment"># File lib/dismaltony/handled_response.rb, line 35</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">finish</span>(<span class="ruby-identifier">rm</span> = <span class="ruby-string">&#39;&#39;</span>)&#x000A;  <span class="ruby-identifier">new_state</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">ConversationState</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">idle:</span> <span class="ruby-keyword">true</span>, <span class="ruby-value">use_next:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">next_directive:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">next_method:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">data:</span> <span class="ruby-keyword">nil</span>, <span class="ruby-value">parse_next:</span> <span class="ruby-keyword">true</span>)&#x000A;  <span class="ruby-identifier">new</span>(<span class="ruby-identifier">rm</span>, <span class="ruby-identifier">new_state</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-finish-source'><span class="ruby-comment"># File lib/dismaltony/handled_response.rb, line 35</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">finish</span>(<span class="ruby-identifier">rm</span> = <span class="ruby-string">&#39;&#39;</span>)&#x000A;  <span class="ruby-identifier">new_state</span> =&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">ConversationState</span>.<span class="ruby-identifier">new</span>(&#x000A;      <span class="ruby-value">idle:</span> <span class="ruby-keyword">true</span>,&#x000A;      <span class="ruby-value">use_next:</span> <span class="ruby-keyword">nil</span>,&#x000A;      <span class="ruby-value">next_directive:</span> <span class="ruby-keyword">nil</span>,&#x000A;      <span class="ruby-value">next_method:</span> <span class="ruby-keyword">nil</span>,&#x000A;      <span class="ruby-value">data:</span> <span class="ruby-keyword">nil</span>,&#x000A;      <span class="ruby-value">parse_next:</span> <span class="ruby-keyword">true</span>&#x000A;    )&#x000A;  <span class="ruby-identifier">new</span>(<span class="ruby-identifier">rm</span>, <span class="ruby-identifier">new_state</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-new'>
@@ -152,8 +146,7 @@ message of <code>rm</code></p>
 </div>
 <div class='description'>
 
-<p>Creates a new response with <code>rm</code> serving as the outgoing
-message, and <code>cs</code> the conversation state</p>
+<p>Creates a new response with <code>rm</code> serving as the outgoing message, and <code>cs</code> the conversation state</p>
 
 </div>
 <div class='source'>
@@ -172,17 +165,14 @@ message, and <code>cs</code> the conversation state</p>
 </div>
 <div class='description'>
 
-<p>Creates a response whose <a
-href="ConversationState.html">ConversationState</a> redirects control flow.
-Passes on next_directive, next_method, data, and parse_next via the
-<code>opts</code> hash.</p>
+<p>Creates a response whose <a href="ConversationState.html"><code>ConversationState</code></a> redirects control flow. Passes on next_directive, next_method, data, and parse_next via the <code>opts</code> hash.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-then_do-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-then_do-source'><span class="ruby-comment"># File lib/dismaltony/handled_response.rb, line 41</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">then_do</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">opts</span>)&#x000A;  <span class="ruby-identifier">new_state</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">ConversationState</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">idle:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">next_directive:</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:directive</span>].<span class="ruby-identifier">name</span>, <span class="ruby-value">next_method:</span> (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:method</span>] <span class="ruby-operator">||</span> <span class="ruby-value">:run</span>), <span class="ruby-value">data:</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:data</span>], <span class="ruby-value">parse_next:</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:parse_next</span>) { <span class="ruby-keyword">true</span> })&#x000A;  <span class="ruby-identifier">new</span>(<span class="ruby-identifier">opts</span>[<span class="ruby-value">:message</span>], <span class="ruby-identifier">new_state</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-then_do-source'><span class="ruby-comment"># File lib/dismaltony/handled_response.rb, line 49</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">then_do</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">opts</span>)&#x000A;  <span class="ruby-identifier">new_state</span> =&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">ConversationState</span>.<span class="ruby-identifier">new</span>(&#x000A;      <span class="ruby-value">idle:</span> <span class="ruby-keyword">false</span>,&#x000A;      <span class="ruby-value">next_directive:</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:directive</span>].<span class="ruby-identifier">name</span>,&#x000A;      <span class="ruby-value">next_method:</span> (<span class="ruby-identifier">opts</span>[<span class="ruby-value">:method</span>] <span class="ruby-operator">||</span> <span class="ruby-value">:run</span>),&#x000A;      <span class="ruby-value">data:</span> <span class="ruby-identifier">opts</span>[<span class="ruby-value">:data</span>],&#x000A;      <span class="ruby-value">parse_next:</span> <span class="ruby-identifier">opts</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:parse_next</span>) { <span class="ruby-keyword">true</span> }&#x000A;    )&#x000A;  <span class="ruby-identifier">new</span>(<span class="ruby-identifier">opts</span>[<span class="ruby-value">:message</span>], <span class="ruby-identifier">new_state</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <h2>Public Instance methods</h2>
@@ -214,8 +204,7 @@ Passes on next_directive, next_method, data, and parse_next via the
 </div>
 <div class='description'>
 
-<p>Returns <a
-href="HandledResponse.html#attribute-i-outgoing_message">outgoing_message</a></p>
+<p>Returns <a href="HandledResponse.html#attribute-i-outgoing_message"><code>outgoing_message</code></a></p>
 
 </div>
 <div class='source'>
@@ -234,15 +223,14 @@ href="HandledResponse.html#attribute-i-outgoing_message">outgoing_message</a></p
 </div>
 <div class='description'>
 
-<p>Allows you to append formatting options <code>form</code> to a Class Method
-created response easily.</p>
+<p>Allows you to append formatting options <code>form</code> to a Class Method created response easily.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-with_format-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-with_format-source'><span class="ruby-comment"># File lib/dismaltony/handled_response.rb, line 47</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">with_format</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">form</span>)&#x000A;  <span class="ruby-ivar">@format</span> = <span class="ruby-identifier">form</span>&#x000A;  <span class="ruby-keyword">self</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-with_format-source'><span class="ruby-comment"># File lib/dismaltony/handled_response.rb, line 62</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">with_format</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">form</span>)&#x000A;  <span class="ruby-ivar">@format</span> = <span class="ruby-identifier">form</span>&#x000A;  <span class="ruby-keyword">self</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

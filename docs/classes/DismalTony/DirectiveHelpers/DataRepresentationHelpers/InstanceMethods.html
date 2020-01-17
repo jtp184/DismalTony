@@ -28,15 +28,14 @@ DismalTony::DirectiveHelpers::DataRepresentationHelpers::InstanceMethods
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+<a href="../../../../files/lib/dismaltony/directive_helpers/data_representation_helpers_rb.html">lib/dismaltony/directive_helpers/data_representation_helpers.rb</a>
 </li>
 </ol>
 </div>
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Provides a mechanism to return rich values from responses Contains the
-Instance methods of the helper, which are added on inclusion</p>
+<p>Provides a mechanism to return rich values from responses Contains the Instance methods of the helper, which are added on inclusion</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -61,15 +60,14 @@ Instance methods of the helper, which are added on inclusion</p>
 </div>
 <div class='description'>
 
-<p>Instance hook for <a
-href="InstanceMethods.html#method-i-data_representation">#data_representation</a></p>
+<p>Instance hook for <a href="InstanceMethods.html#method-i-data_representation"><code>data_representation</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_representation-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-data_representation-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 352</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_representation</span>&#x000A;  <span class="ruby-ivar">@data_representation</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">data_representation</span>&#x000A;  <span class="ruby-ivar">@data_representation</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">parameters</span>&#x000A;  <span class="ruby-ivar">@data_representation</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>&#x000A;  <span class="ruby-ivar">@data_representation</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-data_representation-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/data_representation_helpers.rb, line 30</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_representation</span>&#x000A;  <span class="ruby-ivar">@data_representation</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">data_representation</span>&#x000A;  <span class="ruby-ivar">@data_representation</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">fragments</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">fragments</span>.<span class="ruby-identifier">empty?</span>&#x000A;  <span class="ruby-ivar">@data_representation</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-data_representation-3D'>
@@ -81,16 +79,14 @@ href="InstanceMethods.html#method-i-data_representation">#data_representation</a
 </div>
 <div class='description'>
 
-<p>Sets <a
-href="InstanceMethods.html#method-i-data_representation">#data_representation</a>
-to <code>new_val</code></p>
+<p>Sets <a href="InstanceMethods.html#method-i-data_representation"><code>data_representation</code></a> to <code>new_val</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_representation-3D-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-data_representation-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 360</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_representation=</span>(<span class="ruby-identifier">new_val</span>)&#x000A;  <span class="ruby-ivar">@data_representation</span> = <span class="ruby-identifier">new_val</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-data_representation-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/data_representation_helpers.rb, line 37</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_representation=</span>(<span class="ruby-identifier">new_val</span>)&#x000A;  <span class="ruby-ivar">@data_representation</span> = <span class="ruby-identifier">new_val</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-return_data'>
@@ -109,7 +105,7 @@ to <code>new_val</code></p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-return_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-return_data-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 365</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">return_data</span>(<span class="ruby-identifier">data</span>)&#x000A;  <span class="ruby-ivar">@data_representation</span> = <span class="ruby-identifier">data</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-return_data-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/data_representation_helpers.rb, line 42</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">return_data</span>(<span class="ruby-identifier">data</span>)&#x000A;  <span class="ruby-ivar">@data_representation</span> = <span class="ruby-identifier">data</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

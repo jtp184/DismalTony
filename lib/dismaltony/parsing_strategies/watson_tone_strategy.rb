@@ -1,8 +1,10 @@
 require 'ibm_watson'
 
-module DismalTony
-  module ParsingStrategies
+module DismalTony # :nodoc:
+  module ParsingStrategies # :nodoc:
+    # Uses IBM Watson to detect sentence tone
     class WatsonToneStrategy < ParsingStrategy
+      # Takes in Query +q+ and parses it into a WatsonToneMap
       def self.call(q)
         qry = {
           utterances: [{ text: q }],
@@ -17,10 +19,11 @@ module DismalTony
         WatsonToneMap.new(tn)
       end
 
-      def self.value_class
+      def self.value_class # :nodoc:
         WatsonToneMap
       end
 
+      # The Watson Tone Analyzer instance
       def self.watson
         return @watson if @watson
 
@@ -31,6 +34,7 @@ module DismalTony
       end
     end
 
+    # The collection of WatsonTone objects with behaviors to check tones
     class WatsonToneMap
       # The collection of Tone objects
       attr_reader :tones
@@ -38,23 +42,25 @@ module DismalTony
       # Takes in an array of tones +tns+
       def initialize(tns)
         @tones = Array(tns)
-        end
+      end
 
       # Returns Tone#to_sym for all tones
       def tone_symbols
         tones.map(&:to_sym)
-        end
+      end
 
       # Sorts tones by Tone#score and returns highest
       def primary_tone
         tones.max_by(&:score)
       end
 
+      # For each +label+ defines a predicate method that returns true if that tone is found
       %i[sad frustrated satisfied excited polite impolite sympathetic neutral].each do |label|
         define_method((label.to_s << '?').to_sym) { tones.any? { |t| t.to_sym == label } }
       end
     end
 
+    # Represents a located tone
     class WatsonTone
       # Confidence interval that this tone was present
       attr_reader :score

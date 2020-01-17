@@ -28,7 +28,7 @@ DismalTony::Directives::GreetingDirective
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../files/lib/dismaltony/directives/conversation_rb.html">lib/dismaltony/directives/conversation.rb</a>
+<a href="../../../files/lib/dismaltony/directives/core_rb.html">lib/dismaltony/directives/core.rb</a>
 </li>
 </ol>
 <div class='parent'>
@@ -38,7 +38,9 @@ Superclass:
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>Handles basic hellos</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
@@ -67,12 +69,14 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>Responds with some randomized emoji</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 15</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/how are you/i</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:thumbsup I&#39;m doing well!&quot;</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;wave&#39;</span>, <span class="ruby-string">&#39;smile&#39;</span>, <span class="ruby-string">&#39;rocket&#39;</span>, <span class="ruby-string">&#39;star&#39;</span>, <span class="ruby-string">&#39;snake&#39;</span>, <span class="ruby-string">&#39;cat&#39;</span>, <span class="ruby-string">&#39;octo&#39;</span>, <span class="ruby-string">&#39;spaceinvader&#39;</span>)&#x000A;    <span class="ruby-identifier">resp</span> = <span class="ruby-node">%(#{synonym_for(&#39;hello&#39;).capitalize}#{&#39;, &#39; + query.user[&#39;nickname&#39;] if (0..100).to_a.sample &lt; 75}#{[&#39;!&#39;, &#39;.&#39;].sample})</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} #{resp}&quot;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/core.rb, line 17</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-regexp">/how are you/</span>.<span class="ruby-identifier">match?</span>(<span class="ruby-identifier">query</span>)&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:thumbsup I&#39;m doing well!&quot;</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">random_emoji</span>(&#x000A;      <span class="ruby-string">&#39;wave&#39;</span>,&#x000A;      <span class="ruby-string">&#39;smile&#39;</span>,&#x000A;      <span class="ruby-string">&#39;rocket&#39;</span>,&#x000A;      <span class="ruby-string">&#39;star&#39;</span>,&#x000A;      <span class="ruby-string">&#39;snake&#39;</span>,&#x000A;      <span class="ruby-string">&#39;cat&#39;</span>,&#x000A;      <span class="ruby-string">&#39;octo&#39;</span>,&#x000A;      <span class="ruby-string">&#39;spaceinvader&#39;</span>&#x000A;    )&#x000A;    <span class="ruby-identifier">resp</span> = <span class="ruby-node">&quot;#{synonym_for(&#39;hello&#39;).capitalize}&quot;</span>&#x000A;    <span class="ruby-identifier">resp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&#39;, &#39;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">user</span>[<span class="ruby-value">:nickname</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">rand</span>(<span class="ruby-value">4</span>) <span class="ruby-operator">&lt;=</span> <span class="ruby-value">2</span>&#x000A;    <span class="ruby-identifier">resp</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;!&#39;</span>, <span class="ruby-string">&#39;.&#39;</span>].<span class="ruby-identifier">sample</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} #{resp}&quot;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

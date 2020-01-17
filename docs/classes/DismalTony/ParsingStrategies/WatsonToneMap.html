@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::ParsingStrategies::WatsonToneMap</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>class</span>
+DismalTony::ParsingStrategies::WatsonToneMap
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../files/lib/dismaltony/parsing_strategies/watson_tone_strategy_rb.html">lib/dismaltony/parsing_strategies/watson_tone_strategy.rb</a>
+</li>
+</ol>
+<div class='parent'>
+Superclass:
+<strong>Object</strong>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>The collection of <a href="WatsonTone.html"><code>WatsonTone</code></a> objects with behaviors to check tones</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Class</h3>
+<ol>
+<li><a href="#method-c-new">new</a></li>
+</ol>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-primary_tone">primary_tone</a></li>
+<li><a href="#method-i-tone_symbols">tone_symbols</a></li>
+<li><a href="#attribute-i-tones">tones</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='attribute-list'>
+<h2 class='section-bar'>Attributes</h2>
+<div class='name-list'>
+<table>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>
+<a name='attribute-i-tones'>tones</a>
+</td>
+<td class='context-item-value'>[R]</td>
+<td class='context-item-desc'>
+<p>The collection of Tone objects</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div id='methods'>
+<h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-new'>
+<a name='method-c-new'></a>
+<div class='synopsis'>
+<span class='name'>new</span>
+<span class='arguments'>(tns)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in an array of tones <code>tns</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-new-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/parsing_strategies/watson_tone_strategy.rb, line 43</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">tns</span>)&#x000A;  <span class="ruby-ivar">@tones</span> = <span class="ruby-constant">Array</span>(<span class="ruby-identifier">tns</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-primary_tone'>
+<a name='method-i-primary_tone'></a>
+<div class='synopsis'>
+<span class='name'>primary_tone</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Sorts tones by Tone#score and returns highest</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-primary_tone-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-primary_tone-source'><span class="ruby-comment"># File lib/dismaltony/parsing_strategies/watson_tone_strategy.rb, line 53</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">primary_tone</span>&#x000A;  <span class="ruby-identifier">tones</span>.<span class="ruby-identifier">max_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:score</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-tone_symbols'>
+<a name='method-i-tone_symbols'></a>
+<div class='synopsis'>
+<span class='name'>tone_symbols</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Returns Tone#to_sym for all tones</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-tone_symbols-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-tone_symbols-source'><span class="ruby-comment"># File lib/dismaltony/parsing_strategies/watson_tone_strategy.rb, line 48</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tone_symbols</span>&#x000A;  <span class="ruby-identifier">tones</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_sym</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

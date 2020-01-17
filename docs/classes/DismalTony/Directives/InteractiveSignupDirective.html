@@ -38,39 +38,54 @@ Superclass:
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>Handles inviting and onboarding users</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
-<li><a href="#method-i-finish_msg">finish_msg</a></li>
+<li><a href="#method-i-get_first_name">get_first_name</a></li>
 <li><a href="#method-i-get_last_name">get_last_name</a></li>
-<li><a href="#method-i-get_name">get_name</a></li>
-<li><a href="#method-i-return_cs">return_cs</a></li>
+<li><a href="#method-i-get_nickname">get_nickname</a></li>
 <li><a href="#method-i-run">run</a></li>
+</ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-begin_cs">begin_cs</a></li>
+<li><a href="#method-i-blank_user">blank_user</a></li>
+<li><a href="#method-i-finish_msg">finish_msg</a></li>
 <li><a href="#method-i-welcome_msg">welcome_msg</a></li>
 </ol>
 </div>
 <div id='context'>
+<div id='includes'>
+<h2>Included modules</h2>
+<ol>
+<li><a href="../DirectiveHelpers/InterrogativeHelpers.html">DismalTony::DirectiveHelpers::InterrogativeHelpers</a></li>
+</ol>
+</div>
 </div>
 <div id='section'>
 <div id='methods'>
 <h2>Public Instance methods</h2>
-<div class='method public-instance' id='method-method-i-finish_msg'>
-<a name='method-i-finish_msg'></a>
+<div class='method public-instance' id='method-method-i-get_first_name'>
+<a name='method-i-get_first_name'></a>
 <div class='synopsis'>
-<span class='name'>finish_msg</span>
+<span class='name'>get_first_name</span>
 <span class='arguments'>()</span>
 
 </div>
 <div class='description'>
 
+<p>TOREPLACE</p>
+
 </div>
 <div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-finish_msg-source&#39;); return false'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_first_name-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-finish_msg-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 44</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">finish_msg</span>&#x000A;  <span class="ruby-identifier">moj</span> = <span class="ruby-node">%w[wave smile envelopeheart checkbox thumbsup star toast]</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-node">&quot;~e:#{moj} Greetings, #{parameters[:user_id][:nickname]}!&quot;</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-get_first_name-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 91</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_first_name</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:first_name</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">then_do</span>(&#x000A;    <span class="ruby-value">message:</span> <span class="ruby-string">&quot;~e:thumbsup Okay! And what is your complete last name?&quot;</span>,&#x000A;    <span class="ruby-value">next_directive:</span> <span class="ruby-keyword">self</span>,&#x000A;    <span class="ruby-value">method:</span> <span class="ruby-value">:get_first_name</span>,&#x000A;    <span class="ruby-value">data:</span> <span class="ruby-identifier">frags</span>&#x000A;  )&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-get_last_name'>
@@ -82,46 +97,33 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>TOREPLACE</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_last_name-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-get_last_name-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 57</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_last_name</span>&#x000A;  <span class="ruby-identifier">the_user</span> = <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span> <span class="ruby-identifier">u</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>] }&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>][<span class="ruby-value">:last_name</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>&#x000A;  <span class="ruby-identifier">the_user</span>.<span class="ruby-identifier">modify_user_data</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>].<span class="ruby-identifier">user_data</span>)&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">finish_msg</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-get_last_name-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 80</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_last_name</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:last_name</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">then_do</span>(&#x000A;    <span class="ruby-value">message:</span> <span class="ruby-string">&quot;~e:pencil Okay! And what is your complete last name?&quot;</span>,&#x000A;    <span class="ruby-value">next_directive:</span> <span class="ruby-keyword">self</span>,&#x000A;    <span class="ruby-value">method:</span> <span class="ruby-value">:get_nickname</span>,&#x000A;    <span class="ruby-value">data:</span> <span class="ruby-identifier">frags</span>&#x000A;  )&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
-<div class='method public-instance' id='method-method-i-get_name'>
-<a name='method-i-get_name'></a>
+<div class='method public-instance' id='method-method-i-get_nickname'>
+<a name='method-i-get_nickname'></a>
 <div class='synopsis'>
-<span class='name'>get_name</span>
+<span class='name'>get_nickname</span>
 <span class='arguments'>()</span>
 
 </div>
 <div class='description'>
 
-</div>
-<div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_name-source&#39;); return false'>
-[show source]
-</a>
-<pre id='method-i-get_name-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 64</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_name</span>&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/\s/</span>&#x000A;    <span class="ruby-identifier">the_user</span> = <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span> <span class="ruby-identifier">u</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>] }&#x000A;    <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>][<span class="ruby-value">:first_name</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39; &#39;</span>)[<span class="ruby-value">0</span>]&#x000A;    <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>][<span class="ruby-value">:last_name</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39; &#39;</span>)[<span class="ruby-value">1</span>]&#x000A;&#x000A;    <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>][<span class="ruby-value">:nickname</span>] = <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>][<span class="ruby-value">:first_name</span>]&#x000A;    <span class="ruby-identifier">the_user</span>.<span class="ruby-identifier">modify_user_data</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>].<span class="ruby-identifier">user_data</span>)&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">finish_msg</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>][<span class="ruby-value">:first_name</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>&#x000A;    <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>][<span class="ruby-value">:nickname</span>] = <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>][<span class="ruby-value">:first_name</span>]&#x000A;    <span class="ruby-identifier">the_user</span>.<span class="ruby-identifier">modify_user_data</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>].<span class="ruby-identifier">user_data</span>)&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">then_do</span>(<span class="ruby-value">directive:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">method:</span> <span class="ruby-value">:get_last_name</span>, <span class="ruby-value">data:</span> <span class="ruby-identifier">parameters</span>, <span class="ruby-value">parse_next:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">message:</span> <span class="ruby-string">&#39;Okay! And what is your last name?&#39;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
-</div>
-</div>
-<div class='method public-instance' id='method-method-i-return_cs'>
-<a name='method-i-return_cs'></a>
-<div class='synopsis'>
-<span class='name'>return_cs</span>
-<span class='arguments'>()</span>
-
-</div>
-<div class='description'>
+<p>TOREPLACE</p>
 
 </div>
 <div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-return_cs-source&#39;); return false'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_nickname-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-return_cs-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 49</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">return_cs</span>&#x000A;  <span class="ruby-identifier">cs</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">ConversationState</span>.<span class="ruby-identifier">new</span>(&#x000A;    <span class="ruby-value">next_directive:</span> <span class="ruby-keyword">self</span>,&#x000A;    <span class="ruby-value">next_method:</span> <span class="ruby-value">:get_name</span>,&#x000A;    <span class="ruby-value">parse_next:</span> <span class="ruby-keyword">false</span>&#x000A;  )&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-get_nickname-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 102</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_nickname</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:nickname</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>&#x000A;&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">update_user</span>(<span class="ruby-identifier">frags</span>[<span class="ruby-value">:uuid</span>]) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">usr</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">usr</span>[<span class="ruby-value">:first_name</span>] = <span class="ruby-identifier">frags</span>[<span class="ruby-value">:first_name</span>]&#x000A;    <span class="ruby-identifier">usr</span>[<span class="ruby-value">:last_name</span>] = <span class="ruby-identifier">frags</span>[<span class="ruby-value">:last_name</span>]&#x000A;    <span class="ruby-identifier">usr</span>[<span class="ruby-value">:nickname</span>] = <span class="ruby-identifier">frags</span>[<span class="ruby-value">:nickname</span>]&#x000A;  <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">finish_msg</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-run'>
@@ -133,15 +135,75 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>Entry point, takes in the phone number and starts a new user for it</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 81</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:send_number</span>] = <span class="ruby-string">&#39;+1&#39;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">query</span>[<span class="ruby-string">&#39;pos&#39;</span>, <span class="ruby-string">&#39;NUM&#39;</span>].<span class="ruby-identifier">first</span>.<span class="ruby-identifier">to_s</span>&#x000A;  <span class="ruby-identifier">ncs</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">previous_state</span>.<span class="ruby-identifier">clone</span>&#x000A;  <span class="ruby-identifier">ncs</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">return_cs</span>)&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>] = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">UserIdentity</span>.<span class="ruby-identifier">new</span>(&#x000A;    <span class="ruby-value">user_data:</span> { <span class="ruby-value">phone:</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:send_number</span>] },&#x000A;    <span class="ruby-value">conversation_state:</span> <span class="ruby-identifier">ncs</span>&#x000A;  )&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">new_user</span>(<span class="ruby-value">user_data:</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:user_id</span>].<span class="ruby-identifier">user_data</span>)&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">say_through</span>(<span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">SMSInterface</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:send_number</span>]), <span class="ruby-identifier">welcome_msg</span>)&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:thumbsup Okay! I sent the message to #{parameters[:send_number]}&quot;</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 60</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:phone</span>] = <span class="ruby-identifier">q</span>.<span class="ruby-identifier">other_entity</span>&#x000A;                   .<span class="ruby-identifier">text</span>&#x000A;  &#x000A;  <span class="ruby-identifier">noob</span> = <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">new_user</span>(<span class="ruby-identifier">blank_user</span>)&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:uuid</span>] = <span class="ruby-identifier">noob</span>[<span class="ruby-value">:uuid</span>]&#x000A;&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">say_through</span>(&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">SMSInterface</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">frags</span>[<span class="ruby-value">:send_number</span>]),&#x000A;    <span class="ruby-identifier">welcome_msg</span>&#x000A;  )&#x000A;  &#x000A;  <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">positive_emoji</span>&#x000A;&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(&#x000A;    <span class="ruby-node">&quot;~e:#{moj} Okay! I sent the message to #{frags[:send_number]}&quot;</span>&#x000A;  )&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
-<div class='method public-instance' id='method-method-i-welcome_msg'>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-begin_cs'>
+<a name='method-i-begin_cs'></a>
+<div class='synopsis'>
+<span class='name'>begin_cs</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>A <a href="../ConversationState.html"><code>ConversationState</code></a> that points back to this <a href="../Directive.html"><code>Directive</code></a> to continue the process</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-begin_cs-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-begin_cs-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 140</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">begin_cs</span>&#x000A;  <span class="ruby-identifier">cs</span> =&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">ConversationState</span>.<span class="ruby-identifier">new</span>(&#x000A;      <span class="ruby-value">next_directive:</span> <span class="ruby-keyword">self</span>,&#x000A;      <span class="ruby-value">next_method:</span> <span class="ruby-value">:get_first_name</span>,&#x000A;      <span class="ruby-value">data:</span> <span class="ruby-identifier">frags</span>,&#x000A;      <span class="ruby-value">parse_next:</span> <span class="ruby-keyword">false</span>&#x000A;    )&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-blank_user'>
+<a name='method-i-blank_user'></a>
+<div class='synopsis'>
+<span class='name'>blank_user</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Creates a <a href="../UserIdentity.html"><code>UserIdentity</code></a> with the phone number in fragments, and the basic conversation state from <a href="InteractiveSignupDirective.html#method-i-begin_cs"><code>begin_cs</code></a></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-blank_user-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-blank_user-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 118</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">blank_user</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">UserIdentity</span>.<span class="ruby-identifier">new</span>(&#x000A;    <span class="ruby-value">user_data:</span> { <span class="ruby-value">phone:</span> <span class="ruby-identifier">frags</span>[<span class="ruby-value">:phone</span>] },&#x000A;    <span class="ruby-value">conversation_state:</span> <span class="ruby-identifier">begin_cs</span>&#x000A;  )&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-finish_msg'>
+<a name='method-i-finish_msg'></a>
+<div class='synopsis'>
+<span class='name'>finish_msg</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>The finish message</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-finish_msg-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-finish_msg-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 134</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">finish_msg</span>&#x000A;  <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;wave&#39;</span>, <span class="ruby-string">&#39;smile&#39;</span>, <span class="ruby-string">&#39;envelopeheart&#39;</span>, <span class="ruby-string">&#39;checkbox&#39;</span>, <span class="ruby-string">&#39;thumbsup&#39;</span>, <span class="ruby-string">&#39;star&#39;</span>, <span class="ruby-string">&#39;toast&#39;</span>)&#x000A;  <span class="ruby-node">&quot;~e:#{moj} Congratulations, #{frags[:user_id][:nickname]}. You&#39;re all ready!&quot;</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-welcome_msg'>
 <a name='method-i-welcome_msg'></a>
 <div class='synopsis'>
 <span class='name'>welcome_msg</span>
@@ -150,12 +212,14 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>The welcome message</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-welcome_msg-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-welcome_msg-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 39</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">welcome_msg</span>&#x000A;  <span class="ruby-identifier">moj</span> = <span class="ruby-node">%w[exclamationmark present scroll speechbubble wave envelopearrow]</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-node">&quot;~e:#{moj} Hello! I&#39;m #{vi.name}, a Virtual Intelligence. What is your name?&quot;</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-welcome_msg-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 126</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">welcome_msg</span>&#x000A;  <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;exclamationmark&#39;</span>, <span class="ruby-string">&#39;present&#39;</span>, <span class="ruby-string">&#39;scroll&#39;</span>, <span class="ruby-string">&#39;speechbubble&#39;</span>, <span class="ruby-string">&#39;wave&#39;</span>, <span class="ruby-string">&#39;envelopearrow&#39;</span>)&#x000A;  <span class="ruby-node">&quot;~e:#{moj} Hello! I&#39;m #{vi.name}&quot;</span> \&#x000A;  <span class="ruby-string">&quot;, a Virtual Intelligence. I&#39;m going to take you through &quot;</span> \&#x000A;  <span class="ruby-string">&quot;interactively signing up to use my services. Let&#39;s begin with your full first name.&quot;</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

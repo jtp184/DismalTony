@@ -39,11 +39,7 @@ Superclass:
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Represents the collection of options and users that comprise the VI&#39;s
-memory. The base <a href="DataStore.html">DataStore</a> class is a
-non-persistent Data Store that functions fine in IRB or for ephemeral
-instances, but doesn&#39;t save anything. If you don&#39;t specify a data
-store to use, this is the default.</p>
+<p>Represents the collection of options and users that comprise the VI&#39;s memory. The base <a href="DataStore.html"><code>DataStore</code></a> class is a non-persistent Data Store that functions fine in IRB or for ephemeral instances, but doesn&#39;t save anything. If you don&#39;t specify a data store to use, this is the default.</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -53,6 +49,7 @@ store to use, this is the default.</p>
 </ol>
 <h3>Public Instance</h3>
 <ol>
+<li><a href="#method-i-delete_data">delete_data</a></li>
 <li><a href="#method-i-delete_user">delete_user</a></li>
 <li><a href="#attribute-i-directive_data">directive_data</a></li>
 <li><a href="#method-i-load_opts">load_opts</a></li>
@@ -63,6 +60,7 @@ store to use, this is the default.</p>
 <li><a href="#method-i-select_user">select_user</a></li>
 <li><a href="#method-i-set_opt">set_opt</a></li>
 <li><a href="#method-i-store_data">store_data</a></li>
+<li><a href="#method-i-update_data">update_data</a></li>
 <li><a href="#attribute-i-users">users</a></li>
 </ol>
 </div>
@@ -97,8 +95,7 @@ store to use, this is the default.</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>an Array of <a href="UserIdentity.html">UserIdentity</a> objects that make
-up the userspace.</p>
+<p>an Array of <a href="UserIdentity.html"><code>UserIdentity</code></a> objects that make up the userspace.</p>
 </td>
 </tr>
 </table>
@@ -110,7 +107,7 @@ up the userspace.</p>
 <a name='method-c-new'></a>
 <div class='synopsis'>
 <span class='name'>new</span>
-<span class='arguments'>(args={})</span>
+<span class='arguments'>(args = {})</span>
 
 </div>
 <div class='description'>
@@ -122,10 +119,29 @@ up the userspace.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-new-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 18</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">args</span>={})&#x000A;  <span class="ruby-ivar">@opts</span> = {}&#x000A;  <span class="ruby-ivar">@opts</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:opts</span>) { {} })&#x000A;  <span class="ruby-ivar">@users</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:users</span>) { [] }&#x000A;  <span class="ruby-ivar">@directive_data</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:directive_data</span>) { <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>({}) }&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 18</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">args</span> = {})&#x000A;  <span class="ruby-ivar">@opts</span> = {}&#x000A;  <span class="ruby-ivar">@opts</span>.<span class="ruby-identifier">merge!</span>(<span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:opts</span>) { {} })&#x000A;  <span class="ruby-ivar">@users</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:users</span>) { [] }&#x000A;  <span class="ruby-ivar">@directive_data</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:directive_data</span>) { <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>({}) }&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-delete_data'>
+<a name='method-i-delete_data'></a>
+<div class='synopsis'>
+<span class='name'>delete_data</span>
+<span class='arguments'>(dname, *ky)</span>
+
+</div>
+<div class='description'>
+
+<p>Using the directive&#39;s <code>dname</code> and the nested keys <code>ky</code>, removes the key from the store</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-delete_data-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-delete_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 68</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">ini</span> = <span class="ruby-identifier">directive_data</span>[<span class="ruby-identifier">dname</span>]&#x000A;  <span class="ruby-identifier">jni</span> = <span class="ruby-keyword">nil</span>&#x000A;&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">empty?</span>&#x000A;    <span class="ruby-identifier">ini</span>&#x000A;  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;    <span class="ruby-identifier">ini</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">ky</span>.<span class="ruby-identifier">first</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>&#x000A;      <span class="ruby-identifier">jni</span> = <span class="ruby-identifier">ini</span>&#x000A;      <span class="ruby-identifier">ini</span> = <span class="ruby-identifier">j</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;    <span class="ruby-identifier">jni</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-identifier">ini</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
 <div class='method public-instance' id='method-method-i-delete_user'>
 <a name='method-i-delete_user'></a>
 <div class='synopsis'>
@@ -161,7 +177,7 @@ up the userspace.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-load_opts-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-load_opts-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 71</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load_opts</span>&#x000A;  <span class="ruby-ivar">@opts</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-load_opts-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 102</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load_opts</span>&#x000A;  <span class="ruby-ivar">@opts</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-new_user'>
@@ -173,10 +189,7 @@ up the userspace.</p>
 </div>
 <div class='description'>
 
-<p>Creates a new <a href="UserIdentity.html">UserIdentity</a> object with <a
-href="UserIdentity.html#attribute-i-user_data">DismalTony::UserIdentity#user_data</a>
-set to <code>opts</code> and then stores it in the <a
-href="DataStore.html#attribute-i-users">users</a> array before returning it</p>
+<p>Creates a new <a href="UserIdentity.html"><code>UserIdentity</code></a> object with <a href="UserIdentity.html#attribute-i-user_data"><code>UserIdentity.user_data</code></a> set to <code>opts</code> and then stores it in the <a href="DataStore.html#attribute-i-users"><code>users</code></a> array before returning it</p>
 
 </div>
 <div class='source'>
@@ -195,13 +208,7 @@ href="DataStore.html#attribute-i-users">users</a> array before returning it</p>
 </div>
 <div class='description'>
 
-<p>A kickback method. This method is called on <a
-href="VIBase.html#attribute-i-data_store">DismalTony::VIBase#data_store</a>
-at the end of VIBase#query! to perform cleanup tasks like updating users or
-saving data, and is passed values for the <a
-href="HandledResponse.html">HandledResponse</a> <code>_response</code>, <a
-href="UserIdentity.html">UserIdentity</a> <code>_user</code>, and the
-<code>_data</code> representation of the result if available.</p>
+<p>A kickback method. This method is called on <a href="VIBase.html#attribute-i-data_store"><code>VIBase#data_store</code></a> at the end of VIBase#query! to perform cleanup tasks like updating users or saving data, and is passed values for the <a href="HandledResponse.html"><code>HandledResponse</code></a> <code>_response</code>, <a href="UserIdentity.html"><code>UserIdentity</code></a> <code>_user</code>, and the <code>_data</code> representation of the result if available.</p>
 
 </div>
 <div class='source'>
@@ -220,16 +227,14 @@ href="UserIdentity.html">UserIdentity</a> <code>_user</code>, and the
 </div>
 <div class='description'>
 
-<p>Using the directive&#39;s <code>dname</code> and the nested keys 
-<code>ky</code>, digs inside <code>directive_data</code> for the
-information</p>
+<p>Using the directive&#39;s <code>dname</code> and the nested keys <code>ky</code>, digs inside <code>directive_data</code> for the information</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-read_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-read_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 60</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">read_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">directive_data</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-read_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 62</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">read_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">directive_data</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-select_user'>
@@ -260,15 +265,14 @@ information</p>
 </div>
 <div class='description'>
 
-<p>Using the key <code>k</code> and the value <code>v</code>, add something to
-the @opts hash</p>
+<p>Using the key <code>k</code> and the value <code>v</code>, add something to the @opts hash</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-set_opt-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-set_opt-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 66</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_opt</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-ivar">@opts</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">v</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-set_opt-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 97</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_opt</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-ivar">@opts</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">v</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-store_data'>
@@ -280,15 +284,33 @@ the @opts hash</p>
 </div>
 <div class='description'>
 
-<p>Uses the hash <code>slug</code> to insert a new value into the <a
-href="DataStore.html#attribute-i-directive_data">directive_data</a> hash</p>
+<p>Uses the hash <code>slug</code> to insert a new value into the <a href="DataStore.html#attribute-i-directive_data"><code>directive_data</code></a> hash</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-store_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-store_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 50</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">dr</span>, <span class="ruby-identifier">ky</span>, <span class="ruby-identifier">vl</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:directive</span>), <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:key</span>), <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:value</span>)&#x000A;  <span class="ruby-ivar">@directive_data</span>[<span class="ruby-identifier">dr</span>] <span class="ruby-operator">||=</span> {}&#x000A;  <span class="ruby-ivar">@directive_data</span>[<span class="ruby-identifier">dr</span>][<span class="ruby-identifier">ky</span>] = <span class="ruby-identifier">vl</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">KeyError</span>&#x000A;  <span class="ruby-keyword">nil</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-store_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 50</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">dr</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:directive</span>)&#x000A;  <span class="ruby-identifier">ky</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:key</span>)&#x000A;  <span class="ruby-identifier">vl</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:value</span>)&#x000A;  <span class="ruby-ivar">@directive_data</span>[<span class="ruby-identifier">dr</span>] <span class="ruby-operator">||=</span> {}&#x000A;  <span class="ruby-ivar">@directive_data</span>[<span class="ruby-identifier">dr</span>][<span class="ruby-identifier">ky</span>] = <span class="ruby-identifier">vl</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">KeyError</span>&#x000A;  <span class="ruby-keyword">nil</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-update_data'>
+<a name='method-i-update_data'></a>
+<div class='synopsis'>
+<span class='name'>update_data</span>
+<span class='arguments'>(slug)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes the <code>slug</code> and modifies <code>directive_data</code> accordingly</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-update_data-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-update_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 86</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">dr</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:directive</span>)&#x000A;  <span class="ruby-identifier">ky</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:key</span>)&#x000A;  <span class="ruby-identifier">vl</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:value</span>)&#x000A;  <span class="ruby-ivar">@directive_data</span>[<span class="ruby-identifier">dr</span>] <span class="ruby-operator">||=</span> {}&#x000A;  <span class="ruby-ivar">@directive_data</span>[<span class="ruby-identifier">dr</span>][<span class="ruby-identifier">ky</span>] = <span class="ruby-identifier">vl</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">KeyError</span>&#x000A;  <span class="ruby-keyword">nil</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

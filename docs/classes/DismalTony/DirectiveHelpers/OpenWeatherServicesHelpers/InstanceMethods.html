@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::DirectiveHelpers::OpenWeatherServicesHelpers::InstanceMethods</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::DirectiveHelpers::OpenWeatherServicesHelpers::InstanceMethods
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../../files/lib/dismaltony/directives/weather_rb.html">lib/dismaltony/directives/weather.rb</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>The instance methods of the helper</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-get_weather_city">get_weather_city</a></li>
+<li><a href="#method-i-retrieve_weather">retrieve_weather</a></li>
+</ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-parse_response">parse_response</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-get_weather_city'>
+<a name='method-i-get_weather_city'></a>
+<div class='synopsis'>
+<span class='name'>get_weather_city</span>
+<span class='arguments'>(str)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in a string <code>str</code> and parses the state out of it</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_weather_city-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-get_weather_city-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 371</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_weather_city</span>(<span class="ruby-identifier">str</span>)&#x000A;  <span class="ruby-identifier">with_state</span> = <span class="ruby-regexp">/, ([A-Z]+)/i</span>&#x000A;  <span class="ruby-identifier">str</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-identifier">with_state</span>, <span class="ruby-string">&#39;&#39;</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-retrieve_weather'>
+<a name='method-i-retrieve_weather'></a>
+<div class='synopsis'>
+<span class='name'>retrieve_weather</span>
+<span class='arguments'>(loc)</span>
+
+</div>
+<div class='description'>
+
+<p>Gets the weather for a location <code>loc</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-retrieve_weather-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-retrieve_weather-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 377</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">retrieve_weather</span>(<span class="ruby-identifier">loc</span>)&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-identifier">api_request</span>(<span class="ruby-string">&#39;q&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">loc</span>)&#x000A;&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;weather&#39;</span>]&amp;.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">nil?</span>&#x000A;    <span class="ruby-identifier">raise</span> <span class="ruby-constant">IndexError</span>, <span class="ruby-node">&quot;No Weather in Response: #{resp.inspect}&quot;</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;wc&#39;</span>] = <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;weather&#39;</span>].<span class="ruby-identifier">first</span>[<span class="ruby-string">&#39;id&#39;</span>])&#x000A;&#x000A;  <span class="ruby-identifier">parse_response</span>(<span class="ruby-identifier">resp</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-parse_response'>
+<a name='method-i-parse_response'></a>
+<div class='synopsis'>
+<span class='name'>parse_response</span>
+<span class='arguments'>(resp)</span>
+
+</div>
+<div class='description'>
+
+<p>Converts <code>resp</code> into a hash</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-parse_response-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-parse_response-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 392</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse_response</span>(<span class="ruby-identifier">resp</span>)&#x000A;  {&#x000A;    <span class="ruby-value">city_name:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;name&#39;</span>],&#x000A;    <span class="ruby-value">weather:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;wc&#39;</span>],&#x000A;    <span class="ruby-value">temp:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;main&#39;</span>][<span class="ruby-string">&#39;temp&#39;</span>],&#x000A;    <span class="ruby-value">temp_min:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;main&#39;</span>][<span class="ruby-string">&#39;temp_min&#39;</span>],&#x000A;    <span class="ruby-value">temp_max:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;main&#39;</span>][<span class="ruby-string">&#39;temp_max&#39;</span>],&#x000A;    <span class="ruby-value">humidity:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;main&#39;</span>][<span class="ruby-string">&#39;humidity&#39;</span>],&#x000A;    <span class="ruby-value">wind_speed:</span> <span class="ruby-identifier">resp</span>[<span class="ruby-string">&#39;wind&#39;</span>][<span class="ruby-string">&#39;speed&#39;</span>]&#x000A;  }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

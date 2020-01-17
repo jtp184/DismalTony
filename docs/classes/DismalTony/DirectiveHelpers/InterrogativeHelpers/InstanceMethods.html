@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::DirectiveHelpers::InterrogativeHelpers::InstanceMethods</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::DirectiveHelpers::InterrogativeHelpers::InstanceMethods
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../../files/lib/dismaltony/directive_helpers/interrogative_helpers_rb.html">lib/dismaltony/directive_helpers/interrogative_helpers.rb</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>Contains the instance methods of the helper, which are added on inclusion</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-ask_for">ask_for</a></li>
+<li><a href="#method-i-ask_frags">ask_frags</a></li>
+<li><a href="#method-i-interrogative_asking_procs">interrogative_asking_procs</a></li>
+<li><a href="#method-i-interrogative_fragments">interrogative_fragments</a></li>
+<li><a href="#method-i-method_missing">method_missing</a></li>
+<li><a href="#method-i-user_input_for">user_input_for</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-ask_for'>
+<a name='method-i-ask_for'></a>
+<div class='synopsis'>
+<span class='name'>ask_for</span>
+<span class='arguments'>(args={})</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in <code>args</code> for :fragment and :message, and optionally :parse_next and :cast</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-ask_for-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-ask_for-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/interrogative_helpers.rb, line 26</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">ask_for</span>(<span class="ruby-identifier">args</span>={})&#x000A;        <span class="ruby-identifier">target_frag</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:fragment</span>)&#x000A;&#x000A;        <span class="ruby-identifier">interrogative_fragments</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">target_frag</span>&#x000A;        <span class="ruby-identifier">interrogative_asking_procs</span>[<span class="ruby-identifier">target_frag</span>] = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:cast</span>, <span class="ruby-value">:itself</span>.<span class="ruby-identifier">to_proc</span>)&#x000A;&#x000A;        <span class="ruby-identifier">frag</span> = <span class="ruby-identifier">fragments</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-identifier">target_frag</span>, <span class="ruby-keyword">false</span>)&#x000A;          &#x000A;        <span class="ruby-identifier">known</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">frag</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">frag</span>.<span class="ruby-identifier">been_cast?</span>&#x000A;                                            <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>]&#x000A;                                    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">frag</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">frag</span>.<span class="ruby-identifier">original</span>&#x000A;                                            <span class="ruby-identifier">cast_proc</span> = <span class="ruby-identifier">interrogative_asking_procs</span>[<span class="ruby-identifier">target_frag</span>]&#x000A;                                            &#x000A;                                            <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>].<span class="ruby-identifier">after_cast</span> = <span class="ruby-identifier">cast_proc</span>.(<span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>].<span class="ruby-identifier">original</span>)&#x000A;                                            &#x000A;                                            <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>]&#x000A;                                    <span class="ruby-keyword">else</span>&#x000A;                                            <span class="ruby-keyword">false</span>&#x000A;                                    <span class="ruby-keyword">end</span>&#x000A;&#x000A;          <span class="ruby-keyword">return</span> <span class="ruby-identifier">known</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">known</span>&#x000A;&#x000A;          <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>] <span class="ruby-operator">||=</span> <span class="ruby-constant">Interrogative</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">target_frag</span>)&#x000A;        <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>].<span class="ruby-identifier">message</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:message</span>)&#x000A;        <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>].<span class="ruby-identifier">parse_next</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:parse_next</span>, <span class="ruby-keyword">true</span>)&#x000A;&#x000A;        <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>]&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-ask_frags'>
+<a name='method-i-ask_frags'></a>
+<div class='synopsis'>
+<span class='name'>ask_frags</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Gets all fragments that were defined with <a href="InstanceMethods.html#method-i-ask_for"><code>ask_for</code></a>,  casts the ones who have not been cast but can be and returns  either a <a href="../../HandledResponse.html"><code>HandledResponse</code></a> asking for the user input or nil</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-ask_frags-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-ask_frags-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/interrogative_helpers.rb, line 72</span>&#x000A;              <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">ask_frags</span>&#x000A;                      <span class="ruby-identifier">sub_f</span> = <span class="ruby-identifier">fragments</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">interrogative_fragments</span>.<span class="ruby-identifier">to_a</span>).<span class="ruby-identifier">values</span>&#x000A;&#x000A;                      <span class="ruby-identifier">filled</span>, <span class="ruby-identifier">unfilled</span> = <span class="ruby-identifier">sub_f</span>.<span class="ruby-identifier">partition</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">value</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">false</span> }&#x000A;                      <span class="ruby-identifier">cast</span>, <span class="ruby-identifier">uncast</span> = <span class="ruby-identifier">sub_f</span>.<span class="ruby-identifier">partition</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:been_cast?</span>)&#x000A;&#x000A;                      <span class="ruby-identifier">castable</span> = <span class="ruby-identifier">filled</span> <span class="ruby-operator">&amp;</span> <span class="ruby-identifier">uncast</span>&#x000A;&#x000A;<span class="ruby-identifier">castable</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>&#x000A;  <span class="ruby-identifier">c</span>.<span class="ruby-identifier">after_cast</span> = <span class="ruby-identifier">interrogative_asking_procs</span>[<span class="ruby-identifier">c</span>.<span class="ruby-identifier">fragment</span>].(<span class="ruby-identifier">c</span>.<span class="ruby-identifier">original</span>)&#x000A;<span class="ruby-keyword">end</span>&#x000A;&#x000A;                      <span class="ruby-identifier">filled</span>, <span class="ruby-identifier">unfilled</span> = <span class="ruby-identifier">sub_f</span>.<span class="ruby-identifier">partition</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">value</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">true</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">false</span> }&#x000A;                      <span class="ruby-identifier">cast</span>, <span class="ruby-identifier">uncast</span> = <span class="ruby-identifier">sub_f</span>.<span class="ruby-identifier">partition</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:been_cast?</span>)&#x000A;&#x000A;                      <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">uncast</span>.<span class="ruby-identifier">any?</span>&#x000A;&#x000A;<span class="ruby-identifier">single</span> = <span class="ruby-identifier">uncast</span>.<span class="ruby-identifier">sort_by</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span>.<span class="ruby-identifier">fragment</span> }.<span class="ruby-identifier">first</span>&#x000A;&#x000A;                      <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">then_do</span>(&#x000A;  <span class="ruby-value">message:</span> <span class="ruby-identifier">single</span>.<span class="ruby-identifier">message</span>,&#x000A;  <span class="ruby-value">directive:</span> <span class="ruby-keyword">self</span>,&#x000A;  <span class="ruby-value">method:</span> <span class="ruby-value">:&quot;user_input_for_#{single.fragment}&quot;</span>,&#x000A;  <span class="ruby-value">parse_next:</span> <span class="ruby-identifier">single</span>.<span class="ruby-identifier">parse_next</span>,&#x000A;  <span class="ruby-value">data:</span> <span class="ruby-identifier">fragments</span>&#x000A;                      )&#x000A;              <span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-interrogative_asking_procs'>
+<a name='method-i-interrogative_asking_procs'></a>
+<div class='synopsis'>
+<span class='name'>interrogative_asking_procs</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>A hash to store casting procs for interrogatives</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-interrogative_asking_procs-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-interrogative_asking_procs-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/interrogative_helpers.rb, line 106</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrogative_asking_procs</span>&#x000A;        <span class="ruby-ivar">@interrogative_asking_procs</span> <span class="ruby-operator">||=</span> {}&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-interrogative_fragments'>
+<a name='method-i-interrogative_fragments'></a>
+<div class='synopsis'>
+<span class='name'>interrogative_fragments</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Stores all interrogative fragments in a set for uniqueness operations</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-interrogative_fragments-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-interrogative_fragments-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/interrogative_helpers.rb, line 101</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">interrogative_fragments</span>&#x000A;        <span class="ruby-ivar">@interrogative_fragments</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Set</span>.<span class="ruby-identifier">new</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-method_missing'>
+<a name='method-i-method_missing'></a>
+<div class='synopsis'>
+<span class='name'>method_missing</span>
+<span class='arguments'>(mtd, *args)</span>
+
+</div>
+<div class='description'>
+
+<p>Defined such that any ask_for_* or user_input_for_* method works</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-method_missing-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-method_missing-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/interrogative_helpers.rb, line 111</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">method_missing</span>(<span class="ruby-identifier">mtd</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)&#x000A;        <span class="ruby-keyword">super</span> <span class="ruby-keyword">unless</span> [<span class="ruby-regexp">/^ask_for/</span>, <span class="ruby-regexp">/^user_input_for/</span>].<span class="ruby-identifier">any?</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">sig</span><span class="ruby-operator">|</span> <span class="ruby-identifier">mtd</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">sig</span> }&#x000A;&#x000A;        <span class="ruby-identifier">prams</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">to_hash</span> <span class="ruby-operator">:</span> {}&#x000A;&#x000A;        <span class="ruby-keyword">case</span> <span class="ruby-identifier">mtd</span>.<span class="ruby-identifier">to_s</span>&#x000A;        <span class="ruby-keyword">when</span> <span class="ruby-regexp">/^ask_for/</span>&#x000A;                <span class="ruby-identifier">ask_for</span>({<span class="ruby-value">fragment:</span> <span class="ruby-identifier">mtd</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp">/^ask_for_(.*)/</span>)[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_sym</span>}.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">prams</span>))&#x000A;        <span class="ruby-keyword">when</span> <span class="ruby-regexp">/^user_input_for/</span>&#x000A;                <span class="ruby-identifier">user_input_for</span>({<span class="ruby-value">fragment:</span> <span class="ruby-identifier">mtd</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">match</span>(<span class="ruby-regexp">/^user_input_for_(.*)/</span>)[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_sym</span>}.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">prams</span>))&#x000A;        <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-user_input_for'>
+<a name='method-i-user_input_for'></a>
+<div class='synopsis'>
+<span class='name'>user_input_for</span>
+<span class='arguments'>(args={})</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in <code>args</code> for :fragment and optionally :method. Sets the fragment to a new Interrogative and then passes control flow to the method</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-user_input_for-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-user_input_for-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/interrogative_helpers.rb, line 58</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_input_for</span>(<span class="ruby-identifier">args</span>={})&#x000A;        <span class="ruby-identifier">target_frag</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:fragment</span>)&#x000A;&#x000A;        <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>] <span class="ruby-operator">||=</span> <span class="ruby-constant">Interrogative</span>.<span class="ruby-identifier">new</span>&#x000A;&#x000A;        <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>].<span class="ruby-identifier">fragment</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">target_frag</span>&#x000A;        <span class="ruby-identifier">fragments</span>[<span class="ruby-identifier">target_frag</span>].<span class="ruby-identifier">original</span> = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>&#x000A;        &#x000A;        <span class="ruby-keyword">self</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:method</span>, <span class="ruby-value">:run</span>))&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

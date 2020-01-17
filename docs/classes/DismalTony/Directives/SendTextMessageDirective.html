@@ -28,7 +28,7 @@ DismalTony::Directives::SendTextMessageDirective
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../files/lib/dismaltony/directives/core_rb.html">lib/dismaltony/directives/core.rb</a>
+<a href="../../../files/lib/dismaltony/directives/conversation_rb.html">lib/dismaltony/directives/conversation.rb</a>
 </li>
 </ol>
 <div class='parent'>
@@ -38,13 +38,13 @@ Superclass:
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>Uses Twilio to send text messages</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
-<li><a href="#method-i-get_msg">get_msg</a></li>
-<li><a href="#method-i-get_tel">get_tel</a></li>
 <li><a href="#method-i-run">run</a></li>
 </ol>
 </div>
@@ -59,40 +59,6 @@ Superclass:
 <div id='section'>
 <div id='methods'>
 <h2>Public Instance methods</h2>
-<div class='method public-instance' id='method-method-i-get_msg'>
-<a name='method-i-get_msg'></a>
-<div class='synopsis'>
-<span class='name'>get_msg</span>
-<span class='arguments'>()</span>
-
-</div>
-<div class='description'>
-
-</div>
-<div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_msg-source&#39;); return false'>
-[show source]
-</a>
-<pre id='method-i-get_msg-source'><span class="ruby-comment"># File lib/dismaltony/directives/core.rb, line 25</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_msg</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendmsg</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">say_through</span>(<span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">SMSInterface</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>]), <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendmsg</span>])&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:speechbubble Okay! I sent the message.&quot;</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
-</div>
-</div>
-<div class='method public-instance' id='method-method-i-get_tel'>
-<a name='method-i-get_tel'></a>
-<div class='synopsis'>
-<span class='name'>get_tel</span>
-<span class='arguments'>()</span>
-
-</div>
-<div class='description'>
-
-</div>
-<div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_tel-source&#39;); return false'>
-[show source]
-</a>
-<pre id='method-i-get_tel-source'><span class="ruby-comment"># File lib/dismaltony/directives/core.rb, line 20</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_tel</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">then_do</span>(<span class="ruby-value">directive:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">method:</span> <span class="ruby-value">:get_msg</span>, <span class="ruby-value">message:</span> <span class="ruby-string">&quot;~e:speechbubble Okay, what shall I say to them?&quot;</span>, <span class="ruby-value">parse_next:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">data:</span> <span class="ruby-identifier">parameters</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
-</div>
-</div>
 <div class='method public-instance' id='method-method-i-run'>
 <a name='method-i-run'></a>
 <div class='synopsis'>
@@ -102,12 +68,14 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>Detects the sending number and message, and sends it through a new <a href="../SMSInterface.html"><code>SMSInterface</code></a></p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/core.rb, line 31</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-keyword">nil</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>] = <span class="ruby-identifier">query</span>[<span class="ruby-string">&#39;pos&#39;</span>, <span class="ruby-string">&#39;NUM&#39;</span>].<span class="ruby-identifier">first</span>&amp;.<span class="ruby-identifier">to_s</span>&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>].<span class="ruby-identifier">nil?</span>&#x000A;    <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>] = <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">children_of</span>(<span class="ruby-identifier">query</span>.<span class="ruby-identifier">verb</span>)&amp;.<span class="ruby-identifier">first</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/^me$/i</span>&#x000A;      <span class="ruby-identifier">query</span>.<span class="ruby-identifier">user</span>[<span class="ruby-value">:phone</span>]&#x000A;    <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">children_of</span>(<span class="ruby-identifier">query</span>.<span class="ruby-identifier">verb</span>)&amp;.<span class="ruby-identifier">first</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/[a-z]*/i</span>&#x000A;                          <span class="ruby-comment"># Code for if it&#39;s a name</span>&#x000A;                          <span class="ruby-keyword">nil</span>&#x000A;                        <span class="ruby-keyword">else</span>&#x000A;                          <span class="ruby-comment"># If it&#39;s really nonexistent</span>&#x000A;                          <span class="ruby-keyword">nil</span>&#x000A;                        <span class="ruby-keyword">end</span>&#x000A;                      <span class="ruby-keyword">else</span>&#x000A;                        <span class="ruby-keyword">if</span> (<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>] <span class="ruby-operator">=~</span> <span class="ruby-regexp">/^\d{10}$/</span>) <span class="ruby-operator">==</span> <span class="ruby-keyword">nil</span>&#x000A;                          <span class="ruby-identifier">resp</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:frown That isn&#39;t a valid phone number!&quot;</span>) &#x000A;                        <span class="ruby-keyword">end</span>&#x000A;                      <span class="ruby-keyword">end</span>&#x000A;&#x000A;                      <span class="ruby-keyword">return</span> <span class="ruby-identifier">resp</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">resp</span>&#x000A;&#x000A;                      <span class="ruby-keyword">if</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>].<span class="ruby-identifier">nil?</span>&#x000A;                        <span class="ruby-identifier">resp</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">then_do</span>(<span class="ruby-value">directive:</span> <span class="ruby-keyword">self</span>, <span class="ruby-value">method:</span> <span class="ruby-value">:get_tel</span>, <span class="ruby-value">message:</span> <span class="ruby-string">&quot;~e:pound Okay, to what number should I send the message?&quot;</span>, <span class="ruby-value">parse_next:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">data:</span> <span class="ruby-identifier">parameters</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>].<span class="ruby-identifier">nil?</span>&#x000A;                      <span class="ruby-keyword">else</span>&#x000A;                        <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendmsg</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>.<span class="ruby-identifier">split</span>(<span class="ruby-identifier">query</span>[<span class="ruby-string">&#39;pos&#39;</span>, <span class="ruby-string">&#39;VERB&#39;</span>].<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">w</span><span class="ruby-operator">|</span> <span class="ruby-identifier">w</span>.<span class="ruby-identifier">any_of?</span>(<span class="ruby-regexp">/says/i</span>, <span class="ruby-regexp">/say/i</span>) }.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot; &quot;</span>)[<span class="ruby-value">1</span>]&#x000A;                        <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">say_through</span>(<span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">SMSInterface</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendto</span>]), <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:sendmsg</span>])&#x000A;                        <span class="ruby-identifier">resp</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:thumbsup Okay! I sent the message.&quot;</span>)&#x000A;                      <span class="ruby-keyword">end</span>&#x000A;                      <span class="ruby-identifier">resp</span>&#x000A;                    <span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/conversation.rb, line 27</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:send_to</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">other_entity</span>.<span class="ruby-identifier">text</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:message</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">/\bsays? /i</span>)[<span class="ruby-value">1</span>]&#x000A;&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">say_through</span>(<span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">SMSInterface</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">frags</span>[<span class="ruby-value">:send_to</span>]), <span class="ruby-identifier">frags</span>[<span class="ruby-value">:message</span>])&#x000A;  &#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">frags</span>)&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&#39;~e:thumbsup Okay! I sent the message.&#39;</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

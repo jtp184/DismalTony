@@ -34,7 +34,9 @@ DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers::ClassMethods
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>The Class methods of the helper, included on module inclusion</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
@@ -43,6 +45,7 @@ DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers::ClassMethods
 <li><a href="#method-i-gmaps_client">gmaps_client</a></li>
 <li><a href="#method-i-step_list">step_list</a></li>
 <li><a href="#method-i-step_string">step_string</a></li>
+<li><a href="#method-i-time_string">time_string</a></li>
 </ol>
 </div>
 <div id='context'>
@@ -59,12 +62,14 @@ DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers::ClassMethods
 </div>
 <div class='description'>
 
+<p>Defines the GoogleMapsRoute Struct</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_struct_template-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-data_struct_template-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 14</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Struct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;GoogleMapsRoute&#39;</span>, <span class="ruby-value">:distance</span>, <span class="ruby-value">:duration</span>, <span class="ruby-value">:start_address</span>, <span class="ruby-value">:end_address</span>, <span class="ruby-value">:steps</span>, <span class="ruby-value">:raw</span>) <span class="ruby-keyword">do</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">step_list</span>&#x000A;      <span class="ruby-identifier">outp</span> = <span class="ruby-string">&#39;&#39;</span>&#x000A;      <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">_slug</span>, <span class="ruby-identifier">ix</span><span class="ruby-operator">|</span>&#x000A;        <span class="ruby-identifier">outp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{ix + 1}) &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">step_string</span>(<span class="ruby-identifier">ix</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;\n&quot;</span>&#x000A;      <span class="ruby-keyword">end</span>&#x000A;      <span class="ruby-identifier">outp</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">step_string</span>(<span class="ruby-identifier">n</span>)&#x000A;      <span class="ruby-identifier">i</span> = <span class="ruby-identifier">steps</span>[<span class="ruby-identifier">n</span>][<span class="ruby-value">:html_instructions</span>].<span class="ruby-identifier">clone</span>&#x000A;      <span class="ruby-identifier">i</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp">/&lt;([A-Z][A-Z0-9]*)\b[^&gt;]*&gt;(.*?)&lt;\/\1&gt;/i</span>) { <span class="ruby-node">%Q|#{&quot;\n\n&quot; if Regexp.last_match(1) == &#39;div&#39;}#{Regexp.last_match(2)}|</span> }&#x000A;      <span class="ruby-identifier">i</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-data_struct_template-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 19</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@data_struct_template</span> <span class="ruby-keyword">unless</span> <span class="ruby-ivar">@data_struct_template</span>.<span class="ruby-identifier">nil?</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">NameError</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">Struct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;GoogleMapsRoute&#39;</span>, <span class="ruby-value">:distance</span>, <span class="ruby-value">:duration</span>, <span class="ruby-value">:start_address</span>, <span class="ruby-value">:end_address</span>, <span class="ruby-value">:steps</span>, <span class="ruby-value">:raw</span>) <span class="ruby-keyword">do</span>&#x000A;    <span class="ruby-comment"># Emits each step</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">step_list</span>&#x000A;      <span class="ruby-identifier">outp</span> = <span class="ruby-string">&#39;&#39;</span>&#x000A;      <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">_slug</span>, <span class="ruby-identifier">ix</span><span class="ruby-operator">|</span>&#x000A;        <span class="ruby-identifier">outp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{ix + 1}) &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">step_string</span>(<span class="ruby-identifier">ix</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; (#{time_string ix})&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;\n&quot;</span>&#x000A;      <span class="ruby-keyword">end</span>&#x000A;      <span class="ruby-identifier">outp</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;&#x000A;    <span class="ruby-comment"># Emits the step at +n+</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">step_string</span>(<span class="ruby-identifier">n</span>)&#x000A;      <span class="ruby-identifier">i</span> = <span class="ruby-identifier">steps</span>[<span class="ruby-identifier">n</span>][<span class="ruby-value">:html_instructions</span>].<span class="ruby-identifier">clone</span>&#x000A;      <span class="ruby-identifier">i</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp">%r{&lt;([A-Z][A-Z0-9]*)\b[^&gt;]*&gt;(.*?)&lt;/\1&gt;}i</span>) { <span class="ruby-node">%(#{&quot;\n\n&quot; if Regexp.last_match(1) == &#39;div&#39;}#{Regexp.last_match(2)})</span> }&#x000A;      <span class="ruby-identifier">i</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;&#x000A;    <span class="ruby-comment"># Gives a time for step +n+</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">time_string</span>(<span class="ruby-identifier">n</span>)&#x000A;      <span class="ruby-identifier">i</span> = <span class="ruby-identifier">steps</span>[<span class="ruby-identifier">n</span>][<span class="ruby-value">:duration</span>][<span class="ruby-value">:text</span>]&#x000A;    <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-gmaps_client'>
@@ -76,12 +81,14 @@ DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers::ClassMethods
 </div>
 <div class='description'>
 
+<p>Yields the GoogleMapsService::Client object</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-gmaps_client-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-gmaps_client-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 10</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gmaps_client</span>&#x000A;  <span class="ruby-ivar">@gmaps_client</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">GoogleMapsService</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;google_maps_api_key&#39;</span>])&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-gmaps_client-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 14</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">gmaps_client</span>&#x000A;  <span class="ruby-ivar">@gmaps_client</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">GoogleMapsService</span><span class="ruby-operator">::</span><span class="ruby-constant">Client</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">key:</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;google_maps_api_key&#39;</span>])&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-step_list'>
@@ -93,12 +100,14 @@ DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers::ClassMethods
 </div>
 <div class='description'>
 
+<p>Emits each step</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-step_list-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-step_list-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 16</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">step_list</span>&#x000A;  <span class="ruby-identifier">outp</span> = <span class="ruby-string">&#39;&#39;</span>&#x000A;  <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">_slug</span>, <span class="ruby-identifier">ix</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">outp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{ix + 1}) &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">step_string</span>(<span class="ruby-identifier">ix</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;\n&quot;</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">outp</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-step_list-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 24</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">step_list</span>&#x000A;  <span class="ruby-identifier">outp</span> = <span class="ruby-string">&#39;&#39;</span>&#x000A;  <span class="ruby-identifier">steps</span>.<span class="ruby-identifier">each_with_index</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">_slug</span>, <span class="ruby-identifier">ix</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">outp</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;#{ix + 1}) &quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">step_string</span>(<span class="ruby-identifier">ix</span>) <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; (#{time_string ix})&quot;</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;\n&quot;</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">outp</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-step_string'>
@@ -110,12 +119,33 @@ DismalTony::DirectiveHelpers::GoogleMapsServiceHelpers::ClassMethods
 </div>
 <div class='description'>
 
+<p>Emits the step at <code>n</code></p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-step_string-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-step_string-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 24</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">step_string</span>(<span class="ruby-identifier">n</span>)&#x000A;  <span class="ruby-identifier">i</span> = <span class="ruby-identifier">steps</span>[<span class="ruby-identifier">n</span>][<span class="ruby-value">:html_instructions</span>].<span class="ruby-identifier">clone</span>&#x000A;  <span class="ruby-identifier">i</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp">/&lt;([A-Z][A-Z0-9]*)\b[^&gt;]*&gt;(.*?)&lt;\/\1&gt;/i</span>) { <span class="ruby-node">%Q|#{&quot;\n\n&quot; if Regexp.last_match(1) == &#39;div&#39;}#{Regexp.last_match(2)}|</span> }&#x000A;  <span class="ruby-identifier">i</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-step_string-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 33</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">step_string</span>(<span class="ruby-identifier">n</span>)&#x000A;  <span class="ruby-identifier">i</span> = <span class="ruby-identifier">steps</span>[<span class="ruby-identifier">n</span>][<span class="ruby-value">:html_instructions</span>].<span class="ruby-identifier">clone</span>&#x000A;  <span class="ruby-identifier">i</span>.<span class="ruby-identifier">gsub!</span>(<span class="ruby-regexp">%r{&lt;([A-Z][A-Z0-9]*)\b[^&gt;]*&gt;(.*?)&lt;/\1&gt;}i</span>) { <span class="ruby-node">%(#{&quot;\n\n&quot; if Regexp.last_match(1) == &#39;div&#39;}#{Regexp.last_match(2)})</span> }&#x000A;  <span class="ruby-identifier">i</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-time_string'>
+<a name='method-i-time_string'></a>
+<div class='synopsis'>
+<span class='name'>time_string</span>
+<span class='arguments'>(n)</span>
+
+</div>
+<div class='description'>
+
+<p>Gives a time for step <code>n</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-time_string-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-time_string-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 40</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">time_string</span>(<span class="ruby-identifier">n</span>)&#x000A;  <span class="ruby-identifier">i</span> = <span class="ruby-identifier">steps</span>[<span class="ruby-identifier">n</span>][<span class="ruby-value">:duration</span>][<span class="ruby-value">:text</span>]&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

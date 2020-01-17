@@ -28,15 +28,14 @@ DismalTony::DirectiveHelpers::JSONAPIHelpers::ClassMethods
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+<a href="../../../../files/lib/dismaltony/directive_helpers/json_api_helpers_rb.html">lib/dismaltony/directive_helpers/json_api_helpers.rb</a>
 </li>
 </ol>
 </div>
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Mixin for JSON-based web APIs. Contains the Class methods of the helper,
-which are added on inclusion</p>
+<p>Mixin for JSON-based web APIs. Contains the Class methods of the helper, which are added on inclusion</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -44,6 +43,7 @@ which are added on inclusion</p>
 <ol>
 <li><a href="#method-i-api_defaults">api_defaults</a></li>
 <li><a href="#method-i-api_defaults-3D">api_defaults=</a></li>
+<li><a href="#method-i-api_defaults_proc">api_defaults_proc</a></li>
 <li><a href="#method-i-api_url">api_url</a></li>
 <li><a href="#method-i-api_url-3D">api_url=</a></li>
 <li><a href="#method-i-get_api_defaults">get_api_defaults</a></li>
@@ -65,15 +65,14 @@ which are added on inclusion</p>
 </div>
 <div class='description'>
 
-<p>Gets the <a
-href="ClassMethods.html#method-i-api_defaults">#api_defaults</a></p>
+<p>Gets the <a href="ClassMethods.html#method-i-api_defaults"><code>api_defaults</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-api_defaults-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-api_defaults-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 192</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_defaults</span>&#x000A;  <span class="ruby-ivar">@api_defaults</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">get_api_defaults</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-api_defaults-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/json_api_helpers.rb, line 28</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_defaults</span>&#x000A;  <span class="ruby-ivar">@api_defaults</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">get_api_defaults</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-api_defaults-3D'>
@@ -85,15 +84,33 @@ href="ClassMethods.html#method-i-api_defaults">#api_defaults</a></p>
 </div>
 <div class='description'>
 
-<p>Sets the <a
-href="ClassMethods.html#method-i-api_defaults">#api_defaults</a></p>
+<p>Sets the <a href="ClassMethods.html#method-i-api_defaults"><code>api_defaults</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-api_defaults-3D-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-api_defaults-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 197</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_defaults=</span>(<span class="ruby-identifier">newval</span>)&#x000A;  <span class="ruby-ivar">@api_defaults</span> = <span class="ruby-identifier">newval</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-api_defaults-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/json_api_helpers.rb, line 33</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_defaults=</span>(<span class="ruby-identifier">newval</span>)&#x000A;  <span class="ruby-ivar">@api_defaults</span> = <span class="ruby-identifier">newval</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-api_defaults_proc'>
+<a name='method-i-api_defaults_proc'></a>
+<div class='synopsis'>
+<span class='name'>api_defaults_proc</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>The api defaults, for late evaluation</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-api_defaults_proc-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-api_defaults_proc-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/json_api_helpers.rb, line 16</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_defaults_proc</span>&#x000A;  <span class="ruby-ivar">@api_defaults_proc</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-api_url'>
@@ -105,14 +122,14 @@ href="ClassMethods.html#method-i-api_defaults">#api_defaults</a></p>
 </div>
 <div class='description'>
 
-<p>Gets the <a href="ClassMethods.html#method-i-api_url">#api_url</a></p>
+<p>Gets the <a href="ClassMethods.html#method-i-api_url"><code>api_url</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-api_url-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-api_url-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 202</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_url</span>&#x000A;  <span class="ruby-ivar">@api_url</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-api_url-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/json_api_helpers.rb, line 38</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_url</span>&#x000A;  <span class="ruby-ivar">@api_url</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-api_url-3D'>
@@ -124,14 +141,14 @@ href="ClassMethods.html#method-i-api_defaults">#api_defaults</a></p>
 </div>
 <div class='description'>
 
-<p>Sets the <a href="ClassMethods.html#method-i-api_url">#api_url</a></p>
+<p>Sets the <a href="ClassMethods.html#method-i-api_url"><code>api_url</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-api_url-3D-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-api_url-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 207</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_url=</span>(<span class="ruby-identifier">newval</span>)&#x000A;  <span class="ruby-ivar">@api_url</span> = <span class="ruby-identifier">newval</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-api_url-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/json_api_helpers.rb, line 43</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_url=</span>(<span class="ruby-identifier">newval</span>)&#x000A;  <span class="ruby-ivar">@api_url</span> = <span class="ruby-identifier">newval</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-get_api_defaults'>
@@ -143,16 +160,14 @@ href="ClassMethods.html#method-i-api_defaults">#api_defaults</a></p>
 </div>
 <div class='description'>
 
-<p>Retrieves the block from <a
-href="ClassMethods.html#method-i-set_api_defaults">set_api_defaults</a> and
-calls it.</p>
+<p>Retrieves the block from <a href="ClassMethods.html#method-i-set_api_defaults"><code>set_api_defaults</code></a> and calls it.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_api_defaults-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-get_api_defaults-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 185</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_api_defaults</span>&#x000A;  <span class="ruby-identifier">res</span> = {}&#x000A;  <span class="ruby-ivar">@api_defaults_proc</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">res</span>)&#x000A;  <span class="ruby-identifier">res</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-get_api_defaults-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/json_api_helpers.rb, line 21</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_api_defaults</span>&#x000A;  <span class="ruby-identifier">res</span> = {}&#x000A;  <span class="ruby-identifier">api_defaults_proc</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">res</span>)&#x000A;  <span class="ruby-identifier">res</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-set_api_defaults'>
@@ -164,15 +179,14 @@ calls it.</p>
 </div>
 <div class='description'>
 
-<p>Takes in a block <code>blk</code> and calculates it later to ensure late
-ENV access</p>
+<p>Takes in a block <code>blk</code> and calculates it later to ensure late ENV access</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-set_api_defaults-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-set_api_defaults-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 180</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_api_defaults</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;  <span class="ruby-ivar">@api_defaults_proc</span> = <span class="ruby-identifier">blk</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-set_api_defaults-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/json_api_helpers.rb, line 11</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_api_defaults</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;  <span class="ruby-ivar">@api_defaults_proc</span> = <span class="ruby-identifier">blk</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-set_api_url'>
@@ -184,15 +198,14 @@ ENV access</p>
 </div>
 <div class='description'>
 
-<p>DSL method for setting the <a
-href="ClassMethods.html#method-i-api_url">#api_url</a></p>
+<p>DSL method for setting the <a href="ClassMethods.html#method-i-api_url"><code>api_url</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-set_api_url-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-set_api_url-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 212</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_api_url</span>(<span class="ruby-identifier">url</span>)&#x000A;  <span class="ruby-ivar">@api_url</span> = <span class="ruby-identifier">url</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-set_api_url-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/json_api_helpers.rb, line 48</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_api_url</span>(<span class="ruby-identifier">url</span>)&#x000A;  <span class="ruby-ivar">@api_url</span> = <span class="ruby-identifier">url</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::ParsingStrategies::WatsonToneStrategy</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>class</span>
+DismalTony::ParsingStrategies::WatsonToneStrategy
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../files/lib/dismaltony/parsing_strategies/watson_tone_strategy_rb.html">lib/dismaltony/parsing_strategies/watson_tone_strategy.rb</a>
+</li>
+</ol>
+<div class='parent'>
+Superclass:
+<strong><a href="ParsingStrategy.html">ParsingStrategy</a></strong>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>Uses IBM Watson to detect sentence tone</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Class</h3>
+<ol>
+<li><a href="#method-c-call">call</a></li>
+<li><a href="#method-c-watson">watson</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-call'>
+<a name='method-c-call'></a>
+<div class='synopsis'>
+<span class='name'>call</span>
+<span class='arguments'>(q)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in <a href="../Query.html"><code>Query</code></a> <code>q</code> and parses it into a <a href="WatsonToneMap.html"><code>WatsonToneMap</code></a></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-call-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-call-source'><span class="ruby-comment"># File lib/dismaltony/parsing_strategies/watson_tone_strategy.rb, line 8</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-identifier">q</span>)&#x000A;  <span class="ruby-identifier">qry</span> = {&#x000A;    <span class="ruby-value">utterances:</span> [{ <span class="ruby-value">text:</span> <span class="ruby-identifier">q</span> }],&#x000A;    <span class="ruby-value">content_language:</span> <span class="ruby-string">&#39;en-US&#39;</span>,&#x000A;    <span class="ruby-value">accept_language:</span> <span class="ruby-string">&#39;en-US&#39;</span>&#x000A;  }&#x000A;&#x000A;  <span class="ruby-identifier">full_text</span> = <span class="ruby-identifier">watson</span>.<span class="ruby-identifier">tone_chat</span>(<span class="ruby-identifier">qry</span>).<span class="ruby-identifier">result</span>[<span class="ruby-string">&#39;utterances_tone&#39;</span>]&#x000A;&#x000A;  <span class="ruby-identifier">tn</span> = <span class="ruby-identifier">full_text</span>.<span class="ruby-identifier">first</span>[<span class="ruby-string">&#39;tones&#39;</span>].<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">t</span><span class="ruby-operator">|</span> <span class="ruby-constant">WatsonTone</span>.<span class="ruby-identifier">detect</span>(<span class="ruby-identifier">t</span>[<span class="ruby-string">&#39;tone_id&#39;</span>].<span class="ruby-identifier">to_sym</span>, <span class="ruby-identifier">t</span>[<span class="ruby-string">&#39;score&#39;</span>]) }&#x000A;  <span class="ruby-identifier">tn</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">WatsonNeutralTone</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">score:</span> <span class="ruby-value">1.0</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">tn</span>.<span class="ruby-identifier">empty?</span>&#x000A;  <span class="ruby-constant">WatsonToneMap</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">tn</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-watson'>
+<a name='method-c-watson'></a>
+<div class='synopsis'>
+<span class='name'>watson</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>The Watson Tone Analyzer instance</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-watson-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-watson-source'><span class="ruby-comment"># File lib/dismaltony/parsing_strategies/watson_tone_strategy.rb, line 27</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">watson</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@watson</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@watson</span>&#x000A;&#x000A;  <span class="ruby-ivar">@watson</span> = <span class="ruby-constant">IBMWatson</span><span class="ruby-operator">::</span><span class="ruby-constant">ToneAnalyzerV3</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">version:</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">2019</span>, <span class="ruby-value">1</span>, <span class="ruby-value">1</span>).<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&#39;%Y-%m-%d&#39;</span>))&#x000A;  <span class="ruby-ivar">@watson</span>.<span class="ruby-identifier">username</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;IBM_USERNAME&#39;</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;ibm_username&#39;</span>]&#x000A;  <span class="ruby-ivar">@watson</span>.<span class="ruby-identifier">password</span> = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;IBM_PASSWORD&#39;</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;ibm_password&#39;</span>]&#x000A;  <span class="ruby-ivar">@watson</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

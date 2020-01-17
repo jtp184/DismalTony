@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::DirectiveHelpers::StocksHelpers::InstanceMethods</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::DirectiveHelpers::StocksHelpers::InstanceMethods
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../../files/lib/dismaltony/directives/stocks_rb.html">lib/dismaltony/directives/stocks.rb</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>The Instance methods of the hlper, included on module inclusion</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-parse_web_req">parse_web_req</a></li>
+<li><a href="#method-i-retrieve_data">retrieve_data</a></li>
+<li><a href="#method-i-stock_price">stock_price</a></li>
+</ol>
+</div>
+<div id='context'>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-parse_web_req'>
+<a name='method-i-parse_web_req'></a>
+<div class='synopsis'>
+<span class='name'>parse_web_req</span>
+<span class='arguments'>(resp)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in the web response <code>resp</code> and parses it as JSON</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-parse_web_req-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-parse_web_req-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 54</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse_web_req</span>(<span class="ruby-identifier">resp</span>)&#x000A;  <span class="ruby-identifier">jsr</span> = <span class="ruby-identifier">resp</span>&#x000A;  <span class="ruby-identifier">sym</span> = <span class="ruby-identifier">jsr</span>[<span class="ruby-string">&#39;Meta Data&#39;</span>][<span class="ruby-string">&#39;2. Symbol&#39;</span>]&#x000A;  <span class="ruby-identifier">slug</span> = <span class="ruby-identifier">jsr</span>.<span class="ruby-identifier">to_a</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">last</span>&#x000A;&#x000A;  <span class="ruby-identifier">results</span> = []&#x000A;&#x000A;  <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">dat</span>, <span class="ruby-identifier">prindx</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">md</span> = <span class="ruby-regexp">/(\d+)-(\d+)-(\d+)/</span>.<span class="ruby-identifier">match</span> <span class="ruby-identifier">dat</span>&#x000A;    <span class="ruby-identifier">datum</span> = <span class="ruby-constant">Date</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">md</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">md</span>[<span class="ruby-value">2</span>].<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">md</span>[<span class="ruby-value">3</span>].<span class="ruby-identifier">to_i</span>)&#x000A;    <span class="ruby-identifier">results</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">stock_price</span>(<span class="ruby-identifier">sym</span>, <span class="ruby-identifier">datum</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">prindx</span>.<span class="ruby-identifier">values</span>.<span class="ruby-identifier">map</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_f</span>))&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">results</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-retrieve_data'>
+<a name='method-i-retrieve_data'></a>
+<div class='synopsis'>
+<span class='name'>retrieve_data</span>
+<span class='arguments'>(qpr)</span>
+
+</div>
+<div class='description'>
+
+<p>Retrieves data for given query params <code>qpr</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-retrieve_data-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-retrieve_data-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 49</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">retrieve_data</span>(<span class="ruby-identifier">qpr</span>)&#x000A;  <span class="ruby-identifier">parse_web_req</span>(<span class="ruby-identifier">api_request</span>(<span class="ruby-identifier">qpr</span>))&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-stock_price'>
+<a name='method-i-stock_price'></a>
+<div class='synopsis'>
+<span class='name'>stock_price</span>
+<span class='arguments'>(*args)</span>
+
+</div>
+<div class='description'>
+
+<p>Class-instance version of .stock_price</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-stock_price-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-stock_price-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 70</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">stock_price</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">stock_price</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

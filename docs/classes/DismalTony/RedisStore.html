@@ -49,7 +49,10 @@ Superclass:
 </ol>
 <h3>Public Instance</h3>
 <ol>
+<li><a href="#method-i-add_env_var">add_env_var</a></li>
 <li><a href="#method-i-all_users">all_users</a></li>
+<li><a href="#method-i-delete_data">delete_data</a></li>
+<li><a href="#method-i-delete_opt">delete_opt</a></li>
 <li><a href="#method-i-delete_user">delete_user</a></li>
 <li><a href="#method-i-directive_data">directive_data</a></li>
 <li><a href="#method-i-load_opts">load_opts</a></li>
@@ -60,13 +63,38 @@ Superclass:
 <li><a href="#method-i-select_user">select_user</a></li>
 <li><a href="#method-i-set_opt">set_opt</a></li>
 <li><a href="#method-i-store_data">store_data</a></li>
+<li><a href="#method-i-update_data">update_data</a></li>
 <li><a href="#method-i-update_user">update_user</a></li>
 <li><a href="#method-i-users">users</a></li>
+</ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-commit_user">commit_user</a></li>
+<li><a href="#method-i-directive_key">directive_key</a></li>
+<li><a href="#method-i-serialize_in">serialize_in</a></li>
+<li><a href="#method-i-serialize_out">serialize_out</a></li>
+<li><a href="#method-i-user_key">user_key</a></li>
 </ol>
 </div>
 <div id='context'>
 </div>
 <div id='section'>
+<div id='constants-list'>
+<h2>Constants</h2>
+<div class='name-list'>
+<table summary='Constants'>
+<tr class='top-aligned-row context-row'>
+<td class='context-item-name'>OPTS_PREFIX</td>
+<td>=</td>
+<td class='context-item-value'>'DismalTony:RedisStore:opts'.freeze</td>
+<td>&nbsp;</td>
+<td class='context-item-desc'>
+<p>The string that opts uses, to dry up opts operations</p>
+</td>
+</tr>
+</table>
+</div>
+</div>
 <div id='attribute-list'>
 <h2 class='section-bar'>Attributes</h2>
 <div class='name-list'>
@@ -89,7 +117,7 @@ Superclass:
 <a name='method-c-new'></a>
 <div class='synopsis'>
 <span class='name'>new</span>
-<span class='arguments'>(args={})</span>
+<span class='arguments'>(args = {})</span>
 
 </div>
 <div class='description'>
@@ -101,10 +129,29 @@ Superclass:
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-new-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 145</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">args</span>={})&#x000A;  <span class="ruby-ivar">@redis</span> = <span class="ruby-constant">Redis</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:redis_config</span>) { {} })&#x000A;  <span class="ruby-identifier">load_opts</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 206</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">args</span> = {})&#x000A;  <span class="ruby-ivar">@redis</span> = <span class="ruby-constant">Redis</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:redis_config</span>) { {} })&#x000A;  <span class="ruby-identifier">load_opts</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-add_env_var'>
+<a name='method-i-add_env_var'></a>
+<div class='synopsis'>
+<span class='name'>add_env_var</span>
+<span class='arguments'>(glob)</span>
+
+</div>
+<div class='description'>
+
+<p>Directly adds the key-value pair <code>k</code> and <code>v</code> to the env_vars hash in opts</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-add_env_var-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-add_env_var-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 340</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_env_var</span>(<span class="ruby-identifier">glob</span>)&#x000A;  <span class="ruby-identifier">raise</span> <span class="ruby-constant">ArgumentError</span> <span class="ruby-string">&#39;Must be hash-like&#39;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">glob</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-value">:to_h</span>)&#x000A;  <span class="ruby-identifier">o</span> = <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hget</span>(<span class="ruby-constant">OPTS_PREFIX</span>, <span class="ruby-string">&#39;env_vars&#39;</span>).<span class="ruby-identifier">clone</span>&#x000A;  <span class="ruby-identifier">o</span> = <span class="ruby-identifier">o</span> <span class="ruby-operator">?</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">o</span>) <span class="ruby-operator">:</span> {}&#x000A;&#x000A;  <span class="ruby-identifier">glob</span>.<span class="ruby-identifier">to_h</span>.<span class="ruby-identifier">each_pair</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">o</span>[<span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>] = <span class="ruby-identifier">v</span> }&#x000A;&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hset</span>(<span class="ruby-constant">OPTS_PREFIX</span>, <span class="ruby-string">&#39;env_vars&#39;</span>, <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">o</span>))&#x000A;  <span class="ruby-identifier">load_opts</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
 <div class='method public-instance' id='method-method-i-all_users'>
 <a name='method-i-all_users'></a>
 <div class='synopsis'>
@@ -114,15 +161,52 @@ Superclass:
 </div>
 <div class='description'>
 
-<p>Globs all the Users&#39; keys and turns them into <a
-href="UserIdentity.html">UserIdentity</a> records.</p>
+<p>Globs all the Users&#39; keys and turns them into <a href="UserIdentity.html"><code>UserIdentity</code></a> records.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-all_users-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-all_users-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 197</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_users</span>&#x000A;  <span class="ruby-identifier">allofem</span> = <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">keys</span>(<span class="ruby-string">&quot;DismalTony:UserIdentity:*&quot;</span>)&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">pipelined</span> { <span class="ruby-identifier">allofem</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-identifier">a</span>) } }&#x000A;  <span class="ruby-identifier">allofem</span>.<span class="ruby-identifier">map!</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:value</span>)&#x000A;  <span class="ruby-identifier">allofem</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">serialize_in</span>(<span class="ruby-identifier">a</span>) }&#x000A;  <span class="ruby-identifier">allofem</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-all_users-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 257</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_users</span>&#x000A;  <span class="ruby-identifier">allofem</span> = <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">keys</span>(<span class="ruby-string">&#39;DismalTony:UserIdentity:*&#39;</span>)&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">pipelined</span> { <span class="ruby-identifier">allofem</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-identifier">a</span>) } }&#x000A;  <span class="ruby-identifier">allofem</span>.<span class="ruby-identifier">map!</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:value</span>)&#x000A;  <span class="ruby-identifier">allofem</span>.<span class="ruby-identifier">map!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">serialize_in</span>(<span class="ruby-identifier">a</span>) }&#x000A;  <span class="ruby-identifier">allofem</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-delete_data'>
+<a name='method-i-delete_data'></a>
+<div class='synopsis'>
+<span class='name'>delete_data</span>
+<span class='arguments'>(dname, *ky)</span>
+
+</div>
+<div class='description'>
+
+<p>Given the directive name <code>dname</code> and any number of keys <code>ky</code>, will expunge the value from the hash.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-delete_data-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-delete_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 309</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">ini</span> = <span class="ruby-identifier">dname</span>&#x000A;  <span class="ruby-identifier">jni</span> = <span class="ruby-keyword">nil</span>&#x000A;&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">empty?</span>&#x000A;    <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hdelall</span>(<span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">ini</span>))&#x000A;  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;    <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hdel</span>(<span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">ini</span>), <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">first</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span>&#x000A;      <span class="ruby-identifier">jni</span> = <span class="ruby-identifier">ini</span>&#x000A;      <span class="ruby-identifier">ini</span> = <span class="ruby-identifier">j</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;    <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hdel</span>(<span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">jni</span>), <span class="ruby-identifier">ini</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-delete_opt'>
+<a name='method-i-delete_opt'></a>
+<div class='synopsis'>
+<span class='name'>delete_opt</span>
+<span class='arguments'>(k)</span>
+
+</div>
+<div class='description'>
+
+<p>Removes the opt with key <code>k</code> from the data store</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-delete_opt-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-delete_opt-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 334</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_opt</span>(<span class="ruby-identifier">k</span>)&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hdel</span>(<span class="ruby-constant">OPTS_PREFIX</span>, <span class="ruby-identifier">k</span>)&#x000A;  <span class="ruby-identifier">load_opts</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-delete_user'>
@@ -134,15 +218,14 @@ href="UserIdentity.html">UserIdentity</a> records.</p>
 </div>
 <div class='description'>
 
-<p>Given any object <code>user</code> which responds properly to #[:uuid],
-deletes the associated hash and keys. Returns <code>user</code> when done.</p>
+<p>Given any object <code>user</code> which responds properly to #[:uuid], deletes the associated hash and keys. Returns <code>user</code> when done.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-delete_user-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-delete_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 189</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_user</span>(<span class="ruby-identifier">user</span>)&#x000A;  <span class="ruby-identifier">ukey</span> = <span class="ruby-identifier">user_key</span>(<span class="ruby-identifier">user</span>)&#x000A;  <span class="ruby-identifier">to_delete</span> = <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-identifier">ukey</span>).<span class="ruby-identifier">keys</span>&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">pipelined</span> { <span class="ruby-identifier">to_delete</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hdel</span>(<span class="ruby-identifier">ukey</span>, <span class="ruby-identifier">j</span>) } }&#x000A;  <span class="ruby-identifier">user</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-delete_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 249</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_user</span>(<span class="ruby-identifier">user</span>)&#x000A;  <span class="ruby-identifier">ukey</span> = <span class="ruby-identifier">user_key</span>(<span class="ruby-identifier">user</span>)&#x000A;  <span class="ruby-identifier">to_delete</span> = <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-identifier">ukey</span>).<span class="ruby-identifier">keys</span>&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">pipelined</span> { <span class="ruby-identifier">to_delete</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">j</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hdel</span>(<span class="ruby-identifier">ukey</span>, <span class="ruby-identifier">j</span>) } }&#x000A;  <span class="ruby-identifier">user</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-directive_data'>
@@ -161,7 +244,7 @@ deletes the associated hash and keys. Returns <code>user</code> when done.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-directive_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-directive_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 211</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">directive_data</span>&#x000A;  {}&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-directive_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 271</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">directive_data</span>&#x000A;  {}&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-load_opts'>
@@ -173,15 +256,14 @@ deletes the associated hash and keys. Returns <code>user</code> when done.</p>
 </div>
 <div class='description'>
 
-<p>Reads the opts in from the database and replaces <code>opts</code> with
-them.</p>
+<p>Reads the opts in from the database and replaces <code>opts</code> with them.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-load_opts-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-load_opts-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 241</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load_opts</span>&#x000A;  <span class="ruby-identifier">o</span> = <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-string">&quot;DismalTony:RedisStore:opts&quot;</span>).<span class="ruby-identifier">clone</span>&#x000A;  <span class="ruby-identifier">o</span>.<span class="ruby-identifier">transform_keys!</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_sym</span>)&#x000A;  <span class="ruby-identifier">o</span>.<span class="ruby-identifier">transform_values!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">v</span>) }&#x000A;  <span class="ruby-identifier">o</span>[<span class="ruby-value">:env_vars</span>]&amp;.<span class="ruby-identifier">each_pair</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span><span class="ruby-operator">|</span> <span class="ruby-constant">ENV</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>] = <span class="ruby-identifier">val</span> }&#x000A;  <span class="ruby-ivar">@opts</span> = <span class="ruby-identifier">o</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-load_opts-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 352</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load_opts</span>&#x000A;  <span class="ruby-identifier">o</span> = <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-constant">OPTS_PREFIX</span>).<span class="ruby-identifier">clone</span>&#x000A;  <span class="ruby-identifier">o</span>.<span class="ruby-identifier">transform_keys!</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_sym</span>)&#x000A;  <span class="ruby-identifier">o</span>.<span class="ruby-identifier">transform_values!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">v</span>) }&#x000A;  <span class="ruby-identifier">o</span>[<span class="ruby-value">:env_vars</span>]&amp;.<span class="ruby-identifier">each_pair</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span><span class="ruby-operator">|</span> <span class="ruby-constant">ENV</span>[<span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>] = <span class="ruby-identifier">val</span> }&#x000A;  <span class="ruby-ivar">@opts</span> = <span class="ruby-identifier">o</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-new_user'>
@@ -193,16 +275,14 @@ them.</p>
 </div>
 <div class='description'>
 
-<p>Takes in options for the new user&#39;s <a
-href="UserIdentity.html#attribute-i-user_data">DismalTony::UserIdentity#user_data</a>
-through <code>args</code></p>
+<p>Takes in options for the new user&#39;s <a href="UserIdentity.html#attribute-i-user_data"><code>UserIdentity#user_data</code></a> through <code>args</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-new_user-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-new_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 151</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new_user</span>(<span class="ruby-identifier">args</span> = {})&#x000A;  <span class="ruby-identifier">tu</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">UserIdentity</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">user_data:</span> <span class="ruby-identifier">args</span>)&#x000A;  <span class="ruby-identifier">commit_user</span>(<span class="ruby-identifier">serialize_out</span>(<span class="ruby-identifier">tu</span>))&#x000A;  <span class="ruby-identifier">tu</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-new_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 212</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new_user</span>(<span class="ruby-identifier">args</span> = {})&#x000A;  <span class="ruby-identifier">tu</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">UserIdentity</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">user_data:</span> <span class="ruby-identifier">args</span>)&#x000A;  <span class="ruby-identifier">commit_user</span>(<span class="ruby-identifier">serialize_out</span>(<span class="ruby-identifier">tu</span>))&#x000A;  <span class="ruby-identifier">tu</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-on_query'>
@@ -214,15 +294,14 @@ through <code>args</code></p>
 </div>
 <div class='description'>
 
-<p>Takes the options in <code>args</code> and doublesplats them.  Uses the
-user returned to update their model in the db</p>
+<p>Takes the options in <code>args</code> and doublesplats them. Uses the user returned to update their model in the db</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-on_query-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-on_query-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 159</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_query</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">args</span>)&#x000A;  <span class="ruby-identifier">user</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:user</span>)&#x000A;  <span class="ruby-identifier">response</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:response</span>)&#x000A;  <span class="ruby-identifier">commit_user</span>(<span class="ruby-identifier">serialize_out</span>(<span class="ruby-identifier">user</span>))&#x000A;  <span class="ruby-identifier">user</span> = <span class="ruby-identifier">select_user</span>(<span class="ruby-identifier">user</span>[<span class="ruby-value">:uuid</span>])&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-on_query-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 220</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_query</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">args</span>)&#x000A;  <span class="ruby-identifier">user</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:user</span>)&#x000A;  <span class="ruby-identifier">response</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:response</span>)&#x000A;  <span class="ruby-identifier">commit_user</span>(<span class="ruby-identifier">serialize_out</span>(<span class="ruby-identifier">user</span>))&#x000A;  <span class="ruby-identifier">user</span> = <span class="ruby-identifier">select_user</span>(<span class="ruby-identifier">user</span>[<span class="ruby-value">:uuid</span>])&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-read_data'>
@@ -234,36 +313,33 @@ user returned to update their model in the db</p>
 </div>
 <div class='description'>
 
-<p>Given the directive name <code>dname</code> and any number of keys
-<code>ky</code>, will dig through the hash and return values.</p>
+<p>Given the directive name <code>dname</code> and any number of keys <code>ky</code>, will dig through the hash and return values.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-read_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-read_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 226</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">read_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">initial</span> = <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">shift</span>&#x000A;  <span class="ruby-identifier">s</span> = <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hget</span> <span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">dname</span>), <span class="ruby-identifier">initial</span>)&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">s</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">empty?</span>&#x000A;  <span class="ruby-identifier">s</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-read_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 294</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">read_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">empty?</span>&#x000A;    <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">dname</span>)).<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">_e</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">v</span>) }&#x000A;      .<span class="ruby-identifier">flatten</span>&#x000A;  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;    <span class="ruby-identifier">initial</span> = <span class="ruby-identifier">ky</span>.<span class="ruby-identifier">shift</span>&#x000A;    <span class="ruby-identifier">s</span> = <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hget</span>(<span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">dname</span>), <span class="ruby-identifier">initial</span>))&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">s</span> = <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hget</span>(<span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">dname</span>), <span class="ruby-identifier">initial</span>))&#x000A;    <span class="ruby-identifier">s</span>.<span class="ruby-identifier">dig</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-select_user'>
 <a name='method-i-select_user'></a>
 <div class='synopsis'>
 <span class='name'>select_user</span>
-<span class='arguments'>(uid=nil,&block)</span>
+<span class='arguments'>(uid = nil, &block)</span>
 
 </div>
 <div class='description'>
 
-<p>If given a <code>uid</code> that is a UserIdentity&#39;s uuid, returns that
-user. Otherwise, passes a block argument to a select on <a
-href="RedisStore.html#method-i-all_users">all_users</a></p>
+<p>If given a <code>uid</code> that is a UserIdentity&#39;s uuid, returns that user. Otherwise, passes a block argument to a select on <a href="RedisStore.html#method-i-all_users"><code>all_users</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-select_user-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-select_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 168</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">select_user</span>(<span class="ruby-identifier">uid</span>=<span class="ruby-keyword">nil</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">uid</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">block_given?</span>&#x000A;    <span class="ruby-identifier">all_users</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)&#x000A;  <span class="ruby-keyword">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">uid</span>.<span class="ruby-identifier">nil?</span>&#x000A;    <span class="ruby-identifier">serialize_in</span>(<span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-identifier">user_key</span>({<span class="ruby-value">uuid:</span> <span class="ruby-identifier">uid</span>})))&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-keyword">nil</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-select_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 229</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">select_user</span>(<span class="ruby-identifier">uid</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">uid</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">block_given?</span>&#x000A;    <span class="ruby-identifier">all_users</span>.<span class="ruby-identifier">select</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)&#x000A;  <span class="ruby-keyword">elsif</span> <span class="ruby-operator">!</span><span class="ruby-identifier">uid</span>.<span class="ruby-identifier">nil?</span>&#x000A;    <span class="ruby-identifier">serialize_in</span>(<span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hgetall</span>(<span class="ruby-identifier">user_key</span>(<span class="ruby-value">uuid:</span> <span class="ruby-identifier">uid</span>)))&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-set_opt'>
@@ -275,15 +351,14 @@ href="RedisStore.html#method-i-all_users">all_users</a></p>
 </div>
 <div class='description'>
 
-<p>Given a key-value pair <code>k</code> and <code>v</code>, stores them in
-the db under the global opts hash. Returns the whole array of opts</p>
+<p>Given a key-value pair <code>k</code> and <code>v</code>, stores them in the db under the global opts hash. Returns the whole array of opts</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-set_opt-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-set_opt-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 235</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_opt</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hset</span>(<span class="ruby-string">&quot;DismalTony:RedisStore:opts&quot;</span>, <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">v</span>))&#x000A;  <span class="ruby-identifier">load_opts</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-set_opt-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 328</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_opt</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hset</span>(<span class="ruby-constant">OPTS_PREFIX</span>, <span class="ruby-identifier">k</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">v</span>))&#x000A;  <span class="ruby-identifier">load_opts</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-store_data'>
@@ -295,15 +370,33 @@ the db under the global opts hash. Returns the whole array of opts</p>
 </div>
 <div class='description'>
 
-<p>Takes in the <code>slug</code> and stores data in the db using the
-directive_key method to generate a hash string.</p>
+<p>Takes in the <code>slug</code> and stores data in the db using the <a href="RedisStore.html#method-i-directive_key"><code>directive_key</code></a> method to generate a hash string.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-store_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-store_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 217</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">dr</span>, <span class="ruby-identifier">ky</span>, <span class="ruby-identifier">vl</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:directive</span>).<span class="ruby-identifier">to_s</span>, <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:key</span>).<span class="ruby-identifier">to_s</span>, <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:value</span>))&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hset</span> <span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">dr</span>), <span class="ruby-identifier">ky</span>, <span class="ruby-identifier">vl</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">KeyError</span>&#x000A;  <span class="ruby-keyword">nil</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-store_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 277</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">dr</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:directive</span>).<span class="ruby-identifier">to_s</span>&#x000A;  <span class="ruby-identifier">ky</span> = <span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:key</span>).<span class="ruby-identifier">to_s</span>&#x000A;  <span class="ruby-identifier">vl</span> = <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">slug</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:value</span>))&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hset</span> <span class="ruby-identifier">directive_key</span>(<span class="ruby-identifier">dr</span>), <span class="ruby-identifier">ky</span>, <span class="ruby-identifier">vl</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">KeyError</span>&#x000A;  <span class="ruby-keyword">nil</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-update_data'>
+<a name='method-i-update_data'></a>
+<div class='synopsis'>
+<span class='name'>update_data</span>
+<span class='arguments'>(slug)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in the <code>slug</code> and stores data in the db using the <a href="RedisStore.html#method-i-directive_key"><code>directive_key</code></a> method to generate a hash string.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-update_data-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-update_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 288</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-update_user'>
@@ -315,15 +408,14 @@ directive_key method to generate a hash string.</p>
 </div>
 <div class='description'>
 
-<p>Given a <code>uid</code>, this passes the <code>user</code> for editing
-inside the <code>block</code>. Then commits the changes.</p>
+<p>Given a <code>uid</code>, this passes the <code>user</code> for editing inside the <code>block</code>. Then commits the changes.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-update_user-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-update_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 180</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_user</span>(<span class="ruby-identifier">uid</span>,<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-comment"># :yields: user</span>&#x000A;  <span class="ruby-identifier">u</span> = <span class="ruby-identifier">select_user</span>(<span class="ruby-identifier">uid</span>)&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">u</span>&#x000A;  <span class="ruby-identifier">commit_user</span>(<span class="ruby-identifier">serialize_out</span>(<span class="ruby-identifier">u</span>))&#x000A;  <span class="ruby-identifier">u</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-update_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 239</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_user</span>(<span class="ruby-identifier">uid</span>)&#x000A;  <span class="ruby-comment"># :yields: user</span>&#x000A;  <span class="ruby-identifier">u</span> = <span class="ruby-identifier">select_user</span>(<span class="ruby-identifier">uid</span>)&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">u</span>&#x000A;  <span class="ruby-identifier">commit_user</span>(<span class="ruby-identifier">serialize_out</span>(<span class="ruby-identifier">u</span>))&#x000A;  <span class="ruby-identifier">u</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-users'>
@@ -335,14 +427,110 @@ inside the <code>block</code>. Then commits the changes.</p>
 </div>
 <div class='description'>
 
-<p>Alias for <a href="RedisStore.html#method-i-all_users">all_users</a></p>
+<p>Alias for <a href="RedisStore.html#method-i-all_users"><code>all_users</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-users-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-users-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 206</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">users</span>&#x000A;  <span class="ruby-identifier">all_users</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-users-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 266</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">users</span>&#x000A;  <span class="ruby-identifier">all_users</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-commit_user'>
+<a name='method-i-commit_user'></a>
+<div class='synopsis'>
+<span class='name'>commit_user</span>
+<span class='arguments'>(fields)</span>
+
+</div>
+<div class='description'>
+
+<p>Given hash <code>fields</code>, flattens them and sets them into the db</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-commit_user-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-commit_user-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 363</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">commit_user</span>(<span class="ruby-identifier">fields</span>)&#x000A;  <span class="ruby-identifier">zipper</span> = <span class="ruby-identifier">fields</span>.<span class="ruby-identifier">to_a</span>.<span class="ruby-identifier">flatten</span>&#x000A;  <span class="ruby-ivar">@redis</span>.<span class="ruby-identifier">hmset</span> <span class="ruby-identifier">user_key</span>(<span class="ruby-identifier">fields</span>), <span class="ruby-operator">*</span><span class="ruby-identifier">zipper</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-directive_key'>
+<a name='method-i-directive_key'></a>
+<div class='synopsis'>
+<span class='name'>directive_key</span>
+<span class='arguments'>(dk)</span>
+
+</div>
+<div class='description'>
+
+<p>Given a string <code>dk</code>, prepends it with “DismalTony:” to serve as a globbable identifier.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-directive_key-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-directive_key-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 391</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">directive_key</span>(<span class="ruby-identifier">dk</span>)&#x000A;  <span class="ruby-node">&quot;DismalTony:#{dk}&quot;</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-serialize_in'>
+<a name='method-i-serialize_in'></a>
+<div class='synopsis'>
+<span class='name'>serialize_in</span>
+<span class='arguments'>(redis_hash)</span>
+
+</div>
+<div class='description'>
+
+<p>Reads the <code>redis_hash</code> from db and undoes what <a href="RedisStore.html#method-i-serialize_out"><code>serialize_out</code></a> does, yielding a <a href="UserIdentity.html"><code>UserIdentity</code></a>.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-serialize_in-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-serialize_in-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 381</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">serialize_in</span>(<span class="ruby-identifier">redis_hash</span>)&#x000A;  <span class="ruby-identifier">h</span> = <span class="ruby-identifier">redis_hash</span>.<span class="ruby-identifier">clone</span>&#x000A;  <span class="ruby-identifier">h</span>.<span class="ruby-identifier">transform_keys!</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:to_sym</span>)&#x000A;  <span class="ruby-identifier">h</span>.<span class="ruby-identifier">transform_values!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span> <span class="ruby-identifier">v</span> }&#x000A;  <span class="ruby-identifier">cs</span> = <span class="ruby-identifier">h</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-value">:conversation_state</span>)&#x000A;  <span class="ruby-identifier">uid</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">UserIdentity</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">user_data:</span> <span class="ruby-identifier">h</span>, <span class="ruby-value">conversation_state:</span> <span class="ruby-identifier">cs</span>)&#x000A;  <span class="ruby-identifier">uid</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-serialize_out'>
+<a name='method-i-serialize_out'></a>
+<div class='synopsis'>
+<span class='name'>serialize_out</span>
+<span class='arguments'>(model)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in a <a href="UserIdentity.html"><code>UserIdentity</code></a> and transforms it into a storable hash for Redis by serializing complex data to YAML</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-serialize_out-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-serialize_out-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 370</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">serialize_out</span>(<span class="ruby-identifier">model</span>)&#x000A;  <span class="ruby-identifier">hfields</span> = {}&#x000A;  <span class="ruby-identifier">hfields</span>[<span class="ruby-string">&#39;conversation_state&#39;</span>] = <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">model</span>.<span class="ruby-identifier">conversation_state</span>)&#x000A;  <span class="ruby-identifier">model</span>.<span class="ruby-identifier">user_data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">hkey</span>, <span class="ruby-identifier">hval</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">hfields</span>[<span class="ruby-identifier">hkey</span>.<span class="ruby-identifier">to_s</span>] = <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">hval</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">hfields</span>[<span class="ruby-string">&#39;uuid&#39;</span>] = <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">hfields</span>[<span class="ruby-string">&#39;uuid&#39;</span>])&#x000A;  <span class="ruby-identifier">hfields</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-user_key'>
+<a name='method-i-user_key'></a>
+<div class='synopsis'>
+<span class='name'>user_key</span>
+<span class='arguments'>(either)</span>
+
+</div>
+<div class='description'>
+
+<p>Given <code>either</code>, which is anything that responds to [&#39;uuid&#39;], yields a key for identifying it in the db</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-user_key-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-user_key-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 396</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_key</span>(<span class="ruby-identifier">either</span>)&#x000A;  <span class="ruby-node">&quot;DismalTony:UserIdentity:#{either[:uuid] || either[&#39;uuid&#39;]}&quot;</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

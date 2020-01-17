@@ -3,11 +3,14 @@ require 'json'
 require 'net/http'
 require 'open-uri'
 
-module DismalTony::DirectiveHelpers
+module DismalTony::DirectiveHelpers # :nodoc:
+  # Service object wrapper for OpenWeatherAPI
   module OpenWeatherServicesHelpers
     include HelperTemplate
 
+    # The class methods of the helper
     module ClassMethods
+      # A YAML HereDOC which enumerates all WeatherCode objects
       def all_weather_codes_yaml
         <<~DOC.freeze
           ---
@@ -306,42 +309,54 @@ module DismalTony::DirectiveHelpers
         DOC
       end
 
+      # Instantiates the WeatherCode struct, returns it if it exists
       def data_struct_template
-        @data_struct_template if @data_struct_template
+        return @data_struct_template if @data_struct_template
         Struct::WeatherCode
       rescue NameError
         @data_struct_template = Struct.new('WeatherCode', :id, :flavor, :icon) do
           include Enumerable
           @@codes = []
 
+          # Takes +params+ and finds a code by it
           def self.[](param)
             @@codes[param]
           end
 
+          # Adds +member+ to codes
           def self.<<(member)
             @@codes << member
           end
 
+          # Yields all codes
           def self.each
             @@codes.each { |c| yield c }
           end
 
+          # Returns all codes
           def self.all
             @@codes
           end
 
+          # Takes +byid+ and finds code by it
           def self.find(byid)
             @@codes.find { |v| v.id == byid }
           end
         end
+
         Psych.load(all_weather_codes_yaml).each { |wc| @data_struct_template << wc }
+
         @data_struct_template
       end
 
+      private
+
+      # Stores the API URL
       def api_url
         'http://api.openweathermap.org/data/2.5/weather?'
       end
 
+      # Holds a proc to late-create the API defaults
       def api_defaults_proc
         Proc.new do |adef|
           adef[:APPID] = ENV['OPEN_WEATHER_API_KEY'] || ENV['open_weather_api_key']
@@ -350,25 +365,34 @@ module DismalTony::DirectiveHelpers
       end
     end
 
+    # The instance methods of the helper
     module InstanceMethods
+      # Takes in a string +str+ and parses the state out of it
       def get_weather_city(str)
         with_state = /, ([A-Z]+)/i
         str.gsub(with_state, '')
       end
 
+      # Gets the weather for a location +loc+
       def retrieve_weather(loc)
         resp = api_request('q' => loc)
+
         if resp['weather']&.first.nil?
           raise IndexError, "No Weather in Response: #{resp.inspect}"
         end
 
-        wc = data_struct_template.find(resp['weather'].first['id'])
+        resp['wc'] = data_struct_template.find(resp['weather'].first['id'])
 
-        binding.pry
+        parse_response(resp)
+      end
 
+      private
+
+      # Converts +resp+ into a hash
+      def parse_response(resp)
         {
           city_name: resp['name'],
-          weather: wc,
+          weather: resp['wc'],
           temp: resp['main']['temp'],
           temp_min: resp['main']['temp_min'],
           temp_max: resp['main']['temp_max'],
@@ -380,7 +404,8 @@ module DismalTony::DirectiveHelpers
   end
 end
 
-module DismalTony::Directives
+module DismalTony::Directives # :nodoc:
+  # Reports on the weather conditions
   class WeatherReportDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
@@ -403,17 +428,24 @@ module DismalTony::Directives
       qry << could { |q| q.key_phrases.any? { |ph| ph.text.match?(/\bweather\b/i) } }
     end
 
+    # Gets the weather for the city, and returns it
     def run
       req = retrieve_weather(get_weather_city(query.location.text))
       return_data(req)
 
-      DismalTony::HandledResponse.finish("The current weather in #{req[:city_name]} is #{req[:weather].flavor}.").with_format(use_icon: req[:weather].icon)
+      weather_resp = "The current weather in #{req[:city_name]} is #{req[:weather].flavor}."
+
+      DismalTony::HandledResponse.finish(weather_resp)
+                                 .with_format(use_icon: req[:weather].icon)
     rescue IndexError
       return_data(nil)
-      DismalTony::HandledResponse.finish("~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}.")
+      dunno_txt = "~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}."
+
+      DismalTony::HandledResponse.finish(dunno_txt)
     end
   end
 
+  # Reports on the temperature
   class TemperatureReportDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
@@ -437,17 +469,28 @@ module DismalTony::Directives
       qry << could { |q| q.key_phrases.any? { |ph| ph.text.match?(/\btemperature\b/i) } }
     end
 
+    # Gets the weather data for a location, and returns the temperature data
     def run
-      req = retrieve_weather(get_weather_city(query.location.text))
-      return_data(req)
+      loc = get_weather_city(query.location.text)
+      req = retrieve_weather(loc)
+
+      return_data(req.slice(*%i[temp temp_min temp_max]))
 
       moj = temp_emoji(req[:temp])
-      DismalTony::HandledResponse.finish("~e:#{moj} The temperature right now is around #{req[:temp]}˚F in #{req[:city_name]}")
+
+      resp = "~e:#{moj} The temperature right now is around #{req[:temp]}˚F in #{req[:city_name]}"
+
+      DismalTony::HandledResponse.finish(resp)
     rescue IndexError
       return_data(nil)
-      DismalTony::HandledResponse.finish("~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}.")
+
+      resp = "~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}."
+      DismalTony::HandledResponse.finish(resp)
     end
 
+    private
+
+    # Gets an appropriate emoji for a temperature +tmp+
     def temp_emoji(tmp)
       case tmp
       when 120..90
@@ -472,6 +515,7 @@ module DismalTony::Directives
     end
   end
 
+  # Reports on the humidity
   class HumidityReportDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
@@ -495,9 +539,10 @@ module DismalTony::Directives
       qry << could { |q| q.key_phrases.any? { |ph| ph.text.match?(/\bhumid(ity)?\b/i) } }
     end
 
+    # Gets the weather and returns the humidity index
     def run
       req = retrieve_weather(get_weather_city(query.location.text))
-      return_data(req)
+      return_data(req.slice(:humidity))
 
       moj = random_emoji('waterdrop', 'waterdrops')
       DismalTony::HandledResponse.finish("~e:#{moj} The humidity is currently at #{req[:humidity]}\% in #{req[:city_name]}")
@@ -506,6 +551,7 @@ module DismalTony::Directives
       DismalTony::HandledResponse.finish("~e:#{negative_emoji} I'm sorry, I couldn't find results for #{query.location.text}.") end
   end
 
+  # Reports on the windspeed
   class WindSpeedReportDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
@@ -529,9 +575,10 @@ module DismalTony::Directives
       qry << could { |q| q.key_phrases.any? { |ph| ph.text.match?(/\bwind\b/i) } }
     end
 
+    # Gets the weather and returns the windspeed
     def run
       req = retrieve_weather(get_weather_city(query.location.text))
-      return_data(req)
+      return_data(req.slice(:wind_speed))
 
       moj = random_emoji('americanflag', 'windblow', 'gust')
       DismalTony::HandledResponse.finish("~e:#{moj} The wind is blowing at #{req[:wind_speed]}mph in #{req[:city_name]}.")

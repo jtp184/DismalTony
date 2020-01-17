@@ -39,8 +39,7 @@ Superclass:
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Used for outputting to speech using the <code>`say`</code> command under
-MacOS</p>
+<p>Used for outputting to speech using the <code>`say`</code> command under MacOS</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -63,15 +62,14 @@ MacOS</p>
 </div>
 <div class='description'>
 
-<p>Calls <code>`say`</code> on the message. If the message is formatted, it
-prefaces <code>msg</code> with the name of the emote</p>
+<p>Calls <code>`say`</code> on the message. If the message is formatted, it prefaces <code>msg</code> with the name of the emote</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-send-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-send-source'><span class="ruby-comment"># File lib/dismaltony/dialog_interface.rb, line 92</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">send</span>(<span class="ruby-identifier">msg</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">msg</span> <span class="ruby-operator">=~</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span><span class="ruby-operator">::</span><span class="ruby-constant">OUTGOING</span>&#x000A;    <span class="ruby-identifier">md</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span><span class="ruby-operator">::</span><span class="ruby-constant">OUTGOING</span>.<span class="ruby-identifier">match</span> <span class="ruby-identifier">msg</span>&#x000A;    <span class="ruby-identifier">emote</span> = <span class="ruby-identifier">md</span>[<span class="ruby-string">&#39;moji&#39;</span>]&#x000A;    <span class="ruby-identifier">text</span> = <span class="ruby-identifier">md</span>[<span class="ruby-string">&#39;message&#39;</span>]&#x000A;    <span class="ruby-node">`say #{DismalTony::EmojiDictionary.name(emote)}. #{text}`</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-node">`say #{msg}`</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-send-source'><span class="ruby-comment"># File lib/dismaltony/dialog_interface.rb, line 89</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">send</span>(<span class="ruby-identifier">msg</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span><span class="ruby-operator">::</span><span class="ruby-constant">OUTGOING</span>.<span class="ruby-identifier">match?</span>(<span class="ruby-identifier">msg</span>)&#x000A;    <span class="ruby-identifier">md</span> = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Formatter</span><span class="ruby-operator">::</span><span class="ruby-constant">OUTGOING</span>.<span class="ruby-identifier">match</span> <span class="ruby-identifier">msg</span>&#x000A;    <span class="ruby-identifier">emote</span> = <span class="ruby-identifier">md</span>[<span class="ruby-string">&#39;moji&#39;</span>]&#x000A;    <span class="ruby-identifier">text</span> = <span class="ruby-identifier">md</span>[<span class="ruby-string">&#39;message&#39;</span>]&#x000A;    <span class="ruby-node">`say #{DismalTony::Formatter.emoji_name(emote)}. #{text}`</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-node">`say #{msg}`</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

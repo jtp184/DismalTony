@@ -12,6 +12,7 @@ module DismalTony # :nodoc:
           @api_defaults_proc = blk
         end
 
+        # The api defaults, for late evaluation
         def api_defaults_proc
           @api_defaults_proc
         end

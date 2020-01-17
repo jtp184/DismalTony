@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang='en'>
 <head>
-<title>DismalTony::MatchLogicTypes::IsKeyword</title>
+<title>DismalTony::ParsingStrategies::ParseyParseStrategy</title>
 <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
 <link href='../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
 <script type='text/javascript'>
@@ -24,57 +24,52 @@
 <div class='class' id='wrapper'>
 <div class='header'>
 <h1 class='name'><span class='type'>class</span>
-DismalTony::MatchLogicTypes::IsKeyword
+DismalTony::ParsingStrategies::ParseyParseStrategy
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../files/lib/dismaltony/match_logic_rb.html">lib/dismaltony/match_logic.rb</a>
+<a href="../../../files/lib/dismaltony/parsing_strategies/parsey_parse_strategy_rb.html">lib/dismaltony/parsing_strategies/parsey_parse_strategy.rb</a>
 </li>
 </ol>
 <div class='parent'>
 Superclass:
-<strong><a href="../MatchLogic.html">MatchLogic</a></strong>
+<strong>ParsingStrategy</strong>
 </div>
 </div>
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>The “keyword” method is used for criteria which represent obvious clues
-that a <a href="../Directive.html">Directive</a> should be employed. Covers
-obvious named domain entities, and unambiguous verbs / symbols. Increases
-the certainty factor by 5x base, but does raise a <a
-href="../MatchLogicFailure.html">MatchLogicFailure</a> if not matched.</p>
+<p>Uses ParseyMcParseface for syntax tagging</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
-<h3>Public Instance</h3>
+<h3>Public Class</h3>
 <ol>
-<li><a href="#method-i-on_failure">on_failure</a></li>
+<li><a href="#method-c-call">call</a></li>
 </ol>
 </div>
 <div id='context'>
 </div>
 <div id='section'>
 <div id='methods'>
-<h2>Public Instance methods</h2>
-<div class='method public-instance' id='method-method-i-on_failure'>
-<a name='method-i-on_failure'></a>
+<h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-call'>
+<a name='method-c-call'></a>
 <div class='synopsis'>
-<span class='name'>on_failure</span>
-<span class='arguments'>()</span>
+<span class='name'>call</span>
+<span class='arguments'>(q)</span>
 
 </div>
 <div class='description'>
 
-<p>Raises a <a href="../MatchLogicFailure.html">MatchLogicFailure</a> if this
-does not match</p>
+<p>Calls ParseyParse with the query <code>q</code></p>
 
 </div>
 <div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-on_failure-source&#39;); return false'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-call-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-on_failure-source'><span class="ruby-comment"># File lib/dismaltony/match_logic.rb, line 155</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_failure</span>&#x000A;  <span class="ruby-identifier">raise</span> <span class="ruby-constant">MatchLogicFailure</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-call-source'><span class="ruby-comment"># File lib/dismaltony/parsing_strategies/parsey_parse_strategy.rb, line 8</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-identifier">q</span>)&#x000A;  <span class="ruby-constant">ParseyParse</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">q</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

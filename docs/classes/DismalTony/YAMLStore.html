@@ -39,10 +39,7 @@ Superclass:
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Represents storing the <a href="DataStore.html">DataStore</a> to disk in a
-YAML file. A relatively simple wrapper around the internal <a
-href="DataStore.html">DataStore</a> that handles loading and saving the
-YAML.</p>
+<p>Represents storing the <a href="DataStore.html"><code>DataStore</code></a> to disk in a YAML file. A relatively simple wrapper around the internal <a href="DataStore.html"><code>DataStore</code></a> that handles loading and saving the YAML.</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -55,13 +52,16 @@ YAML.</p>
 <h3>Public Instance</h3>
 <ol>
 <li><a href="#attribute-i-data_store">data_store</a></li>
+<li><a href="#method-i-delete_data">delete_data</a></li>
 <li><a href="#attribute-i-filepath">filepath</a></li>
 <li><a href="#method-i-load">load</a></li>
 <li><a href="#method-i-method_missing">method_missing</a></li>
 <li><a href="#method-i-on_query">on_query</a></li>
+<li><a href="#method-i-read_data">read_data</a></li>
 <li><a href="#method-i-save">save</a></li>
 <li><a href="#method-i-set_opt">set_opt</a></li>
 <li><a href="#method-i-store_data">store_data</a></li>
+<li><a href="#method-i-update_data">update_data</a></li>
 </ol>
 </div>
 <div id='context'>
@@ -77,7 +77,7 @@ YAML.</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>The wrapped <a href="DataStore.html">DataStore</a> object</p>
+<p>The wrapped <a href="DataStore.html"><code>DataStore</code></a> object</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -103,15 +103,14 @@ YAML.</p>
 </div>
 <div class='description'>
 
-<p>Creates a new <a href="YAMLStore.html">YAMLStore</a> at the filepath
-<code>fp</code>, and saves it to disk as well.</p>
+<p>Creates a new <a href="YAMLStore.html"><code>YAMLStore</code></a> at the filepath <code>fp</code>, and saves it to disk as well.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-create_at-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-create_at-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 98</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">create_at</span>(<span class="ruby-identifier">fp</span>)&#x000A;  <span class="ruby-identifier">new_store</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">filepath:</span> <span class="ruby-identifier">fp</span>)&#x000A;  <span class="ruby-identifier">new_store</span>.<span class="ruby-identifier">save</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-create_at-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 129</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">create_at</span>(<span class="ruby-identifier">fp</span>)&#x000A;  <span class="ruby-identifier">new_store</span> = <span class="ruby-identifier">new</span>(<span class="ruby-value">filepath:</span> <span class="ruby-identifier">fp</span>)&#x000A;  <span class="ruby-identifier">new_store</span>.<span class="ruby-identifier">save</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-load_from'>
@@ -123,38 +122,55 @@ YAML.</p>
 </div>
 <div class='description'>
 
-<p>Takes a filepath <code>fp</code> and reads in that <a
-href="YAMLStore.html">YAMLStore</a>.</p>
+<p>Takes a filepath <code>fp</code> and reads in that <a href="YAMLStore.html"><code>YAMLStore</code></a>.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-load_from-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-load_from-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 91</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">load_from</span>(<span class="ruby-identifier">fp</span> = <span class="ruby-string">&#39;./tony.yml&#39;</span>)&#x000A;  <span class="ruby-identifier">loaded</span> = <span class="ruby-keyword">self</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">filepath:</span> <span class="ruby-identifier">fp</span>, <span class="ruby-value">data_store:</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">fp</span>)))&#x000A;  <span class="ruby-identifier">loaded</span>.<span class="ruby-identifier">opts</span>[<span class="ruby-value">:env_vars</span>]&amp;.<span class="ruby-identifier">each_pair</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span><span class="ruby-operator">|</span> <span class="ruby-constant">ENV</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">val</span> }&#x000A;  <span class="ruby-identifier">loaded</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-load_from-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 122</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">load_from</span>(<span class="ruby-identifier">fp</span> = <span class="ruby-string">&#39;./tony.yml&#39;</span>)&#x000A;  <span class="ruby-identifier">loaded</span> = <span class="ruby-identifier">new</span>(<span class="ruby-value">filepath:</span> <span class="ruby-identifier">fp</span>, <span class="ruby-value">data_store:</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-identifier">fp</span>)))&#x000A;  <span class="ruby-identifier">loaded</span>.<span class="ruby-identifier">opts</span>[<span class="ruby-value">:env_vars</span>]&amp;.<span class="ruby-identifier">each_pair</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">val</span><span class="ruby-operator">|</span> <span class="ruby-constant">ENV</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-identifier">val</span> }&#x000A;  <span class="ruby-identifier">loaded</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-new'>
 <a name='method-c-new'></a>
 <div class='synopsis'>
 <span class='name'>new</span>
-<span class='arguments'>(args={})</span>
+<span class='arguments'>(args = {})</span>
 
 </div>
 <div class='description'>
 
-<p>Args takes hooks for :filepath and :data_store, and autopopulates them if
-not present.</p>
+<p>Args takes hooks for :filepath and :data_store, and autopopulates them if not present.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-new-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 85</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">args</span>={})&#x000A;  <span class="ruby-ivar">@filepath</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:filepath</span>) { <span class="ruby-string">&quot;./tony.yml&quot;</span> }&#x000A;  <span class="ruby-ivar">@data_store</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:data_store</span>) { <span class="ruby-constant">DataStore</span>.<span class="ruby-identifier">new</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-new-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 116</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">args</span> = {})&#x000A;  <span class="ruby-ivar">@filepath</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:filepath</span>) { <span class="ruby-string">&#39;./tony.yml&#39;</span> }&#x000A;  <span class="ruby-ivar">@data_store</span> = <span class="ruby-identifier">args</span>.<span class="ruby-identifier">fetch</span>(<span class="ruby-value">:data_store</span>) { <span class="ruby-constant">DataStore</span>.<span class="ruby-identifier">new</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-delete_data'>
+<a name='method-i-delete_data'></a>
+<div class='synopsis'>
+<span class='name'>delete_data</span>
+<span class='arguments'>(dname, *ky)</span>
+
+</div>
+<div class='description'>
+
+<p>Using the directive&#39;s <code>dname</code> and the nested keys <code>ky</code>, removes the key from the store</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-delete_data-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-delete_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 167</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">x</span> = <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">delete_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;  <span class="ruby-identifier">x</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
 <div class='method public-instance' id='method-method-i-load'>
 <a name='method-i-load'></a>
 <div class='synopsis'>
@@ -171,7 +187,7 @@ not present.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-load-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-load-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 115</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load</span>&#x000A;  <span class="ruby-identifier">load_from</span>(<span class="ruby-identifier">filepath</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-load-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 146</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load</span>&#x000A;  <span class="ruby-identifier">load_from</span>(<span class="ruby-identifier">filepath</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-method_missing'>
@@ -183,15 +199,14 @@ not present.</p>
 </div>
 <div class='description'>
 
-<p>Checks the internal <code>data_store</code> to see if it responds to
-<code>name</code>, and passes the <code>params</code> along.</p>
+<p>Checks the internal <code>data_store</code> to see if it responds to <code>name</code>, and passes the <code>params</code> along.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-method_missing-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-method_missing-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 134</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">method_missing</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">params</span>)&#x000A;  <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">name</span>) <span class="ruby-operator">?</span> <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">name</span>).(<span class="ruby-operator">*</span><span class="ruby-identifier">params</span>) <span class="ruby-operator">:</span> <span class="ruby-keyword">super</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-method_missing-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 188</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">method_missing</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">params</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">name</span>)&#x000A;    <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">method</span>(<span class="ruby-identifier">name</span>).<span class="ruby-identifier">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">params</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-keyword">super</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-on_query'>
@@ -203,15 +218,33 @@ not present.</p>
 </div>
 <div class='description'>
 
-<p>Kickback function. Ignores <code>_args</code> and saves to disk after every
-query.</p>
+<p>Kickback function. Ignores <code>_args</code> and saves to disk after every query.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-on_query-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-on_query-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 104</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_query</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">_args</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-on_query-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 135</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">on_query</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">_args</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-read_data'>
+<a name='method-i-read_data'></a>
+<div class='synopsis'>
+<span class='name'>read_data</span>
+<span class='arguments'>(dname, *ky)</span>
+
+</div>
+<div class='description'>
+
+<p>Using the directive&#39;s <code>dname</code> and the nested keys <code>ky</code>, digs inside <code>directive_data</code> for the information</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-read_data-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-read_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 159</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">read_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">x</span> = <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">read_data</span>(<span class="ruby-identifier">dname</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;  <span class="ruby-identifier">x</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-save'>
@@ -230,7 +263,7 @@ query.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-save-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-save-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 109</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save</span>&#x000A;  <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">filepath</span>, <span class="ruby-string">&#39;w+&#39;</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">data_store</span>) }&#x000A;  <span class="ruby-keyword">self</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-save-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 140</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">save</span>&#x000A;  <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">filepath</span>, <span class="ruby-string">&#39;w+&#39;</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">data_store</span>) }&#x000A;  <span class="ruby-keyword">self</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-set_opt'>
@@ -242,16 +275,14 @@ query.</p>
 </div>
 <div class='description'>
 
-<p>Delegates <code>k</code> and <code>v</code> to <a
-href="DataStore.html#method-i-set_opt">DismalTony::DataStore#set_opt</a>
-and saves to disk.</p>
+<p>Delegates <code>k</code> and <code>v</code> to <a href="DataStore.html#method-i-set_opt"><code>DataStore#set_opt</code></a> and saves to disk.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-set_opt-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-set_opt-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 127</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_opt</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-identifier">x</span> = <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">set_opt</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;  <span class="ruby-identifier">x</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-set_opt-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 181</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_opt</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-identifier">x</span> = <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">set_opt</span>(<span class="ruby-identifier">k</span>, <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;  <span class="ruby-identifier">x</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-store_data'>
@@ -263,16 +294,33 @@ and saves to disk.</p>
 </div>
 <div class='description'>
 
-<p>Passes the <code>slug</code> to <a
-href="DataStore.html#method-i-store_data">DismalTony::DataStore#store_data</a>
-and, then saves to disk.</p>
+<p>Passes the <code>slug</code> to <a href="DataStore.html#method-i-store_data"><code>DataStore#store_data</code></a> and, then saves to disk.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-store_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-store_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 120</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">x</span> = <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;  <span class="ruby-identifier">x</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-store_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 151</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">x</span> = <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">store_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;  <span class="ruby-identifier">x</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-update_data'>
+<a name='method-i-update_data'></a>
+<div class='synopsis'>
+<span class='name'>update_data</span>
+<span class='arguments'>(slug)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes the data from the <code>slug</code> and updates accordingly</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-update_data-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-update_data-source'><span class="ruby-comment"># File lib/dismaltony/data_store.rb, line 174</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">x</span> = <span class="ruby-ivar">@data_store</span>.<span class="ruby-identifier">update_data</span>(<span class="ruby-identifier">slug</span>)&#x000A;  <span class="ruby-identifier">save</span>&#x000A;  <span class="ruby-identifier">x</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

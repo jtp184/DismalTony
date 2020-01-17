@@ -1,6 +1,7 @@
 require 'dismaltony/parsing_strategies/aws_comprehend_strategy'
 
-module DismalTony::Directives
+module DismalTony::Directives # :nodoc:
+	# Does the tip on a bill
 	class TipMathDirective < DismalTony::Directive
 		include DismalTony::DirectiveHelpers::DataRepresentationHelpers
 		include DismalTony::DirectiveHelpers::InterrogativeHelpers
@@ -22,6 +23,7 @@ module DismalTony::Directives
 			qry << could(&:quantities?)
 		end
 
+		# Asks for the bill subtotal and tip, and calculates
 		def run
 			moj = random_emoji('dollarsign', 'moneybag', 'moneywing', 'pencil')
 			ask_for_bill_subtotal(
@@ -69,6 +71,7 @@ module DismalTony::Directives
 
 		private
 
+		# Performs math on the fragments to get final results
 		def perform_calculations
 			frags[:bill_total] = (frags[:bill_subtotal].value * (1.0 + frags[:tip].value))
 			frags[:tip_total] = (frags[:bill_subtotal].value * frags[:tip].value)
@@ -76,11 +79,13 @@ module DismalTony::Directives
 			fragments
 		end
 
+		# strf converts +val+
 		def monetize(val)
 			"$%.2f" % val
 		end
 	end
 
+	# Splits a bill between people, also handling tip
 	class BillSplitDirective < DismalTony::Directive
 		include DismalTony::DirectiveHelpers::DataRepresentationHelpers
 		include DismalTony::DirectiveHelpers::InterrogativeHelpers
@@ -121,6 +126,7 @@ module DismalTony::Directives
 			]
 		end
 
+		# Gets bill, split count, and tip, and returns
 		def run
 			moj = random_emoji('dollarsign', 'moneybag', 'moneywing', 'pencil')
 
@@ -177,6 +183,7 @@ module DismalTony::Directives
 
 		private
 
+		# Gets totals from subtotals
 		def perform_calculations
 			frags[:bill_total] = (frags[:bill_subtotal].value * (1.0 + frags[:tip].value))
 			frags[:tip_total] = (frags[:bill_subtotal].value * frags[:tip].value)
@@ -185,6 +192,7 @@ module DismalTony::Directives
 			fragments
 		end
 
+		# strf converts +val+
 		def monetize(val)
 			"$%.2f" % val
 		end

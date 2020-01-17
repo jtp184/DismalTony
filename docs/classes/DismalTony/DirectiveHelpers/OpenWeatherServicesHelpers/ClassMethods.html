@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::DirectiveHelpers::OpenWeatherServicesHelpers::ClassMethods</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>module</span>
+DismalTony::DirectiveHelpers::OpenWeatherServicesHelpers::ClassMethods
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../../files/lib/dismaltony/directives/weather_rb.html">lib/dismaltony/directives/weather.rb</a>
+</li>
+</ol>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>The class methods of the helper</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Class</h3>
+<ol>
+<li><a href="#method-c-3C-3C"><<</a></li>
+<li><a href="#method-c-5B-5D">[]</a></li>
+<li><a href="#method-c-all">all</a></li>
+<li><a href="#method-c-each">each</a></li>
+<li><a href="#method-c-find">find</a></li>
+</ol>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-all_weather_codes_yaml">all_weather_codes_yaml</a></li>
+<li><a href="#method-i-data_struct_template">data_struct_template</a></li>
+</ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-api_defaults_proc">api_defaults_proc</a></li>
+<li><a href="#method-i-api_url">api_url</a></li>
+</ol>
+</div>
+<div id='context'>
+<div id='includes'>
+<h2>Included modules</h2>
+<ol>
+<li>Enumerable</li>
+</ol>
+</div>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Class methods</h2>
+<div class='method public-class' id='method-method-c-3C-3C'>
+<a name='method-c-3C-3C'></a>
+<div class='synopsis'>
+<span class='name'><<</span>
+<span class='arguments'>(member)</span>
+
+</div>
+<div class='description'>
+
+<p>Adds <code>member</code> to codes</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-3C-3C-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-3C-3C-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 327</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">&lt;&lt;</span>(<span class="ruby-identifier">member</span>)&#x000A;  <span class="ruby-identifier">@@codes</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">member</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-5B-5D'>
+<a name='method-c-5B-5D'></a>
+<div class='synopsis'>
+<span class='name'>[]</span>
+<span class='arguments'>(param)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes <code>params</code> and finds a code by it</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-5B-5D-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-5B-5D-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 322</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">[]</span>(<span class="ruby-identifier">param</span>)&#x000A;  <span class="ruby-identifier">@@codes</span>[<span class="ruby-identifier">param</span>]&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-all'>
+<a name='method-c-all'></a>
+<div class='synopsis'>
+<span class='name'>all</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Returns all codes</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-all-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-all-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 337</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>&#x000A;  <span class="ruby-identifier">@@codes</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-each'>
+<a name='method-c-each'></a>
+<div class='synopsis'>
+<span class='name'>each</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Yields all codes</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-each-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-each-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 332</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">each</span>&#x000A;  <span class="ruby-identifier">@@codes</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword">yield</span> <span class="ruby-identifier">c</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-find'>
+<a name='method-c-find'></a>
+<div class='synopsis'>
+<span class='name'>find</span>
+<span class='arguments'>(byid)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes <code>byid</code> and finds code by it</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-find-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-find-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 342</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">byid</span>)&#x000A;  <span class="ruby-identifier">@@codes</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">byid</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-all_weather_codes_yaml'>
+<a name='method-i-all_weather_codes_yaml'></a>
+<div class='synopsis'>
+<span class='name'>all_weather_codes_yaml</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>A YAML HereDOC which enumerates all WeatherCode objects</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-all_weather_codes_yaml-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-all_weather_codes_yaml-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 14</span>&#x000A;      <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">all_weather_codes_yaml</span>&#x000A;        <span class="ruby-identifier">&lt;&lt;~DOC</span>.<span class="ruby-identifier">freeze</span>&#x000A;<span class="ruby-value">          ---&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 200&#x000A;            flavor: thunderstorm with light rain&#x000A;            icon: &quot;⛈&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 201&#x000A;            flavor: thunderstorm with rain&#x000A;            icon: &quot;⛈&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 202&#x000A;            flavor: thunderstorm with heavy rain&#x000A;            icon: &quot;⛈&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 210&#x000A;            flavor: light thunderstorm&#x000A;            icon: &quot;🌩&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 211&#x000A;            flavor: thunderstorm&#x000A;            icon: &quot;🌩&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 212&#x000A;            flavor: heavy thunderstorm&#x000A;            icon: &quot;🌩&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 221&#x000A;            flavor: ragged thunderstorm&#x000A;            icon: &quot;🌩&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 230&#x000A;            flavor: thunderstorm with light drizzle&#x000A;            icon: &quot;⛈&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 231&#x000A;            flavor: thunderstorm with drizzle&#x000A;            icon: &quot;⛈&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 232&#x000A;            flavor: thunderstorm with heavy drizzle&#x000A;            icon: &quot;⛈&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 300&#x000A;            flavor: light intensity drizzle&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 301&#x000A;            flavor: drizzle&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 302&#x000A;            flavor: heavy intensity drizzle&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 310&#x000A;            flavor: light intensity drizzle rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 311&#x000A;            flavor: drizzle rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 312&#x000A;            flavor: heavy intensity drizzle rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 313&#x000A;            flavor: shower rain and drizzle&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 314&#x000A;            flavor: heavy shower rain and drizzle&#x000A;            icon: &quot;☔️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 321&#x000A;            flavor: shower drizzle&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 500&#x000A;            flavor: light rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 501&#x000A;            flavor: moderate rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 502&#x000A;            flavor: heavy intensity rain&#x000A;            icon: &quot;☔️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 503&#x000A;            flavor: very heavy rain&#x000A;            icon: &quot;☔️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 504&#x000A;            flavor: extreme rain&#x000A;            icon: &quot;☔️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 511&#x000A;            flavor: freezing rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 520&#x000A;            flavor: light intensity shower rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 521&#x000A;            flavor: shower rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 522&#x000A;            flavor: heavy intensity shower rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 531&#x000A;            flavor: ragged shower rain&#x000A;            icon: &quot;🌧&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 600&#x000A;            flavor: light snow&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 601&#x000A;            flavor: snow&#x000A;            icon: &quot;❄️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 602&#x000A;            flavor: heavy snow&#x000A;            icon: &quot;❄️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 611&#x000A;            flavor: sleet&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 612&#x000A;            flavor: shower sleet&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 615&#x000A;            flavor: light rain and snow&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 616&#x000A;            flavor: rain and snow&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 620&#x000A;            flavor: light shower snow&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 621&#x000A;            flavor: shower snow&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 622&#x000A;            flavor: heavy shower snow&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 701&#x000A;            flavor: mist&#x000A;            icon: &quot;🌫&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 711&#x000A;            flavor: smoke&#x000A;            icon: &quot;🌫&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 721&#x000A;            flavor: haze&#x000A;            icon: &quot;🌫&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 731&#x000A;            flavor: sand, dust whirls&#x000A;            icon: &quot;🌪&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 741&#x000A;            flavor: fog&#x000A;            icon: &quot;🌫&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 751&#x000A;            flavor: sand&#x000A;            icon: &quot;🌪&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 761&#x000A;            flavor: dust&#x000A;            icon: &quot;🌫&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 762&#x000A;            flavor: volcanic ash&#x000A;            icon: &quot;🌋&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 771&#x000A;            flavor: squalls&#x000A;            icon: &quot;🌬&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 781&#x000A;            flavor: tornado&#x000A;            icon: &quot;🌪&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 800&#x000A;            flavor: clear sky&#x000A;            icon: &quot;☀️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 801&#x000A;            flavor: few clouds&#x000A;            icon: &quot;🌤&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 802&#x000A;            flavor: scattered clouds&#x000A;            icon: &quot;🌤&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 803&#x000A;            flavor: broken clouds&#x000A;            icon: &quot;🌤&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 804&#x000A;            flavor: overcast clouds&#x000A;            icon: &quot;🌥&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 900&#x000A;            flavor: tornado&#x000A;            icon: &quot;🌪&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 901&#x000A;            flavor: tropical storm&#x000A;            icon: &quot;🌪&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 902&#x000A;            flavor: hurricane&#x000A;            icon: &quot;🌪&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 903&#x000A;            flavor: cold&#x000A;            icon: &quot;❄️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 904&#x000A;            flavor: hot&#x000A;            icon: &quot;🔥&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 905&#x000A;            flavor: windy&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 906&#x000A;            flavor: hail&#x000A;            icon: &quot;🌨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 951&#x000A;            flavor: calm&#x000A;            icon: &quot;☀️&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 952&#x000A;            flavor: light breeze&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 953&#x000A;            flavor: gentle breeze&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 954&#x000A;            flavor: moderate breeze&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 955&#x000A;            flavor: fresh breeze&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 956&#x000A;            flavor: strong breeze&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 957&#x000A;            flavor: high wind, near gale&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 958&#x000A;            flavor: gale&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 959&#x000A;            flavor: severe gale&#x000A;            icon: &quot;💨&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 960&#x000A;            flavor: storm&#x000A;            icon: &quot;⛈&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 961&#x000A;            flavor: violent storm&#x000A;            icon: &quot;⛈&quot;&#x000A;          - !ruby/struct:Struct::WeatherCode&#x000A;            id: 962&#x000A;            flavor: hurricane&#x000A;            icon: &quot;🌪&quot;&#x000A;</span><span class="ruby-identifier">        DOC</span>&#x000A;      <span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-data_struct_template'>
+<a name='method-i-data_struct_template'></a>
+<div class='synopsis'>
+<span class='name'>data_struct_template</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Instantiates the WeatherCode struct, returns it if it exists</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_struct_template-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-data_struct_template-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 313</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@data_struct_template</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@data_struct_template</span>&#x000A;  <span class="ruby-constant">Struct</span><span class="ruby-operator">::</span><span class="ruby-constant">WeatherCode</span>&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">NameError</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span> = <span class="ruby-constant">Struct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;WeatherCode&#39;</span>, <span class="ruby-value">:id</span>, <span class="ruby-value">:flavor</span>, <span class="ruby-value">:icon</span>) <span class="ruby-keyword">do</span>&#x000A;    <span class="ruby-identifier">include</span> <span class="ruby-constant">Enumerable</span>&#x000A;    <span class="ruby-identifier">@@codes</span> = []&#x000A;&#x000A;    <span class="ruby-comment"># Takes +params+ and finds a code by it</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">[]</span>(<span class="ruby-identifier">param</span>)&#x000A;      <span class="ruby-identifier">@@codes</span>[<span class="ruby-identifier">param</span>]&#x000A;    <span class="ruby-keyword">end</span>&#x000A;&#x000A;    <span class="ruby-comment"># Adds +member+ to codes</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">&lt;&lt;</span>(<span class="ruby-identifier">member</span>)&#x000A;      <span class="ruby-identifier">@@codes</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">member</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;&#x000A;    <span class="ruby-comment"># Yields all codes</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">each</span>&#x000A;      <span class="ruby-identifier">@@codes</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword">yield</span> <span class="ruby-identifier">c</span> }&#x000A;    <span class="ruby-keyword">end</span>&#x000A;&#x000A;    <span class="ruby-comment"># Returns all codes</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>&#x000A;      <span class="ruby-identifier">@@codes</span>&#x000A;    <span class="ruby-keyword">end</span>&#x000A;&#x000A;    <span class="ruby-comment"># Takes +byid+ and finds code by it</span>&#x000A;    <span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">find</span>(<span class="ruby-identifier">byid</span>)&#x000A;      <span class="ruby-identifier">@@codes</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">byid</span> }&#x000A;    <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-constant">Psych</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">all_weather_codes_yaml</span>).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">wc</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@data_struct_template</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">wc</span> }&#x000A;&#x000A;  <span class="ruby-ivar">@data_struct_template</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-api_defaults_proc'>
+<a name='method-i-api_defaults_proc'></a>
+<div class='synopsis'>
+<span class='name'>api_defaults_proc</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Holds a proc to late-create the API defaults</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-api_defaults_proc-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-api_defaults_proc-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 360</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_defaults_proc</span>&#x000A;  <span class="ruby-constant">Proc</span>.<span class="ruby-identifier">new</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">adef</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">adef</span>[<span class="ruby-value">:APPID</span>] = <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;OPEN_WEATHER_API_KEY&#39;</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">ENV</span>[<span class="ruby-string">&#39;open_weather_api_key&#39;</span>]&#x000A;    <span class="ruby-identifier">adef</span>[<span class="ruby-value">:units</span>] = <span class="ruby-string">&#39;imperial&#39;</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-api_url'>
+<a name='method-i-api_url'></a>
+<div class='synopsis'>
+<span class='name'>api_url</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Stores the API URL</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-api_url-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-api_url-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 355</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">api_url</span>&#x000A;  <span class="ruby-string">&#39;http://api.openweathermap.org/data/2.5/weather?&#39;</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

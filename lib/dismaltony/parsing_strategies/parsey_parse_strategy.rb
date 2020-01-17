@@ -1,13 +1,15 @@
 require 'ParseyParse'
 
-module DismalTony
-  module ParsingStrategies
+module DismalTony # :nodoc:
+  module ParsingStrategies # :nodoc:
+    # Uses ParseyMcParseface for syntax tagging
     class ParseyParseStrategy < ParsingStrategy
+      # Calls ParseyParse with the query +q+
       def self.call(q)
         ParseyParse.call(q)
       end
 
-      def self.value_class
+      def self.value_class # :nodoc:
         ParseyParse::Sentence
       end
     end

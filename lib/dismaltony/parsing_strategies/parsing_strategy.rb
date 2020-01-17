@@ -1,4 +1,5 @@
-module DismalTony
+module DismalTony #:nodoc:
+  # The self enumerating module containing all defined ParsingStrategy objects
   module ParsingStrategies
     class << self
       include Enumerable
@@ -14,9 +15,11 @@ module DismalTony
       all.each(&blk)
     end
 
+    # Represents a way of interpreting the query to assign extra behavior
     class ParsingStrategy
+      # Takes in a Query, yields the .value_class to the Query#parsed_results
       def self.call(_q); end
-
+      # The class that is instantiated with the result
       def self.value_class; end
     end
   end

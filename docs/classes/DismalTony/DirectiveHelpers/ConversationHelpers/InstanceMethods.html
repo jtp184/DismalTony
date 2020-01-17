@@ -28,15 +28,14 @@ DismalTony::DirectiveHelpers::ConversationHelpers::InstanceMethods
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+<a href="../../../../files/lib/dismaltony/directive_helpers/conversation_helpers_rb.html">lib/dismaltony/directive_helpers/conversation_helpers.rb</a>
 </li>
 </ol>
 </div>
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Utility functions to help construct responses easier. Contains the Instance
-methods of the helper, which are added on inclusion</p>
+<p>Utility functions to help construct responses easier. Contains the Instance methods of the helper, which are added on inclusion</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -67,7 +66,7 @@ methods of the helper, which are added on inclusion</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-synonym_for-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-synonym_for-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 117</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonym_for</span>(<span class="ruby-identifier">word</span>)&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-keyword">nil</span>&#x000A;  <span class="ruby-identifier">synonyms</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">reg</span>, <span class="ruby-identifier">syns</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">resp</span> = <span class="ruby-identifier">word</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">reg</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">syns</span>.<span class="ruby-identifier">sample</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>&#x000A;    <span class="ruby-keyword">return</span> <span class="ruby-identifier">resp</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">resp</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">word</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-synonym_for-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/conversation_helpers.rb, line 38</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonym_for</span>(<span class="ruby-identifier">word</span>)&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-keyword">nil</span>&#x000A;  <span class="ruby-identifier">synonyms</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">reg</span>, <span class="ruby-identifier">syns</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">resp</span> = <span class="ruby-identifier">word</span>&amp;.<span class="ruby-identifier">match?</span>(<span class="ruby-identifier">reg</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">syns</span>.<span class="ruby-identifier">sample</span> <span class="ruby-operator">:</span> <span class="ruby-keyword">nil</span>&#x000A;    <span class="ruby-keyword">return</span> <span class="ruby-identifier">resp</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">resp</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-identifier">word</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-synonyms'>
@@ -86,7 +85,7 @@ methods of the helper, which are added on inclusion</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-synonyms-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-synonyms-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 127</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-synonyms-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/conversation_helpers.rb, line 48</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">synonyms</span>&#x000A;  <span class="ruby-ivar">@synonyms</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

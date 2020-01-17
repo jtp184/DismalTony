@@ -1,6 +1,7 @@
 require 'duration'
 
-module DismalTony::Directives
+module DismalTony::Directives # :nodoc:
+  # Handles basic hellos
   class GreetingDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::ConversationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
@@ -12,6 +13,7 @@ module DismalTony::Directives
       qry << must { |q| q =~ /hello/i || q =~ /\bhi\b/i || q =~ /greetings/i }
     end
 
+    # Responds with some randomized emoji
     def run
       if /how are you/.match?(query)
         DismalTony::HandledResponse.finish("~e:thumbsup I'm doing well!")
@@ -34,6 +36,7 @@ module DismalTony::Directives
     end
   end
 
+  # Returns information about the program
   class SelfDiagnosticDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::ConversationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
@@ -46,6 +49,7 @@ module DismalTony::Directives
       qry << must { |q| q =~ /run/i || q =~ /execute/i || q =~ /perform/i }
     end
 
+    # Rescues errors, and returns basic information otherwise
     def run
       good_moj = random_emoji('tophat', 'thumbsup', 'star', 'checkbox', 'chartup')
       return_string = "Diagnostic Successful!\n\n"

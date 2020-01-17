@@ -28,7 +28,7 @@ DismalTony::DirectiveHelpers::HelperTemplate::ClassMethods
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+<a href="../../../../files/lib/dismaltony/directive_helpers/directive_helpers_rb.html">lib/dismaltony/directive_helpers/directive_helpers.rb</a>
 </li>
 </ol>
 </div>
@@ -58,15 +58,14 @@ DismalTony::DirectiveHelpers::HelperTemplate::ClassMethods
 </div>
 <div class='description'>
 
-<p>Adds the inclusion method to the class this class is included on, So that
-its n-children inherit class methods</p>
+<p>Adds the inclusion method to the class this class is included on, So that its n-children inherit class methods</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-included-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-included-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 22</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">included</span>(<span class="ruby-identifier">base</span>)&#x000A;  <span class="ruby-identifier">base</span>.<span class="ruby-identifier">send</span>(<span class="ruby-value">:include</span>, <span class="ruby-identifier">const_get</span>(<span class="ruby-value">:InstanceMethods</span>))&#x000A;  <span class="ruby-identifier">base</span>.<span class="ruby-identifier">extend</span> <span class="ruby-identifier">const_get</span>(<span class="ruby-value">:ClassMethods</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-included-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 22</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">included</span>(<span class="ruby-identifier">base</span>)&#x000A;  <span class="ruby-identifier">base</span>.<span class="ruby-identifier">send</span>(<span class="ruby-value">:include</span>, <span class="ruby-identifier">const_get</span>(<span class="ruby-value">:InstanceMethods</span>))&#x000A;  <span class="ruby-identifier">base</span>.<span class="ruby-identifier">extend</span> <span class="ruby-identifier">const_get</span>(<span class="ruby-value">:ClassMethods</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

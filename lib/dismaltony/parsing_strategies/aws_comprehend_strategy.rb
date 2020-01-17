@@ -1,20 +1,25 @@
 require 'aws-sdk'
 
-module DismalTony
-  module ParsingStrategies
+module DismalTony #:nodoc:
+  module ParsingStrategies #:nodoc:
+    # For use with AWS Comprehend, attempts to collect known entities as topics
     class ComprehendTopicStrategy < ParsingStrategy
+      # Runs .fetch_entities for the query +q+ and creates a new ComprehendTopicMap
       def self.call(q)
         ComprehendTopicMap.new(fetch_entities(q))
       end
 
-      def self.value_class
+      def self.value_class #:nodoc:
         ComprehendTopicMap
       end
 
+      # An Aws::Comprehend::Client instance
       def self.aws_client
         @aws_client ||= Aws::Comprehend::Client.new
       end
 
+      # For the entities in Query +q+, detects entities 
+      # and creates a new ComprehendTopicEntity for each
       def self.fetch_entities(q)
         qr = { language_code: 'en', text: q }
         aws_client.detect_entities(qr).entities
@@ -22,19 +27,24 @@ module DismalTony
       end
     end
 
+    # For use with AWS Comprehend, detects key phrases
     class ComprehendKeyPhraseStrategy < ParsingStrategy
+      # Takes in a query +q+ and makes a new ComprehendKeyPhraseMap out of .fetch_key_phrases
       def self.call(q)
         ComprehendKeyPhraseMap.new(fetch_key_phrases(q))
       end
 
-      def self.value_class
+      def self.value_class #:nodoc:
         ComprehendKeyPhraseMap
       end
 
+      # An Aws::Comprehend::Client instance
       def self.aws_client
         @aws_client ||= Aws::Comprehend::Client.new
       end
 
+      # Takes in a query +q+ and detects key phrases, maps them each to
+      # a ComprehendTopicKeyPhrase
       def self.fetch_key_phrases(q)
         qr = { language_code: 'en', text: q }
         aws_client.detect_key_phrases(qr).key_phrases
@@ -42,19 +52,24 @@ module DismalTony
       end
     end
 
+    # For use with AWS Comprehend, detects syntax and part of speech data
     class ComprehendSyntaxStrategy < ParsingStrategy
+      # Takes in a query +q+ and makes a new ComprehendSyntaxMap out of .fetch_syntax_labels
       def self.call(q)
         ComprehendSyntaxMap.new(fetch_syntax_labels(q))
       end
 
-      def self.value_class
+      def self.value_class #:nodoc:
         ComprehendSyntaxMap
       end
 
+      # An Aws::Comprehend::Client instance
       def self.aws_client
         @aws_client ||= Aws::Comprehend::Client.new
       end
 
+      # Takes in a query +q+ and detects utterance tokens, maps them each to
+      # a ComprehendSpeechTag 
       def self.fetch_syntax_labels(q)
         qr = { language_code: 'en', text: q }
         aws_client.detect_syntax(qr).syntax_tokens
@@ -104,21 +119,24 @@ module DismalTony
         score
       end
 
+      # Passes the match? to +text+
       def match?(txt)
         text.match?(txt)
       end
 
+      # Passes the match to +text+
       def match(txt)
         text.match(txt)
       end
 
-      def also_in?(ocheck)
-        ocheck.find { |o| o.document_location == document_location }
+      alias =~ match
+
+      # Compares document_location of +other+
+      def same_token?(other)
+        other.document_location == document_location
       rescue NoMethodError
         nil
       end
-
-      alias =~ match
     end
 
     # A collection of topic detection information from the AWS Comprehend api
@@ -131,7 +149,9 @@ module DismalTony
         @entities = es
       end
 
+      # For each of the labels...
       DismalTony::ParsingStrategies::ComprehendTopicEntity::ENTITY_TYPES.each do |label|
+        # Create a singular version
         sing = case label
                when :other
                  :other_entity
@@ -139,6 +159,7 @@ module DismalTony
                  label
         end
 
+        # Create a pluralized version
         plur = case sing
                when :person
                  :people
@@ -150,18 +171,22 @@ module DismalTony
                  (sing.to_s << 's').to_sym
         end
 
+        # Finds all entities whose type is equal to the label +plur+
         define_method(plur) do
           r = entities.find_all { |j| j.type == label }
         end
 
+        # Finds the first entity whose type is equal to the label +sing+
         define_method(sing) do
-          entities.select { |j| j.type == label }.first
+          entities.find { |j| j.type == label }
         end
 
+        # Returns true if any entities are of type +sing+
         define_method((sing.to_s << '?').to_sym) do
           entities.any? { |j| j.type == label }
         end
 
+        # Returns true if there are multiple entities of type +plur+
         define_method((plur.to_s << '?').to_sym) do
           r = entities.select { |j| j.type == label }
           r.count > 0
@@ -201,23 +226,27 @@ module DismalTony
         score
       end
 
+      # Passes the match? to +text+
       def match?(txt)
         text.match?(txt)
       end
 
+      # Passes the match to +text+
       def match(txt)
         text.match(txt)
       end
 
-      def also_in?(ocheck)
-        ocheck.find { |o| o.document_location == document_location }
+      alias =~ match
+
+      # Compares document_location of +other+
+      def same_token?(other)
+        other.document_location == document_location
       rescue NoMethodError
         nil
       end
-
-      alias =~ match
     end
 
+    # A Collection of key phrases
     class ComprehendKeyPhraseMap
       # A collection of ComprehendTopicKeyPhrase objects
       attr_reader :key_phrases
@@ -227,11 +256,13 @@ module DismalTony
         @key_phrases = ks
       end
 
+      # Gives the first found key phrase as a shortcut
       def key_phrase
         key_phrases.first
       end
     end
 
+    # A Single utterance token, tagged with a part of speech and certainty
     class ComprehendSpeechTag
       # The text content recognized
       attr_reader :text
@@ -263,6 +294,7 @@ module DismalTony
         verb
       ].freeze
 
+      # Human-friendly labels for each tag
       POS_LABELS = %i[
         adjective
         adposition
@@ -301,16 +333,26 @@ module DismalTony
         score
       end
 
+      # Passes the match? to +text+
       def match?(txt)
         text.match?(txt)
       end
 
+      # Passes the match to +text+
       def match(txt)
         text.match(txt)
       end
 
+      # Checks if any of the supplied +various+ regexes match
       def any_of?(*various)
         various.any? { |a| a.match?(text) }
+      end
+
+      # Compares document_location of +other+
+      def same_token?(other)
+        other.document_location == document_location
+      rescue NoMethodError
+        nil
       end
     end
 
@@ -319,11 +361,14 @@ module DismalTony
       # A collection of ComprehendSpeechTag objects
       attr_reader :pos_tags
 
+      # Tages in tags and sets +pos_tags+ to it
       def initialize(tgs)
         @pos_tags = tgs
       end
 
+      # For each of the POS_LABELS...
       DismalTony::ParsingStrategies::ComprehendSpeechTag::POS_LABELS.each_with_index do |label, ix|
+        # Create a plural
         plur = case label
                when :auxiliary
                  :auxiliaries
@@ -331,29 +376,37 @@ module DismalTony
                  (label.to_s << 's').to_sym
         end
 
+        # Create a question form
         ques = (label.to_s << '?').to_sym
+        # Create a plural question form
         plur_ques = (plur.to_s << '?').to_sym
 
+        # Gets the corresponding tag
         the_tag = DismalTony::ParsingStrategies::ComprehendSpeechTag::POS_TAGS[ix]
 
+        # For +label+, gets the tags which match the tag
         define_method(label) do
           pos_tags.find { |t| t.tag == the_tag }
         end
 
+        # For +plur+, gets all tags which match the tag
         define_method(plur) do
           pos_tags.find_all { |t| t.tag == the_tag }
         end
 
+        # For +ques+ returns true if any tags exist for the tag
         define_method(ques) do
           pos_tags.any? { |t| t.tag == the_tag }
         end
 
+        # For +plur_ques+ returns true if more than one tag exists for the tag
         define_method(plur_ques) do
           r = pos_tags.find_all? { |t| t.tag == the_tag }
           r.count > 1
         end
       end
 
+      # Returns true if any pattern in +pattns+ matches the tags
       def contains?(*pattns)
         pattns.any? do |pattn|
           pos_tags.any? { |wor| wor.text =~ pattn }

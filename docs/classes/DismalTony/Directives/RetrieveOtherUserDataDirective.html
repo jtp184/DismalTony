@@ -38,13 +38,24 @@ Superclass:
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>Accesses data about another known user</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
 <li><a href="#method-i-run">run</a></li>
 <li><a href="#method-i-user_for">user_for</a></li>
+</ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-detect_emoji">detect_emoji</a></li>
+<li><a href="#method-i-detect_user">detect_user</a></li>
+<li><a href="#method-i-subject">subject</a></li>
+<li><a href="#method-i-whats">whats</a></li>
+<li><a href="#method-i-whats_age">whats_age</a></li>
+<li><a href="#method-i-who_is">who_is</a></li>
 </ol>
 </div>
 <div id='context'>
@@ -69,12 +80,14 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>Returns the info asked for</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 77</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">target</span> = <span class="ruby-constant">Array</span>(<span class="ruby-identifier">query</span>.<span class="ruby-identifier">xpos</span>(<span class="ruby-string">&#39;NNP&#39;</span>)).<span class="ruby-identifier">join</span>&#x000A;  <span class="ruby-identifier">u</span> = <span class="ruby-identifier">user_for</span>(<span class="ruby-identifier">target</span>)&#x000A;&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/who is/i</span>&#x000A;    <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;think&#39;</span>,<span class="ruby-string">&#39;magnifyingglass&#39;</span>,<span class="ruby-string">&#39;crystalball&#39;</span>,<span class="ruby-string">&#39;smile&#39;</span>)&#x000A;    <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">u</span>)&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} #{target}&#39;s number is #{u[:phone]}.&quot;</span>)&#x000A;  <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">query</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/what(&#39;| i)?s/i</span>&#x000A;    <span class="ruby-identifier">seek</span> = <span class="ruby-constant">Array</span>(<span class="ruby-identifier">query</span>.<span class="ruby-identifier">children_of</span>(<span class="ruby-identifier">query</span>.<span class="ruby-identifier">root</span>).<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">w</span><span class="ruby-operator">|</span> <span class="ruby-identifier">w</span>.<span class="ruby-identifier">rel</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;nsubj&#39;</span> }).<span class="ruby-identifier">join</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">downcase</span>&#x000A;    <span class="ruby-identifier">moj</span> = <span class="ruby-keyword">case</span> <span class="ruby-identifier">seek</span>&#x000A;    <span class="ruby-keyword">when</span> <span class="ruby-regexp">/phone/i</span>, <span class="ruby-regexp">/number/i</span>&#x000A;      <span class="ruby-string">&#39;phone&#39;</span>&#x000A;    <span class="ruby-keyword">when</span> <span class="ruby-regexp">/name/i</span>&#x000A;      <span class="ruby-string">&#39;speechbubble&#39;</span>&#x000A;    <span class="ruby-keyword">when</span> <span class="ruby-regexp">/birthday/i</span>&#x000A;      <span class="ruby-string">&#39;calendar&#39;</span>&#x000A;    <span class="ruby-keyword">when</span> <span class="ruby-regexp">/age/i</span>&#x000A;      <span class="ruby-string">&#39;clockface&#39;</span>&#x000A;    <span class="ruby-keyword">when</span> <span class="ruby-regexp">/email/i</span>&#x000A;      <span class="ruby-string">&#39;envelope&#39;</span>&#x000A;    <span class="ruby-keyword">else</span>&#x000A;      <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;magnifyingglass&#39;</span>, <span class="ruby-string">&#39;key&#39;</span>)&#x000A;    <span class="ruby-keyword">end</span>&#x000A;&#x000A;    <span class="ruby-identifier">return_data</span>(<span class="ruby-node">&quot;#{u[:first_name]} #{u[:last_name]}&quot;</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} Their name is #{u[:nickname]}.&quot;</span>) <span class="ruby-keyword">if</span> (<span class="ruby-identifier">seek</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/\bname\b/</span>)&#x000A;    <span class="ruby-identifier">age_in_years</span> = <span class="ruby-constant">Duration</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">u</span>[<span class="ruby-value">:birthday</span>]).<span class="ruby-identifier">weeks</span> <span class="ruby-operator">/</span> <span class="ruby-value">52</span>&#x000A;    <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">age_in_years</span>) <span class="ruby-keyword">and</span> <span class="ruby-keyword">return</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} They are #{age_in_years} years old#{(rand &lt; 0.5) ? (&#39;, &#39; + query.user[:nickname]) : nil}.&quot;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">seek</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;age&#39;</span>&#x000A;&#x000A;    <span class="ruby-identifier">ky</span> = <span class="ruby-identifier">seek</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&quot; &quot;</span>, <span class="ruby-string">&quot;_&quot;</span>).<span class="ruby-identifier">to_sym</span>&#x000A;    <span class="ruby-identifier">ky</span> = <span class="ruby-value">:phone</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">ky</span> <span class="ruby-operator">==</span> <span class="ruby-value">:number</span>&#x000A;&#x000A;    <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">user</span>[<span class="ruby-identifier">ky</span>]&#x000A;      <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">u</span>[<span class="ruby-identifier">ky</span>])&#x000A;      <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} Their #{seek} is #{u[ky]}&quot;</span>)&#x000A;    <span class="ruby-keyword">else</span>&#x000A;      <span class="ruby-identifier">return_data</span>(<span class="ruby-keyword">nil</span>)&#x000A;      <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:frown I&#39;m sorry, I don&#39;t know their #{seek}&quot;</span>)&#x000A;    <span class="ruby-keyword">end</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:frown I&#39;m not quite sure how to answer that.&quot;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 151</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-regexp">/who is/i</span>.<span class="ruby-identifier">match?</span>(<span class="ruby-identifier">query</span>)&#x000A;    <span class="ruby-identifier">who_is</span>&#x000A;  <span class="ruby-keyword">elsif</span> <span class="ruby-regexp">/what(&#39;| i)?s/i</span>.<span class="ruby-identifier">match?</span>(<span class="ruby-identifier">query</span>)&#x000A;    <span class="ruby-identifier">whats</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-string">&quot;~e:frown I&#39;m not quite sure how to answer that.&quot;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-user_for'>
@@ -86,12 +99,129 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>The user yielded by the <code>text_check</code></p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-user_for-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-user_for-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 73</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_for</span>(<span class="ruby-identifier">text_check</span>)&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">users</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span> (<span class="ruby-identifier">u</span>[<span class="ruby-value">:nickname</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">text_check</span>) <span class="ruby-operator">||</span> (<span class="ruby-identifier">u</span>[<span class="ruby-value">:first_name</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">text_check</span>) <span class="ruby-operator">||</span> (<span class="ruby-identifier">u</span>[<span class="ruby-value">:first_name</span>] <span class="ruby-operator">+</span> <span class="ruby-identifier">u</span>[<span class="ruby-value">:last_name</span>] <span class="ruby-operator">==</span> <span class="ruby-identifier">text_check</span>) }&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-user_for-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 134</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_for</span>(<span class="ruby-identifier">text_check</span>)&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-ivar">@user_for</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@user_for</span>&#x000A;&#x000A;  <span class="ruby-identifier">names</span> = [&#x000A;    <span class="ruby-operator">-&gt;</span> (<span class="ruby-identifier">u</span>) { <span class="ruby-identifier">u</span>[<span class="ruby-value">:nickname</span>] },&#x000A;    <span class="ruby-operator">-&gt;</span> (<span class="ruby-identifier">u</span>) { <span class="ruby-identifier">u</span>[<span class="ruby-value">:first_name</span>] },&#x000A;    <span class="ruby-operator">-&gt;</span> (<span class="ruby-identifier">u</span>) { <span class="ruby-identifier">u</span>[<span class="ruby-value">:first_name</span>] <span class="ruby-operator">+</span> <span class="ruby-identifier">u</span>[<span class="ruby-value">:last_name</span>] }&#x000A;  ]&#x000A;&#x000A;  <span class="ruby-identifier">u</span> = <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>&#x000A;        .<span class="ruby-identifier">users</span>&#x000A;        .<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">u</span><span class="ruby-operator">|</span> <span class="ruby-identifier">names</span>.<span class="ruby-identifier">any?</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">txt</span><span class="ruby-operator">|</span> <span class="ruby-identifier">txt</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">u</span>) <span class="ruby-operator">==</span> <span class="ruby-identifier">text_check</span> } }&#x000A;&#x000A;  <span class="ruby-ivar">@user_for</span> = <span class="ruby-identifier">fragments</span>[<span class="ruby-value">:other_user</span>] = <span class="ruby-identifier">u</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-detect_emoji'>
+<a name='method-i-detect_emoji'></a>
+<div class='synopsis'>
+<span class='name'>detect_emoji</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Yields different emoji depending on subject</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-detect_emoji-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-detect_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 213</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">detect_emoji</span>&#x000A;  <span class="ruby-keyword">case</span> <span class="ruby-identifier">subject</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-regexp">/phone/i</span>, <span class="ruby-regexp">/number/i</span>&#x000A;    <span class="ruby-string">&#39;phone&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-regexp">/name/i</span>&#x000A;    <span class="ruby-string">&#39;speechbubble&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-regexp">/birthday/i</span>&#x000A;    <span class="ruby-string">&#39;calendar&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-regexp">/age/i</span>&#x000A;    <span class="ruby-string">&#39;clockface&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-regexp">/email/i</span>&#x000A;    <span class="ruby-string">&#39;envelope&#39;</span>&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;magnifyingglass&#39;</span>, <span class="ruby-string">&#39;key&#39;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-detect_user'>
+<a name='method-i-detect_user'></a>
+<div class='synopsis'>
+<span class='name'>detect_user</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Converts the first person entity to a <a href="../UserIdentity.html"><code>UserIdentity</code></a></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-detect_user-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-detect_user-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 208</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">detect_user</span>&#x000A;  <span class="ruby-identifier">user_for</span>(<span class="ruby-identifier">person</span>.<span class="ruby-identifier">text</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-subject'>
+<a name='method-i-subject'></a>
+<div class='synopsis'>
+<span class='name'>subject</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Gets the first key phrase which is not the user</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-subject-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-subject-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 203</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">subject</span>&#x000A;  <span class="ruby-identifier">key_phrases</span>.<span class="ruby-identifier">reject</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">phr</span><span class="ruby-operator">|</span> <span class="ruby-identifier">phr</span>.<span class="ruby-identifier">same_token?</span>(<span class="ruby-identifier">detect_user</span>) }.<span class="ruby-identifier">first</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-whats'>
+<a name='method-i-whats'></a>
+<div class='synopsis'>
+<span class='name'>whats</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Handles asking for user details</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-whats-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-whats-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 172</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">whats</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">whats_age</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">subject</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;age&#39;</span>&#x000A;&#x000A;  <span class="ruby-identifier">ky</span> = <span class="ruby-identifier">subject</span>.<span class="ruby-identifier">tr</span>(<span class="ruby-string">&#39; &#39;</span>, <span class="ruby-string">&#39;_&#39;</span>).<span class="ruby-identifier">to_sym</span>&#x000A;  <span class="ruby-identifier">ky</span> = <span class="ruby-value">:phone</span> <span class="ruby-keyword">if</span> (<span class="ruby-identifier">ky</span> <span class="ruby-operator">==</span> <span class="ruby-value">:number</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">ky</span> <span class="ruby-operator">==</span> <span class="ruby-value">:phone_number</span>)&#x000A;&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">query</span>.<span class="ruby-identifier">user</span>[<span class="ruby-identifier">ky</span>]&#x000A;    <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">detect_user</span>[<span class="ruby-identifier">ky</span>])&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{detect_emoji} Their #{subject} is #{detect_user[ky]}&quot;</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">return_data</span>(<span class="ruby-keyword">nil</span>)&#x000A;    <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:frown I&#39;m sorry, I don&#39;t know their #{subject}&quot;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-whats_age'>
+<a name='method-i-whats_age'></a>
+<div class='synopsis'>
+<span class='name'>whats_age</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Calculates age from birthday and returns</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-whats_age-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-whats_age-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 188</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">whats_age</span>&#x000A;  <span class="ruby-identifier">age_in_years</span> = <span class="ruby-constant">Duration</span>.<span class="ruby-identifier">new</span>(<span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">detect_user</span>[<span class="ruby-value">:birthday</span>]).<span class="ruby-identifier">weeks</span> <span class="ruby-operator">/</span> <span class="ruby-value">52</span>&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">age_in_years</span>) &#x000A;  &#x000A;  <span class="ruby-identifier">s</span> = <span class="ruby-node">&quot;~e:#{detect_emoji} &quot;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;They are &quot;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">age_in_years</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot; years old&quot;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> (<span class="ruby-identifier">rand</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">0.5</span>) <span class="ruby-operator">?</span> <span class="ruby-node">&quot;, #{query.user[:nickname]}&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-string">&quot;&quot;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;.&quot;</span>&#x000A;&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">s</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-who_is'>
+<a name='method-i-who_is'></a>
+<div class='synopsis'>
+<span class='name'>who_is</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Handles asking about the user in the abstract</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-who_is-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-who_is-source'><span class="ruby-comment"># File lib/dismaltony/directives/user_info.rb, line 164</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">who_is</span>&#x000A;  <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;think&#39;</span>, <span class="ruby-string">&#39;magnifyingglass&#39;</span>, <span class="ruby-string">&#39;crystalball&#39;</span>, <span class="ruby-string">&#39;smile&#39;</span>)&#x000A;  &#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">detect_user</span>)&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} #{target}&#39;s number is #{detect_user[:phone]}.&quot;</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

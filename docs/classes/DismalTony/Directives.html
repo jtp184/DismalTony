@@ -43,6 +43,9 @@ DismalTony::Directives
 <a href="../../files/lib/dismaltony/directives/fun_rb.html">lib/dismaltony/directives/fun.rb</a>
 </li>
 <li class='other'>
+<a href="../../files/lib/dismaltony/directives/money_math_rb.html">lib/dismaltony/directives/money_math.rb</a>
+</li>
+<li class='other'>
 <a href="../../files/lib/dismaltony/directives/stocks_rb.html">lib/dismaltony/directives/stocks.rb</a>
 </li>
 <li class='other'>
@@ -62,8 +65,7 @@ DismalTony::Directives
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>The module that contains all the <a href="Directive.html">Directive</a>
-classes. Self enumerates.</p>
+<p>The module that contains all the <a href="Directive.html"><code>Directive</code></a> classes. Self enumerates.</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -86,17 +88,25 @@ classes. Self enumerates.</p>
 <div id='class-list'>
 <h2>Classes and Modules</h2>
 <ol>
+<li><a href="Directives/BillSplitDirective.html">DismalTony::Directives::BillSplitDirective</a></li>
 <li><a href="Directives/DiceRollDirective.html">DismalTony::Directives::DiceRollDirective</a></li>
 <li><a href="Directives/DrinkMixDirective.html">DismalTony::Directives::DrinkMixDirective</a></li>
+<li><a href="Directives/GetDistanceDirective.html">DismalTony::Directives::GetDistanceDirective</a></li>
 <li><a href="Directives/GetStockPriceDirective.html">DismalTony::Directives::GetStockPriceDirective</a></li>
 <li><a href="Directives/GreetingDirective.html">DismalTony::Directives::GreetingDirective</a></li>
+<li><a href="Directives/HumidityReportDirective.html">DismalTony::Directives::HumidityReportDirective</a></li>
 <li><a href="Directives/InteractiveSignupDirective.html">DismalTony::Directives::InteractiveSignupDirective</a></li>
+<li><a href="Directives/MapsDirectionsDirective.html">DismalTony::Directives::MapsDirectionsDirective</a></li>
 <li><a href="Directives/RetrieveOtherUserDataDirective.html">DismalTony::Directives::RetrieveOtherUserDataDirective</a></li>
 <li><a href="Directives/RetrieveUserDataDirective.html">DismalTony::Directives::RetrieveUserDataDirective</a></li>
 <li><a href="Directives/SelfDiagnosticDirective.html">DismalTony::Directives::SelfDiagnosticDirective</a></li>
 <li><a href="Directives/SendTextMessageDirective.html">DismalTony::Directives::SendTextMessageDirective</a></li>
+<li><a href="Directives/StockMathDirective.html">DismalTony::Directives::StockMathDirective</a></li>
+<li><a href="Directives/TemperatureReportDirective.html">DismalTony::Directives::TemperatureReportDirective</a></li>
+<li><a href="Directives/TipMathDirective.html">DismalTony::Directives::TipMathDirective</a></li>
 <li><a href="Directives/TrafficReportDirective.html">DismalTony::Directives::TrafficReportDirective</a></li>
 <li><a href="Directives/WeatherReportDirective.html">DismalTony::Directives::WeatherReportDirective</a></li>
+<li><a href="Directives/WindSpeedReportDirective.html">DismalTony::Directives::WindSpeedReportDirective</a></li>
 </ol>
 </div>
 <div id='section'>
@@ -111,17 +121,14 @@ classes. Self enumerates.</p>
 </div>
 <div class='description'>
 
-<p>Takes in the <code>param</code> and returns the first <a
-href="Directive.html">Directive</a> whose <a
-href="Directive.html#attribute-i-name">DismalTony::Directive#name</a> is
-<code>param</code></p>
+<p>Takes in the <code>param</code> and returns the first <a href="Directive.html"><code>Directive</code></a> whose <a href="Directive.html#attribute-i-name"><code>Directive#name</code></a> is <code>param</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-5B-5D-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-5B-5D-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 25</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">[]</span>(<span class="ruby-identifier">param</span>)&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">dir</span><span class="ruby-operator">|</span> <span class="ruby-identifier">dir</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">param</span> }.<span class="ruby-identifier">first</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-5B-5D-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 26</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">[]</span>(<span class="ruby-identifier">param</span>)&#x000A;  <span class="ruby-identifier">all</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">dir</span><span class="ruby-operator">|</span> <span class="ruby-identifier">dir</span>.<span class="ruby-identifier">name</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">param</span> }.<span class="ruby-identifier">first</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-all'>
@@ -133,15 +140,14 @@ href="Directive.html#attribute-i-name">DismalTony::Directive#name</a> is
 </div>
 <div class='description'>
 
-<p>Selects all inheritors of the <a href="Directive.html">Directive</a> class
-that are defined as constants within this module.</p>
+<p>Selects all inheritors of the <a href="Directive.html"><code>Directive</code></a> class that are defined as constants within this module.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-all-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-all-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 10</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">constants</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">c</span>) }.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Directive</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-all-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 9</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">all</span>&#x000A;  <span class="ruby-identifier">constants</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">c</span>) }.<span class="ruby-identifier">select</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-identifier">c</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">Directive</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-each'>
@@ -153,15 +159,14 @@ that are defined as constants within this module.</p>
 </div>
 <div class='description'>
 
-<p>Using all, returns an each iterator which is passed the block
-<code>blk</code></p>
+<p>Using all, returns an each iterator which is passed the block <code>blk</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-each-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-each-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 15</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-each-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 16</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;  <span class="ruby-identifier">all</span>.<span class="ruby-identifier">each</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">blk</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-in_group'>
@@ -173,16 +178,14 @@ that are defined as constants within this module.</p>
 </div>
 <div class='description'>
 
-<p>Returns all <a href="Directives.html">Directives</a> whose <a
-href="Directive.html#attribute-i-group">DismalTony::Directive#group</a>
-variable is <code>the_group</code></p>
+<p>Returns all <a href="Directives.html"><code>Directives</code></a> whose <a href="Directive.html#attribute-i-group"><code>Directive#group</code></a> variable is <code>the_group</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-in_group-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-in_group-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 20</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">in_group</span>(<span class="ruby-identifier">the_group</span>)&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">all</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">dir</span><span class="ruby-operator">|</span> <span class="ruby-identifier">dir</span>.<span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">the_group</span> } &#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-in_group-source'><span class="ruby-comment"># File lib/dismaltony/directive.rb, line 21</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">in_group</span>(<span class="ruby-identifier">the_group</span>)&#x000A;  <span class="ruby-identifier">all</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">dir</span><span class="ruby-operator">|</span> <span class="ruby-identifier">dir</span>.<span class="ruby-identifier">group</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">the_group</span> }&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

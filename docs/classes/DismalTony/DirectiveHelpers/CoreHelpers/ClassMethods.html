@@ -28,27 +28,28 @@ DismalTony::DirectiveHelpers::CoreHelpers::ClassMethods
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+<a href="../../../../files/lib/dismaltony/directive_helpers/directive_helpers_rb.html">lib/dismaltony/directive_helpers/directive_helpers.rb</a>
 </li>
 </ol>
 </div>
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Basic helpers that make the <a href="../../Directives.html">Directives</a>
-function Contains the Class methods of the helper, which are added on
-inclusion</p>
+<p>Basic helpers that make the <a href="../../Directives.html"><code>Directives</code></a> function Contains the Class methods of the helper, which are added on inclusion</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
 <li><a href="#method-i-add_criteria">add_criteria</a></li>
-<li><a href="#method-i-add_param">add_param</a></li>
-<li><a href="#method-i-add_params">add_params</a></li>
 <li><a href="#method-i-error">error</a></li>
+<li><a href="#method-i-expect_frags">expect_frags</a></li>
+<li><a href="#method-i-frag_default">frag_default</a></li>
+<li><a href="#method-i-parsing_strategies">parsing_strategies</a></li>
+<li><a href="#method-i-parsing_strategies-3D">parsing_strategies=</a></li>
 <li><a href="#method-i-set_group">set_group</a></li>
 <li><a href="#method-i-set_name">set_name</a></li>
+<li><a href="#method-i-use_parsing_strategies">use_parsing_strategies</a></li>
 </ol>
 </div>
 <div id='context'>
@@ -65,58 +66,14 @@ inclusion</p>
 </div>
 <div class='description'>
 
-<p>Yields the <code>criteria</code> array, and uses the <code>block</code> to
-add its results to <code>match_criteria</code> afterwards, allowing you to
-add new <a href="../../MatchLogic.html">MatchLogic</a> objects using the
-DSL.</p>
+<p>Yields the <code>criteria</code> array, and uses the <code>block</code> to add its results to <code>match_criteria</code> afterwards, allowing you to add new <a href="../../MatchLogic.html"><code>MatchLogic</code></a> objects using the DSL.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-add_criteria-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-add_criteria-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 62</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_criteria</span>&#x000A;  <span class="ruby-identifier">crit</span> = []&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">crit</span>&#x000A;  <span class="ruby-ivar">@match_criteria</span> <span class="ruby-operator">||=</span> []&#x000A;  <span class="ruby-ivar">@match_criteria</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">crit</span>&#x000A;<span class="ruby-keyword">end</span></pre>
-</div>
-</div>
-<div class='method public-instance' id='method-method-i-add_param'>
-<a name='method-i-add_param'></a>
-<div class='synopsis'>
-<span class='name'>add_param</span>
-<span class='arguments'>(param, initial = nil)</span>
-
-</div>
-<div class='description'>
-
-<p>DSL function, adds a new entry to the <code>parameters</code> hash keyed by
-<code>param</code> and given a value of <code>initial</code>.</p>
-
-</div>
-<div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-add_param-source&#39;); return false'>
-[show source]
-</a>
-<pre id='method-i-add_param-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 47</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_param</span>(<span class="ruby-identifier">param</span>, <span class="ruby-identifier">initial</span> = <span class="ruby-keyword">nil</span>)&#x000A;  <span class="ruby-ivar">@default_params</span> <span class="ruby-operator">||=</span> {}&#x000A;  <span class="ruby-ivar">@default_params</span>[<span class="ruby-identifier">param</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-identifier">initial</span>&#x000A;<span class="ruby-keyword">end</span></pre>
-</div>
-</div>
-<div class='method public-instance' id='method-method-i-add_params'>
-<a name='method-i-add_params'></a>
-<div class='synopsis'>
-<span class='name'>add_params</span>
-<span class='arguments'>(inputpar)</span>
-
-</div>
-<div class='description'>
-
-<p>DSL function, takes each key-value pair in <code>inputpar</code> and adds a
-new entry to the <code>parameters</code> hash keyed by <code>param</code>
-and given a value of <code>initial</code>.</p>
-
-</div>
-<div class='source'>
-<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-add_params-source&#39;); return false'>
-[show source]
-</a>
-<pre id='method-i-add_params-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 54</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_params</span>(<span class="ruby-identifier">inputpar</span>)&#x000A;  <span class="ruby-identifier">inputpar</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ki</span>, <span class="ruby-identifier">va</span><span class="ruby-operator">|</span>&#x000A;    <span class="ruby-ivar">@default_params</span>[<span class="ruby-identifier">ki</span>] = <span class="ruby-identifier">va</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-add_criteria-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 68</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_criteria</span>&#x000A;  <span class="ruby-identifier">crit</span> = []&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">crit</span>&#x000A;  <span class="ruby-ivar">@match_criteria</span> <span class="ruby-operator">||=</span> []&#x000A;  <span class="ruby-ivar">@match_criteria</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">crit</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-error'>
@@ -128,15 +85,90 @@ and given a value of <code>initial</code>.</p>
 </div>
 <div class='description'>
 
-<p>Returns an Errored directive, using <code>qry</code> and <code>vi</code> to
-construct the new <a href="../../Directive.html">Directive</a></p>
+<p>Returns an Errored directive, using <code>qry</code> and <code>vi</code> to construct the new <a href="../../Directive.html"><code>Directive</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-error-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-error-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 70</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">qry</span>, <span class="ruby-identifier">vi</span>)&#x000A;  <span class="ruby-identifier">me</span> = <span class="ruby-identifier">new</span>(<span class="ruby-identifier">qry</span>, <span class="ruby-identifier">vi</span>)&#x000A;  <span class="ruby-identifier">me</span>.<span class="ruby-identifier">query</span>.<span class="ruby-identifier">complete</span>(<span class="ruby-keyword">self</span>, <span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">error</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-error-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 93</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">qry</span>, <span class="ruby-identifier">vi</span>)&#x000A;  <span class="ruby-identifier">me</span> = <span class="ruby-identifier">new</span>(<span class="ruby-identifier">qry</span>, <span class="ruby-identifier">vi</span>)&#x000A;  <span class="ruby-identifier">me</span>.<span class="ruby-identifier">query</span>.<span class="ruby-identifier">complete</span>(<span class="ruby-keyword">self</span>, <span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">error</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-expect_frags'>
+<a name='method-i-expect_frags'></a>
+<div class='synopsis'>
+<span class='name'>expect_frags</span>
+<span class='arguments'>(*these)</span>
+
+</div>
+<div class='description'>
+
+<p>DSL function, takes in <code>these</code> fragments, either as an Array or Hash, and adds them to the defaults</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-expect_frags-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-expect_frags-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 54</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">expect_frags</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">these</span>)&#x000A;  <span class="ruby-ivar">@default_frags</span> <span class="ruby-operator">||=</span> {}&#x000A;  <span class="ruby-identifier">these</span> = <span class="ruby-identifier">these</span>.<span class="ruby-identifier">first</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">these</span>.<span class="ruby-identifier">one?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">these</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Hash</span>)&#x000A;&#x000A;  <span class="ruby-keyword">case</span> <span class="ruby-identifier">these</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-constant">Array</span>&#x000A;    <span class="ruby-identifier">these</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@default_frags</span>[<span class="ruby-identifier">a</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-keyword">nil</span> }&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-constant">Hash</span>&#x000A;    <span class="ruby-identifier">these</span>.<span class="ruby-identifier">each_pair</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span>, <span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-ivar">@default_frags</span>[<span class="ruby-identifier">a</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-identifier">b</span> }&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-frag_default'>
+<a name='method-i-frag_default'></a>
+<div class='synopsis'>
+<span class='name'>frag_default</span>
+<span class='arguments'>(**these)</span>
+
+</div>
+<div class='description'>
+
+<p>DSL function, adds a new entry to the <code>parameters</code> hash keyed by <code>param</code> and given a value of <code>initial</code>.</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-frag_default-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-frag_default-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 47</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">frag_default</span>(<span class="ruby-operator">**</span><span class="ruby-identifier">these</span>)&#x000A;  <span class="ruby-ivar">@default_frags</span> <span class="ruby-operator">||=</span> {}&#x000A;  <span class="ruby-ivar">@default_frags</span>.<span class="ruby-identifier">merge</span>(<span class="ruby-identifier">these</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-parsing_strategies'>
+<a name='method-i-parsing_strategies'></a>
+<div class='synopsis'>
+<span class='name'>parsing_strategies</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>This directive&#39;s parsing strategies</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-parsing_strategies-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-parsing_strategies-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 76</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parsing_strategies</span>&#x000A;  <span class="ruby-ivar">@parsing_strategies</span> <span class="ruby-operator">||=</span> []&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-parsing_strategies-3D'>
+<a name='method-i-parsing_strategies-3D'></a>
+<div class='synopsis'>
+<span class='name'>parsing_strategies=</span>
+<span class='arguments'>(ps)</span>
+
+</div>
+<div class='description'>
+
+<p>Writer, sets <code>parsing_strategy</code> to <code>ps</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-parsing_strategies-3D-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-parsing_strategies-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 81</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parsing_strategies=</span>(<span class="ruby-identifier">ps</span>)&#x000A;  <span class="ruby-ivar">@parsing_strategies</span> = <span class="ruby-identifier">ps</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-set_group'>
@@ -148,15 +180,14 @@ construct the new <a href="../../Directive.html">Directive</a></p>
 </div>
 <div class='description'>
 
-<p>DSL function, sets the <a href="../../Directives.html">Directives</a>
-<code>group</code> to <code>param</code></p>
+<p>DSL function, sets the <a href="../../Directives.html"><code>Directives</code></a> <code>group</code> to <code>param</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-set_group-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-set_group-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 42</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_group</span>(<span class="ruby-identifier">param</span>)&#x000A;  <span class="ruby-ivar">@group</span> = <span class="ruby-identifier">param</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-set_group-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 42</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_group</span>(<span class="ruby-identifier">param</span>)&#x000A;  <span class="ruby-ivar">@group</span> = <span class="ruby-identifier">param</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-set_name'>
@@ -168,15 +199,33 @@ construct the new <a href="../../Directive.html">Directive</a></p>
 </div>
 <div class='description'>
 
-<p>DSL function, sets the <a href="../../Directives.html">Directives</a>
-<code>name</code> to <code>param</code></p>
+<p>DSL function, sets the <a href="../../Directives.html"><code>Directives</code></a> <code>name</code> to <code>param</code></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-set_name-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-set_name-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 37</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_name</span>(<span class="ruby-identifier">param</span>)&#x000A;  <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">param</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-set_name-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 37</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">set_name</span>(<span class="ruby-identifier">param</span>)&#x000A;  <span class="ruby-ivar">@name</span> = <span class="ruby-identifier">param</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-instance' id='method-method-i-use_parsing_strategies'>
+<a name='method-i-use_parsing_strategies'></a>
+<div class='synopsis'>
+<span class='name'>use_parsing_strategies</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Sets the <code>parsing_strategies</code> to <code>strats</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-use_parsing_strategies-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-use_parsing_strategies-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/directive_helpers.rb, line 86</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">use_parsing_strategies</span> <span class="ruby-comment"># :yields: strats</span>&#x000A;  <span class="ruby-identifier">x</span> = []&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">x</span>&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">parsing_strategies</span> = <span class="ruby-identifier">x</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

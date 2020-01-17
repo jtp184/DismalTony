@@ -38,12 +38,20 @@ Superclass:
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>Uses the AlphaVantageAPI to get the current stock price</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
 <li><a href="#method-i-run">run</a></li>
+</ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-price_comment">price_comment</a></li>
+<li><a href="#method-i-with_delta">with_delta</a></li>
+<li><a href="#method-i-with_highest">with_highest</a></li>
 </ol>
 </div>
 <div id='context'>
@@ -54,44 +62,11 @@ Superclass:
 <li><a href="../DirectiveHelpers/ConversationHelpers.html">DismalTony::DirectiveHelpers::ConversationHelpers</a></li>
 <li><a href="../DirectiveHelpers/DataRepresentationHelpers.html">DismalTony::DirectiveHelpers::DataRepresentationHelpers</a></li>
 <li><a href="../DirectiveHelpers/EmojiHelpers.html">DismalTony::DirectiveHelpers::EmojiHelpers</a></li>
+<li><a href="../DirectiveHelpers/StocksHelpers.html">DismalTony::DirectiveHelpers::StocksHelpers</a></li>
 </ol>
 </div>
 </div>
 <div id='section'>
-<div id='constants-list'>
-<h2>Constants</h2>
-<div class='name-list'>
-<table summary='Constants'>
-<tr class='top-aligned-row context-row'>
-<td class='context-item-name'>StockPrice</td>
-<td>=</td>
-<td class='context-item-value'>Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
-include Comparable
-
-def price
-close || open
-end
-
-def <=>(other)
-close <=> other.close
-rescue NoMethodError
-close <=> Integer(other)
-end
-
-def to_s
-price.to_s
-end
-
-def to_str
-price.to_s
-end
-end</td>
-<td>&nbsp;</td>
-<td class='context-item-desc'></td>
-</tr>
-</table>
-</div>
-</div>
 <div id='methods'>
 <h2>Public Instance methods</h2>
 <div class='method public-instance' id='method-method-i-run'>
@@ -103,12 +78,72 @@ end</td>
 </div>
 <div class='description'>
 
+<p>Gets the org, retrieves the symbol for it, and returns data</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 37</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:stock_id</span>] =&#x000A;    <span class="ruby-regexp">/\b[A-Z]+\b/</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">query</span>.<span class="ruby-identifier">raw_text</span>)[<span class="ruby-value">0</span>]&#x000A;  <span class="ruby-identifier">prices</span> = <span class="ruby-identifier">retrieve_data</span>(<span class="ruby-value">symbol:</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:stock_id</span>])&#x000A;&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:current_value</span>] = <span class="ruby-identifier">prices</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:date</span>).<span class="ruby-identifier">last</span>&#x000A;&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>)&#x000A;&#x000A;  <span class="ruby-identifier">data_representation</span>.<span class="ruby-identifier">value</span> = <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:current_value</span>]&#x000A;  <span class="ruby-identifier">data_representation</span>.<span class="ruby-identifier">price</span> = <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:current_value</span>].<span class="ruby-identifier">price</span>&#x000A;  <span class="ruby-identifier">data_representation</span>.<span class="ruby-identifier">symbol</span> = <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:stock_id</span>]&#x000A;&#x000A;  <span class="ruby-identifier">answ</span>, <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">price_comment</span>(<span class="ruby-identifier">prices</span>)&#x000A;&#x000A;  <span class="ruby-identifier">conv</span> = <span class="ruby-node">&quot;~e:#{moj} &quot;</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">synonym_for</span>(<span class="ruby-string">&quot;today&#39;s&quot;</span>).<span class="ruby-identifier">capitalize</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; stock price for #{parameters[:stock_id]} is &quot;</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">answ</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&#39;.&#39;</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">conv</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 113</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:stock_id</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">organization</span>.<span class="ruby-identifier">text</span>&#x000A;  <span class="ruby-identifier">prices</span> = <span class="ruby-identifier">retrieve_data</span>(<span class="ruby-value">symbol:</span> <span class="ruby-identifier">frags</span>[<span class="ruby-value">:stock_id</span>])&#x000A;&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:current_value</span>] = <span class="ruby-identifier">prices</span>.<span class="ruby-identifier">max_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:date</span>)&#x000A;&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>)&#x000A;&#x000A;  <span class="ruby-identifier">data_representation</span>.<span class="ruby-identifier">value</span> = <span class="ruby-identifier">frags</span>[<span class="ruby-value">:current_value</span>]&#x000A;  <span class="ruby-identifier">data_representation</span>.<span class="ruby-identifier">price</span> = <span class="ruby-identifier">frags</span>[<span class="ruby-value">:current_value</span>].<span class="ruby-identifier">price</span>&#x000A;  <span class="ruby-identifier">data_representation</span>.<span class="ruby-identifier">symbol</span> = <span class="ruby-identifier">frags</span>[<span class="ruby-value">:stock_id</span>]&#x000A;&#x000A;  <span class="ruby-identifier">answ</span>, <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">price_comment</span>(<span class="ruby-identifier">prices</span>)&#x000A;&#x000A;  <span class="ruby-identifier">conv</span> = <span class="ruby-node">&quot;~e:#{moj} &quot;</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">synonym_for</span>(<span class="ruby-string">&quot;today&#39;s&quot;</span>).<span class="ruby-identifier">capitalize</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot; stock price for #{frags[:stock_id]} is &quot;</span>&#x000A;  <span class="ruby-identifier">conv</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">answ</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&#39;.&#39;</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">conv</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-price_comment'>
+<a name='method-i-price_comment'></a>
+<div class='synopsis'>
+<span class='name'>price_comment</span>
+<span class='arguments'>(history)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in downloaded <code>history</code> and creates a randomized response for it</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-price_comment-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-price_comment-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 137</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">price_comment</span>(<span class="ruby-identifier">history</span>)&#x000A;  <span class="ruby-identifier">current</span> = <span class="ruby-identifier">history</span>.<span class="ruby-identifier">max_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:date</span>)&#x000A;&#x000A;  <span class="ruby-identifier">comment</span> = <span class="ruby-node">&quot;$#{format(&#39;%.2f&#39;, current.price)}&quot;</span> &#x000A;&#x000A;  <span class="ruby-identifier">fluff</span> = <span class="ruby-keyword">case</span> [<span class="ruby-value">0</span>, <span class="ruby-value">1</span>, <span class="ruby-value">2</span>, <span class="ruby-value">3</span>].<span class="ruby-identifier">sample</span>&#x000A;          <span class="ruby-keyword">when</span> <span class="ruby-value">0</span>&#x000A;           <span class="ruby-identifier">with_history</span>(<span class="ruby-identifier">history</span>)&#x000A;          <span class="ruby-keyword">when</span> <span class="ruby-value">1</span>&#x000A;           <span class="ruby-identifier">with_highest</span>(<span class="ruby-identifier">history</span>)&#x000A;          <span class="ruby-keyword">else</span>&#x000A;            [&#x000A;              <span class="ruby-string">&#39;&#39;</span>,&#x000A;              <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;moneywing&#39;</span>, <span class="ruby-string">&#39;moneybag&#39;</span>, <span class="ruby-string">&#39;monocle&#39;</span>, <span class="ruby-string">&#39;tophat&#39;</span>, <span class="ruby-string">&#39;dollarsign&#39;</span>)&#x000A;            ]&#x000A;          <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-identifier">comment</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">fluff</span>[<span class="ruby-value">0</span>]&#x000A;&#x000A;  [<span class="ruby-identifier">comment</span>, <span class="ruby-identifier">fluff</span>[<span class="ruby-value">1</span>]]&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-with_delta'>
+<a name='method-i-with_delta'></a>
+<div class='synopsis'>
+<span class='name'>with_delta</span>
+<span class='arguments'>(history)</span>
+
+</div>
+<div class='description'>
+
+<p>Adds a delta addendum for <code>history</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-with_delta-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-with_delta-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 160</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">with_delta</span>(<span class="ruby-identifier">history</span>)&#x000A;  <span class="ruby-identifier">yesterday</span> = <span class="ruby-identifier">history</span>.<span class="ruby-identifier">sort_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:date</span>).<span class="ruby-identifier">reverse</span>[<span class="ruby-value">1</span>]&#x000A;  <span class="ruby-identifier">current</span> = <span class="ruby-identifier">history</span>.<span class="ruby-identifier">max_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:date</span>)&#x000A;&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">current</span> <span class="ruby-operator">&gt;</span> <span class="ruby-identifier">yesterday</span>&#x000A;    [&#x000A;      <span class="ruby-node">&quot;, up from yesterday&#39;s $#{yesterday.price}&quot;</span>,&#x000A;      <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;chartup&#39;</span>, <span class="ruby-string">&#39;thumbsup&#39;</span>, <span class="ruby-string">&#39;fire&#39;</span>)&#x000A;    ]&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    [&#x000A;      <span class="ruby-node">&quot;, down from yesterday&#39;s $#{yesterday.price}&quot;</span>,&#x000A;      <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;chartdown&#39;</span>, <span class="ruby-string">&#39;raincloud&#39;</span>, <span class="ruby-string">&#39;snail&#39;</span>)&#x000A;    ]&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-with_highest'>
+<a name='method-i-with_highest'></a>
+<div class='synopsis'>
+<span class='name'>with_highest</span>
+<span class='arguments'>(history)</span>
+
+</div>
+<div class='description'>
+
+<p>Adds a highest value addendum for <code>history</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-with_highest-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-with_highest-source'><span class="ruby-comment"># File lib/dismaltony/directives/stocks.rb, line 178</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">with_highest</span>(<span class="ruby-identifier">history</span>)&#x000A;  <span class="ruby-identifier">current</span> = <span class="ruby-identifier">history</span>.<span class="ruby-identifier">max_by</span>(<span class="ruby-operator">&amp;</span><span class="ruby-value">:date</span>)&#x000A;&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">history</span>.<span class="ruby-identifier">max</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">current</span>&#x000A;    [&#x000A;      <span class="ruby-string">&#39;, currently at its 100-day peak&#39;</span>,&#x000A;      <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;star&#39;</span>, <span class="ruby-string">&#39;rocket&#39;</span>, <span class="ruby-string">&#39;100&#39;</span>)&#x000A;    ]&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    [&#x000A;      <span class="ruby-node">&quot;, with a 100-day peak of $#{history.max.price} on #{history.max.date}&quot;</span>,&#x000A;      <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;barchart&#39;</span>, <span class="ruby-string">&#39;chartup&#39;</span>, <span class="ruby-string">&#39;checkbox&#39;</span>)&#x000A;    ]&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

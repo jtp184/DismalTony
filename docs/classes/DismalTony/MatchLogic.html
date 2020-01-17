@@ -39,10 +39,7 @@ Superclass:
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Represents a prescriptive check to see if a <a href="Query.html">Query</a>
-can be paired with a <a href="Directive.html">Directive</a>. Self
-enumerating, and each priority is transformed into a DSL method that can be
-used to create it.</p>
+<p>Represents a prescriptive check to see if a <a href="Query.html"><code>Query</code></a> can be paired with a <a href="Directive.html"><code>Directive</code></a>. Self enumerating, and each priority is transformed into a DSL method that can be used to create it.</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -90,8 +87,7 @@ used to create it.</p>
 </td>
 <td class='context-item-value'>[R]</td>
 <td class='context-item-desc'>
-<p>Whether this logic type should be counted or abstained from counting when
-evaluating matching criteria.</p>
+<p>Whether this logic type should be counted or abstained from counting when evaluating matching criteria.</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -100,8 +96,7 @@ evaluating matching criteria.</p>
 </td>
 <td class='context-item-value'>[RW]</td>
 <td class='context-item-desc'>
-<p>The Proc representing the condition to compare the <a
-href="Query.html">Query</a> against.</p>
+<p>The Proc representing the condition to compare the <a href="Query.html"><code>Query</code></a> against.</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -110,8 +105,7 @@ href="Query.html">Query</a> against.</p>
 </td>
 <td class='context-item-value'>[RW]</td>
 <td class='context-item-desc'>
-<p>The word used in DSL to indicate this type of <a
-href="MatchLogic.html">MatchLogic</a>, stored as a symbol</p>
+<p>The word used in DSL to indicate this type of <a href="MatchLogic.html"><code>MatchLogic</code></a>, stored as a symbol</p>
 </td>
 </tr>
 <tr class='top-aligned-row context-row'>
@@ -137,8 +131,7 @@ href="MatchLogic.html">MatchLogic</a>, stored as a symbol</p>
 </div>
 <div class='description'>
 
-<p>Kickback method. When a <code>subclass</code> is created, it&#39;s added to
-the <code>members</code> array.</p>
+<p>Kickback method. When a <code>subclass</code> is created, it&#39;s added to the <code>members</code> array.</p>
 
 </div>
 <div class='source'>
@@ -157,11 +150,7 @@ the <code>members</code> array.</p>
 </div>
 <div class='description'>
 
-<p>Takes in a predicate <code>pre</code> which is a Proc object of arity 1
-representing the condition to check against. <a
-href="MatchLogic.html#attribute-i-success_incr">#success_incr</a>+, and
-<code>penalty</code> status. Otherwise, they default to :matches, 1, 0, and
-true respectively.</p>
+<p>Takes in a predicate <code>pre</code> which is a Proc object of arity 1 representing the condition to check against. <a href="MatchLogic.html#attribute-i-success_incr"><code>success_incr</code></a>+, and <code>penalty</code> status. Otherwise, they default to :matches, 1, 0, and true respectively.</p>
 
 </div>
 <div class='source'>
@@ -200,9 +189,7 @@ true respectively.</p>
 </div>
 <div class='description'>
 
-<p>Returns the proper <a
-href="MatchLogic.html#attribute-i-fails_incr">#fails_incr</a>+ converted to
-float</p>
+<p>Returns the proper <a href="MatchLogic.html#attribute-i-fails_incr"><code>fails_incr</code></a>+ converted to float</p>
 
 </div>
 <div class='source'>
@@ -240,8 +227,7 @@ float</p>
 </div>
 <div class='description'>
 
-<p>Checks if this <a href="MatchLogic.html">MatchLogic</a> object is true for
-a given <a href="Query.html">Query</a> <code>qry</code></p>
+<p>Checks if this <a href="MatchLogic.html"><code>MatchLogic</code></a> object is true for a given <a href="Query.html"><code>Query</code></a> <code>qry</code></p>
 
 </div>
 <div class='source'>
@@ -279,8 +265,7 @@ a given <a href="Query.html">Query</a> <code>qry</code></p>
 </div>
 <div class='description'>
 
-<p>Kickback function, executes when this <a
-href="MatchLogic.html">MatchLogic</a> fails.</p>
+<p>Kickback function, executes when this <a href="MatchLogic.html"><code>MatchLogic</code></a> fails.</p>
 
 </div>
 <div class='source'>
@@ -299,8 +284,7 @@ href="MatchLogic.html">MatchLogic</a> fails.</p>
 </div>
 <div class='description'>
 
-<p>Kickback function, executes when this <a
-href="MatchLogic.html">MatchLogic</a> succeeds.</p>
+<p>Kickback function, executes when this <a href="MatchLogic.html"><code>MatchLogic</code></a> succeeds.</p>
 
 </div>
 <div class='source'>

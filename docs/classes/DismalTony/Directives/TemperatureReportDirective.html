@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+<head>
+<title>DismalTony::Directives::TemperatureReportDirective</title>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<link href='../../../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+<script type='text/javascript'>
+  function popupCode(url) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+  
+  function toggleCode(id) {
+    var code = document.getElementById(id)
+  
+    code.style.display = code.style.display != 'block' ? 'block' : 'none'
+    return true
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+</script>
+</head>
+<body class='page'>
+<div class='class' id='wrapper'>
+<div class='header'>
+<h1 class='name'><span class='type'>class</span>
+DismalTony::Directives::TemperatureReportDirective
+</h1>
+<ol class='paths'>
+<li>
+<a href="../../../files/lib/dismaltony/directives/weather_rb.html">lib/dismaltony/directives/weather.rb</a>
+</li>
+</ol>
+<div class='parent'>
+Superclass:
+<strong><a href="../Directive.html">Directive</a></strong>
+</div>
+</div>
+<div id='content'>
+<div id='text'>
+<div id='description'>
+<p>Reports on the temperature</p>
+</div>
+<div id='method-list'>
+<h2>Methods</h2>
+<h3>Public Instance</h3>
+<ol>
+<li><a href="#method-i-run">run</a></li>
+</ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-temp_emoji">temp_emoji</a></li>
+</ol>
+</div>
+<div id='context'>
+<div id='includes'>
+<h2>Included modules</h2>
+<ol>
+<li><a href="../DirectiveHelpers/JSONAPIHelpers.html">DismalTony::DirectiveHelpers::JSONAPIHelpers</a></li>
+<li><a href="../DirectiveHelpers/EmojiHelpers.html">DismalTony::DirectiveHelpers::EmojiHelpers</a></li>
+<li><a href="../DirectiveHelpers/DataRepresentationHelpers.html">DismalTony::DirectiveHelpers::DataRepresentationHelpers</a></li>
+<li><a href="../DirectiveHelpers/DataStructHelpers.html">DismalTony::DirectiveHelpers::DataStructHelpers</a></li>
+<li><a href="../DirectiveHelpers/OpenWeatherServicesHelpers.html">DismalTony::DirectiveHelpers::OpenWeatherServicesHelpers</a></li>
+</ol>
+</div>
+</div>
+<div id='section'>
+<div id='methods'>
+<h2>Public Instance methods</h2>
+<div class='method public-instance' id='method-method-i-run'>
+<a name='method-i-run'></a>
+<div class='synopsis'>
+<span class='name'>run</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Gets the weather data for a location, and returns the temperature data</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 473</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">loc</span> = <span class="ruby-identifier">get_weather_city</span>(<span class="ruby-identifier">query</span>.<span class="ruby-identifier">location</span>.<span class="ruby-identifier">text</span>)&#x000A;  <span class="ruby-identifier">req</span> = <span class="ruby-identifier">retrieve_weather</span>(<span class="ruby-identifier">loc</span>)&#x000A;&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">req</span>.<span class="ruby-identifier">slice</span>(<span class="ruby-operator">*</span><span class="ruby-node">%i[temp temp_min temp_max]</span>))&#x000A;&#x000A;  <span class="ruby-identifier">moj</span> = <span class="ruby-identifier">temp_emoji</span>(<span class="ruby-identifier">req</span>[<span class="ruby-value">:temp</span>])&#x000A;&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-node">&quot;~e:#{moj} The temperature right now is around #{req[:temp]}˚F in #{req[:city_name]}&quot;</span>&#x000A;&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">resp</span>)&#x000A;<span class="ruby-keyword">rescue</span> <span class="ruby-constant">IndexError</span>&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-keyword">nil</span>)&#x000A;&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-node">&quot;~e:#{negative_emoji} I&#39;m sorry, I couldn&#39;t find results for #{query.location.text}.&quot;</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">resp</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-temp_emoji'>
+<a name='method-i-temp_emoji'></a>
+<div class='synopsis'>
+<span class='name'>temp_emoji</span>
+<span class='arguments'>(tmp)</span>
+
+</div>
+<div class='description'>
+
+<p>Gets an appropriate emoji for a temperature <code>tmp</code></p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-temp_emoji-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-temp_emoji-source'><span class="ruby-comment"># File lib/dismaltony/directives/weather.rb, line 494</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">temp_emoji</span>(<span class="ruby-identifier">tmp</span>)&#x000A;  <span class="ruby-keyword">case</span> <span class="ruby-identifier">tmp</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">120</span><span class="ruby-operator">..</span><span class="ruby-value">90</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;fire&#39;</span>, <span class="ruby-string">&#39;chartup&#39;</span>, <span class="ruby-string">&#39;chili&#39;</span>, <span class="ruby-string">&#39;exclamationmark&#39;</span>, <span class="ruby-string">&#39;caution&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">90</span><span class="ruby-operator">..</span><span class="ruby-value">80</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;thermometer&#39;</span>, <span class="ruby-string">&#39;tropicaldrink&#39;</span>, <span class="ruby-string">&#39;globe&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">80</span><span class="ruby-operator">..</span><span class="ruby-value">70</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;sun&#39;</span>, <span class="ruby-string">&#39;fish&#39;</span>, <span class="ruby-string">&#39;flower&#39;</span>, <span class="ruby-string">&#39;snail&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">70</span><span class="ruby-operator">..</span><span class="ruby-value">60</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;egg&#39;</span>, <span class="ruby-string">&#39;smile&#39;</span>, <span class="ruby-string">&#39;speechbubble&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">60</span><span class="ruby-operator">..</span><span class="ruby-value">40</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;smile&#39;</span>, <span class="ruby-string">&#39;popcorn&#39;</span>, <span class="ruby-string">&#39;pizza&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">40</span><span class="ruby-operator">..</span><span class="ruby-value">35</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;chartdown&#39;</span>, <span class="ruby-string">&#39;coffee&#39;</span>, <span class="ruby-string">&#39;shower&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">35</span><span class="ruby-operator">..</span><span class="ruby-value">28</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;snowflake&#39;</span>, <span class="ruby-string">&#39;whiskey&#39;</span>, <span class="ruby-string">&#39;worried&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">20</span><span class="ruby-operator">..</span><span class="ruby-value">0</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;snowflake&#39;</span>, <span class="ruby-string">&#39;chartdown&#39;</span>, <span class="ruby-string">&#39;snowflake&#39;</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;mindblown&#39;</span>, <span class="ruby-string">&#39;snowflake&#39;</span>, <span class="ruby-string">&#39;cancel&#39;</span>, <span class="ruby-string">&#39;thumbsdown&#39;</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div id='footer-push'></div>
+</div>
+<div id='footer'>
+<a href="https://github.com/rdoc/hanna-nouveau"><strong>Hanna Nouveau</strong> RDoc template</a>
+</div>
+</body>
+</html>

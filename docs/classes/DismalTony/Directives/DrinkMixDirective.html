@@ -38,15 +38,27 @@ Superclass:
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>Suggests a drink to make</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
 <li><a href="#method-i-run">run</a></li>
 </ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-pick_drink">pick_drink</a></li>
+</ol>
 </div>
 <div id='context'>
+<div id='includes'>
+<h2>Included modules</h2>
+<ol>
+<li><a href="../DirectiveHelpers/DataRepresentationHelpers.html">DismalTony::DirectiveHelpers::DataRepresentationHelpers</a></li>
+</ol>
+</div>
 </div>
 <div id='section'>
 <div id='methods'>
@@ -60,12 +72,34 @@ Superclass:
 </div>
 <div class='description'>
 
+<p>Chooses from</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/fun.rb, line 13</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:drink</span>] = [<span class="ruby-string">&#39;Glass of Water&#39;</span>, <span class="ruby-string">&#39;Old Fashioned&#39;</span>, <span class="ruby-string">&#39;Zombie&#39;</span>, <span class="ruby-string">&#39;Mai Tai&#39;</span>, <span class="ruby-string">&#39;Rum &amp; Coke&#39;</span>, <span class="ruby-string">&#39;Gin &amp; Tonic&#39;</span>, <span class="ruby-string">&#39;Pepsi Crystal&#39;</span>].<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-identifier">moj</span> = [<span class="ruby-string">&#39;martini&#39;</span>,<span class="ruby-string">&#39;pineapple&#39;</span>,<span class="ruby-string">&#39;think&#39;</span>,<span class="ruby-string">&#39;tropicaldrink&#39;</span>,<span class="ruby-string">&#39;beer&#39;</span>,<span class="ruby-string">&#39;cheers&#39;</span>,<span class="ruby-string">&#39;toast&#39;</span>,<span class="ruby-string">&#39;champagne&#39;</span>].<span class="ruby-identifier">sample</span>&#x000A;&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} Okay, #{query.user[&#39;nickname&#39;]}. Have a #{parameters[:drink]}!&quot;</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/fun.rb, line 23</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">frags</span>[<span class="ruby-value">:drink</span>])&#x000A;  &#x000A;  <span class="ruby-identifier">moj</span> = <span class="ruby-node">%w[martini pineapple think tropicaldrink beer cheers toast champagne]</span>.<span class="ruby-identifier">sample</span>&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-node">&quot;~e:#{moj} Okay, #{query.user[&#39;nickname&#39;]}. Have a #{frags[:drink]}!&quot;</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-pick_drink'>
+<a name='method-i-pick_drink'></a>
+<div class='synopsis'>
+<span class='name'>pick_drink</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Randomly selects a drink</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-pick_drink-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-pick_drink-source'><span class="ruby-comment"># File lib/dismaltony/directives/fun.rb, line 33</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">pick_drink</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:drink</span>] = [&#x000A;    <span class="ruby-string">&#39;Glass of Water&#39;</span>, &#x000A;    <span class="ruby-string">&#39;Old Fashioned&#39;</span>, &#x000A;    <span class="ruby-string">&#39;Zombie&#39;</span>, &#x000A;    <span class="ruby-string">&#39;Mai Tai&#39;</span>, &#x000A;    <span class="ruby-string">&#39;Rum &amp; Coke&#39;</span>, &#x000A;    <span class="ruby-string">&#39;Gin &amp; Tonic&#39;</span>, &#x000A;    <span class="ruby-string">&#39;Pepsi Crystal&#39;</span>&#x000A;  ].<span class="ruby-identifier">sample</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

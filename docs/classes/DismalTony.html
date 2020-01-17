@@ -43,7 +43,25 @@ DismalTony
 <a href="../files/lib/dismaltony/directive_rb.html">lib/dismaltony/directive.rb</a>
 </li>
 <li class='other'>
-<a href="../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+<a href="../files/lib/dismaltony/directive_helpers/conversation_helpers_rb.html">lib/dismaltony/directive_helpers/conversation_helpers.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/directive_helpers/data_representation_helpers_rb.html">lib/dismaltony/directive_helpers/data_representation_helpers.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/directive_helpers/data_struct_helpers_rb.html">lib/dismaltony/directive_helpers/data_struct_helpers.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/directive_helpers/directive_helpers_rb.html">lib/dismaltony/directive_helpers/directive_helpers.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/directive_helpers/emoji_helpers_rb.html">lib/dismaltony/directive_helpers/emoji_helpers.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/directive_helpers/interrogative_helpers_rb.html">lib/dismaltony/directive_helpers/interrogative_helpers.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/directive_helpers/json_api_helpers_rb.html">lib/dismaltony/directive_helpers/json_api_helpers.rb</a>
 </li>
 <li class='other'>
 <a href="../files/lib/dismaltony/directives/conversation_rb.html">lib/dismaltony/directives/conversation.rb</a>
@@ -58,6 +76,9 @@ DismalTony
 <a href="../files/lib/dismaltony/directives/fun_rb.html">lib/dismaltony/directives/fun.rb</a>
 </li>
 <li class='other'>
+<a href="../files/lib/dismaltony/directives/money_math_rb.html">lib/dismaltony/directives/money_math.rb</a>
+</li>
+<li class='other'>
 <a href="../files/lib/dismaltony/directives/stocks_rb.html">lib/dismaltony/directives/stocks.rb</a>
 </li>
 <li class='other'>
@@ -70,9 +91,6 @@ DismalTony
 <a href="../files/lib/dismaltony/directives/weather_rb.html">lib/dismaltony/directives/weather.rb</a>
 </li>
 <li class='other'>
-<a href="../files/lib/dismaltony/emoji_dictionary_rb.html">lib/dismaltony/emoji_dictionary.rb</a>
-</li>
-<li class='other'>
 <a href="../files/lib/dismaltony/formatter_rb.html">lib/dismaltony/formatter.rb</a>
 </li>
 <li class='other'>
@@ -82,13 +100,22 @@ DismalTony
 <a href="../files/lib/dismaltony/match_logic_rb.html">lib/dismaltony/match_logic.rb</a>
 </li>
 <li class='other'>
+<a href="../files/lib/dismaltony/parsing_strategies/aws_comprehend_strategy_rb.html">lib/dismaltony/parsing_strategies/aws_comprehend_strategy.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/parsing_strategies/parsey_parse_strategy_rb.html">lib/dismaltony/parsing_strategies/parsey_parse_strategy.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/parsing_strategies/parsing_strategy_rb.html">lib/dismaltony/parsing_strategies/parsing_strategy.rb</a>
+</li>
+<li class='other'>
+<a href="../files/lib/dismaltony/parsing_strategies/watson_tone_strategy_rb.html">lib/dismaltony/parsing_strategies/watson_tone_strategy.rb</a>
+</li>
+<li class='other'>
 <a href="../files/lib/dismaltony/query_rb.html">lib/dismaltony/query.rb</a>
 </li>
 <li class='other'>
 <a href="../files/lib/dismaltony/query_resolver_rb.html">lib/dismaltony/query_resolver.rb</a>
-</li>
-<li class='other'>
-<a href="../files/lib/dismaltony/scheduler_rb.html">lib/dismaltony/scheduler.rb</a>
 </li>
 <li class='other'>
 <a href="../files/lib/dismaltony/user_identity_rb.html">lib/dismaltony/user_identity.rb</a>
@@ -116,6 +143,7 @@ DismalTony
 <li><a href="#method-c-call">call</a></li>
 <li><a href="#method-c-config">config</a></li>
 <li><a href="#method-c-configure">configure</a></li>
+<li><a href="#method-c-data_store">data_store</a></li>
 <li><a href="#method-c-last_result">last_result</a></li>
 <li><a href="#method-c-last_result-3D">last_result=</a></li>
 <li><a href="#method-c-vi">vi</a></li>
@@ -129,15 +157,15 @@ DismalTony
 <ol>
 <li><a href="DismalTony/DirectiveHelpers.html">DismalTony::DirectiveHelpers</a></li>
 <li><a href="DismalTony/Directives.html">DismalTony::Directives</a></li>
+<li><a href="DismalTony/Formatter.html">DismalTony::Formatter</a></li>
 <li><a href="DismalTony/MatchLogicTypes.html">DismalTony::MatchLogicTypes</a></li>
+<li><a href="DismalTony/ParsingStrategies.html">DismalTony::ParsingStrategies</a></li>
 <li><a href="DismalTony/QueryResolver.html">DismalTony::QueryResolver</a></li>
 <li><a href="DismalTony/ConsoleInterface.html">DismalTony::ConsoleInterface</a></li>
 <li><a href="DismalTony/ConversationState.html">DismalTony::ConversationState</a></li>
 <li><a href="DismalTony/DataStore.html">DismalTony::DataStore</a></li>
 <li><a href="DismalTony/DialogInterface.html">DismalTony::DialogInterface</a></li>
 <li><a href="DismalTony/Directive.html">DismalTony::Directive</a></li>
-<li><a href="DismalTony/EmojiDictionary.html">DismalTony::EmojiDictionary</a></li>
-<li><a href="DismalTony/Formatter.html">DismalTony::Formatter</a></li>
 <li><a href="DismalTony/HandledResponse.html">DismalTony::HandledResponse</a></li>
 <li><a href="DismalTony/MacSpeechInterface.html">DismalTony::MacSpeechInterface</a></li>
 <li><a href="DismalTony/MatchLogic.html">DismalTony::MatchLogic</a></li>
@@ -147,8 +175,6 @@ DismalTony
 <li><a href="DismalTony/Query.html">DismalTony::Query</a></li>
 <li><a href="DismalTony/RedisStore.html">DismalTony::RedisStore</a></li>
 <li><a href="DismalTony/SMSInterface.html">DismalTony::SMSInterface</a></li>
-<li><a href="DismalTony/ScheduleEvent.html">DismalTony::ScheduleEvent</a></li>
-<li><a href="DismalTony/Scheduler.html">DismalTony::Scheduler</a></li>
 <li><a href="DismalTony/UserIdentity.html">DismalTony::UserIdentity</a></li>
 <li><a href="DismalTony/VIBase.html">DismalTony::VIBase</a></li>
 <li><a href="DismalTony/YAMLStore.html">DismalTony::YAMLStore</a></li>
@@ -166,16 +192,14 @@ DismalTony
 </div>
 <div class='description'>
 
-<p>The main point of interaction. If <code>args</code> is empty, it returns
-the same as vi, but otherwise passes the single string arg on to <a
-href="DismalTony/VIBase.html#method-i-call">DismalTony::VIBase#call</a></p>
+<p>The main point of interaction. If <code>args</code> is empty, it returns the same as vi, but otherwise passes the single string arg on to <a href="DismalTony/VIBase.html#method-i-call"><code>VIBase#call</code></a></p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-call-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-call-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 69</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">vi</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">empty?</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]) <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;  <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoMethodError</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-call-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 68</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">call</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">vi</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">empty?</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">args</span>[<span class="ruby-value">0</span>]) <span class="ruby-keyword">if</span> <span class="ruby-identifier">args</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">1</span>&#x000A;&#x000A;  <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoMethodError</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-config'>
@@ -194,7 +218,7 @@ href="DismalTony/VIBase.html#method-i-call">DismalTony::VIBase#call</a></p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-config-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-config-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 47</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">config</span>&#x000A;  <span class="ruby-identifier">@@config</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-config-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 43</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">config</span>&#x000A;  <span class="ruby-identifier">@@config</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-configure'>
@@ -206,15 +230,33 @@ href="DismalTony/VIBase.html#method-i-call">DismalTony::VIBase#call</a></p>
 </div>
 <div class='description'>
 
-<p>Yields the <code>config</code> varable to the block <code>blk</code> so you
-can define settings.</p>
+<p>Yields the <code>config</code> varable to the block <code>blk</code> so you can define settings.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-configure-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-configure-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 31</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">configure</span> <span class="ruby-comment"># :yields: config</span>&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">@@config</span>&#x000A;  <span class="ruby-identifier">@@config</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-configure-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 27</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">configure</span>&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">@@config</span>&#x000A;  <span class="ruby-identifier">@@config</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method public-class' id='method-method-c-data_store'>
+<a name='method-c-data_store'></a>
+<div class='synopsis'>
+<span class='name'>data_store</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Returns the Data Store attached to the inherent VI</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-data_store-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-c-data_store-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 62</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">data_store</span>&#x000A;  <span class="ruby-keyword">self</span>.<span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-last_result'>
@@ -226,15 +268,14 @@ can define settings.</p>
 </div>
 <div class='description'>
 
-<p>Retrieves the stored result of the last <a
-href="DismalTony/Directive.html">Directive</a> evaluated</p>
+<p>Retrieves the stored result of the last <a href="DismalTony/Directive.html"><code>Directive</code></a> evaluated</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-last_result-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-last_result-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 37</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">last_result</span>&#x000A;  <span class="ruby-ivar">@last_result</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-last_result-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 33</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">last_result</span>&#x000A;  <span class="ruby-ivar">@last_result</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-last_result-3D'>
@@ -246,15 +287,14 @@ href="DismalTony/Directive.html">Directive</a> evaluated</p>
 </div>
 <div class='description'>
 
-<p>Stores the result of the last <a
-href="DismalTony/Directive.html">Directive</a> evaluated</p>
+<p>Stores the result of the last <a href="DismalTony/Directive.html"><code>Directive</code></a> evaluated</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-last_result-3D-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-last_result-3D-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 42</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">last_result=</span>(<span class="ruby-identifier">new_one</span>)&#x000A;  <span class="ruby-ivar">@last_result</span> = <span class="ruby-identifier">new_one</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-last_result-3D-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 38</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">last_result=</span>(<span class="ruby-identifier">new_one</span>)&#x000A;  <span class="ruby-ivar">@last_result</span> = <span class="ruby-identifier">new_one</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-vi'>
@@ -266,15 +306,14 @@ href="DismalTony/Directive.html">Directive</a> evaluated</p>
 </div>
 <div class='description'>
 
-<p>Returns the <a href="DismalTony/VIBase.html">VIBase</a> in the config.
-Creates a basic one if none exists.</p>
+<p>Returns the <a href="DismalTony/VIBase.html"><code>VIBase</code></a> in the config. Creates a basic one if none exists.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-vi-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-vi-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 52</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">vi</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">config</span>[<span class="ruby-value">:vi</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-value">:vi</span>]&#x000A;  <span class="ruby-identifier">data_store</span> = (<span class="ruby-identifier">config</span>[<span class="ruby-value">:data_store</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-value">:data_store</span>])&#x000A;&#x000A;  <span class="ruby-identifier">@@config</span>[<span class="ruby-value">:vi</span>] = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">VIBase</span>.<span class="ruby-identifier">new</span>(&#x000A;    <span class="ruby-value">data_store:</span> <span class="ruby-identifier">config</span>[<span class="ruby-value">:data_store</span>]&#x000A;  )&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-vi-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 48</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">vi</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">config</span>[<span class="ruby-value">:vi</span>] <span class="ruby-keyword">if</span> <span class="ruby-identifier">config</span>[<span class="ruby-value">:vi</span>]&#x000A;&#x000A;  <span class="ruby-identifier">@@config</span>[<span class="ruby-value">:vi</span>] = <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">VIBase</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">data_store:</span> <span class="ruby-identifier">config</span>[<span class="ruby-value">:data_store</span>])&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-class' id='method-method-c-vi-3D'>
@@ -286,15 +325,14 @@ Creates a basic one if none exists.</p>
 </div>
 <div class='description'>
 
-<p>Overrides the VI inside the config with the one passed in. Very strict
-about typing.</p>
+<p>Overrides the VI inside the config with the one passed in. Very strict about typing.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-c-vi-3D-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-c-vi-3D-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 62</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">vi=</span>(<span class="ruby-identifier">vi</span>)&#x000A;  <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-string">&#39;Not a VIBase!&#39;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">VIBase</span>&#x000A;  <span class="ruby-identifier">config</span>[<span class="ruby-value">:vi</span>] = <span class="ruby-identifier">vi</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-c-vi-3D-source'><span class="ruby-comment"># File lib/dismaltony.rb, line 55</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier ruby-title">vi=</span>(<span class="ruby-identifier">vi</span>)&#x000A;  <span class="ruby-identifier">raise</span> <span class="ruby-constant">TypeError</span>, <span class="ruby-string">&#39;Not a VIBase!&#39;</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">is_a?</span> <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">VIBase</span>&#x000A;&#x000A;  <span class="ruby-identifier">config</span>[<span class="ruby-value">:vi</span>] = <span class="ruby-identifier">vi</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

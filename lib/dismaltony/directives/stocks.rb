@@ -7,11 +7,14 @@ require 'ostruct'
 require 'numbers_in_words'
 require 'numbers_in_words/duck_punch'
 
-module DismalTony::DirectiveHelpers
+module DismalTony::DirectiveHelpers # :nodoc:
+  # Uses the AlphaVantage API to get StockPrices
   module StocksHelpers
     include HelperTemplate
 
+    # The Class methods of the helper, included on module inclusion
     module ClassMethods
+      # A Struct which stores the price data retrieved
       StockPrice = Struct.new(:symbol, :date, :open, :high, :low, :close, :volume) do
         include Comparable
 
@@ -34,16 +37,20 @@ module DismalTony::DirectiveHelpers
         end
       end
 
+      # Converts +args+ to a StockPrice
       def stock_price(*args)
         StockPrice.new(*args)
       end
     end
 
+    # The Instance methods of the hlper, included on module inclusion
     module InstanceMethods
+      # Retrieves data for given query params +qpr+
       def retrieve_data(qpr)
         parse_web_req(api_request(qpr))
       end
 
+      # Takes in the web response +resp+ and parses it as JSON
       def parse_web_req(resp)
         jsr = resp
         sym = jsr['Meta Data']['2. Symbol']
@@ -59,6 +66,7 @@ module DismalTony::DirectiveHelpers
         results
       end
 
+      # Class-instance version of .stock_price
       def stock_price(*args)
         self.class.stock_price(*args)
       end
@@ -66,7 +74,8 @@ module DismalTony::DirectiveHelpers
   end
 end
 
-module DismalTony::Directives
+module DismalTony::Directives # :nodoc:
+  # Uses the AlphaVantageAPI to get the current stock price
   class GetStockPriceDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::ConversationHelpers
@@ -100,6 +109,7 @@ module DismalTony::Directives
       adef[:apikey] = ENV['ALPHA_VANTAGE_KEY'] || ENV['alpha_vantage_key']
     end
 
+    # Gets the org, retrieves the symbol for it, and returns data
     def run
       frags[:stock_id] = query.organization.text
       prices = retrieve_data(symbol: frags[:stock_id])
@@ -123,39 +133,66 @@ module DismalTony::Directives
 
     private
 
+    # Takes in downloaded +history+ and creates a randomized response for it
     def price_comment(history)
       current = history.max_by(&:date)
-      moj = ''
 
-      comment = "$#{format('%.2f', current.price)}" << case [0, 1, 2, 3].sample
-                                                       when 0
-                                                         # Better / worse than yesterday
-                                                         yesterday = history.sort_by(&:date).reverse[1]
-                                                         if current > yesterday
-                                                           moj = random_emoji('chartup', 'thumbsup', 'fire')
-                                                           ", up from yesterday's $#{yesterday.price}"
-                                                         else
-                                                           moj = random_emoji('chartdown', 'raincloud', 'snail')
-                                                           ", down from yesterday's $#{yesterday.price}"
-                                                         end
-                                                       when 1
-                                                         # Compared to highest record
-                                                         if history.max == current
-                                                           moj = random_emoji('star', 'rocket', '100')
-                                                           ', currently at its 100-day peak'
-                                                         else
-                                                           moj = random_emoji('barchart', 'chartup', 'checkbox')
-                                                           ", with a 100-day peak of $#{history.max.price} on #{history.max.date}"
-                                                         end
-                                                       else
-                                                         # Just the current price, no commentary
-                                                         moj = random_emoji('moneywing', 'moneybag', 'monocle', 'tophat', 'dollarsign')
-                                                         ''
-       end
-      [comment, moj]
-     end
+      comment = "$#{format('%.2f', current.price)}" 
+
+      fluff = case [0, 1, 2, 3].sample
+              when 0
+               with_history(history)
+              when 1
+               with_highest(history)
+              else
+                [
+                  '',
+                  random_emoji('moneywing', 'moneybag', 'monocle', 'tophat', 'dollarsign')
+                ]
+              end
+
+      comment << fluff[0]
+
+      [comment, fluff[1]]
+    end
+
+    # Adds a delta addendum for +history+
+    def with_delta(history)
+      yesterday = history.sort_by(&:date).reverse[1]
+      current = history.max_by(&:date)
+
+      if current > yesterday
+        [
+          ", up from yesterday's $#{yesterday.price}",
+          random_emoji('chartup', 'thumbsup', 'fire')
+        ]
+      else
+        [
+          ", down from yesterday's $#{yesterday.price}",
+          random_emoji('chartdown', 'raincloud', 'snail')
+        ]
+      end
+    end
+
+    # Adds a highest value addendum for +history+
+    def with_highest(history)
+      current = history.max_by(&:date)
+
+      if history.max == current
+        [
+          ', currently at its 100-day peak',
+          random_emoji('star', 'rocket', '100')
+        ]
+      else
+        [
+          ", with a 100-day peak of $#{history.max.price} on #{history.max.date}",
+          random_emoji('barchart', 'chartup', 'checkbox')
+        ]
+      end
+    end
   end
 
+  # Determines the value of a specific number of shares of a stock
   class StockMathDirective < DismalTony::Directive
     include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::ConversationHelpers
@@ -192,25 +229,36 @@ module DismalTony::Directives
       adef[:apikey] = ENV['ALPHA_VANTAGE_KEY'] || ENV['alpha_vantage_key']
     end
 
+    # Gets the stock symbol and the quantity, does the calculation, and finalizes
     def run
       frags[:stock_id] ||= query.organization.text
 
       num = query.quantity.text
-      frags[:shares_requested] = if num =~ /\d/
-                                   Integer(num.match(/\d+/).to_s)
-                                 else
-                                   num.in_numbers
-                                 end
 
-      if frags[:shares_requested] < 1
-        ask_for_number
+      num = if num =~ /\d/
+              Integer(num.match(/\d+/).to_s)
+            else
+              num.in_numbers
+            end
+
+      if num < 1
+        ask_for_shares_requested(
+          message: "~e:pound Please enter the number of shares you'd like to sum as a digit.",
+          cast: -> (q) { frags[:shares_requested] ||= q.quantity.text.in_numbers
+        )
       else
         finalize
       end
+
+      return ask_frags if ask_frags
+
+      finalize
+      calculate_final_total
     end
 
     private
 
+    # Performs final calculation for value, and sets their returns
     def finalize
       frags[:current_value] = retrieve_data(symbol: frags[:stock_id]).first
 
@@ -226,26 +274,33 @@ module DismalTony::Directives
       resp
     end
 
+    # Sets final total for response, including HandledResponse
     def calculate_final_total
       frags[:final_total] = (frags[:shares_requested] * frags[:current_value].price)
-      moj = random_emoji('chartup', 'lightbulb', 'magnifyingglass', 'moneywing', 'moneybag', 'pencil', 'think', 'tophat', 'monocle', 'toast')
-      x = DismalTony::HandledResponse.finish("~e:#{moj} #{frags[:shares_requested]} shares of #{frags[:stock_id]} stock #{synonym_for('is worth')} $#{frags[:final_total]}")
-    end
-
-    def ask_for_number
-      DismalTony::HandledResponse.then_do(
-        message: "~e:pound Please enter the number of shares you'd like to sum as a digit.",
-        directive: self,
-        method: :read_number,
-        data: frags
+     
+      moj = random_emoji(
+        'chartup',
+        'lightbulb',
+        'magnifyingglass',
+        'moneywing',
+        'moneybag',
+        'pencil',
+        'think',
+        'tophat',
+        'monocle',
+        'toast'
       )
-    end
 
-    def read_number
-      frags[:shares_requested] ||= query.quantity.text.in_numbers
-      finalize
-    rescue ArgumentError
-      ask_for_number
+      fstring = ""
+      fstring << "~e:#{moj} "
+      fstring << frags[:shares_requested]
+      fstring << " shares of "
+      fstring << frags[:stock_id]
+      fstring << " stock "
+      fstring << synonym_for('is worth')
+      fstring << " $#{frags[:final_total]}"
+
+      DismalTony::HandledResponse.finish(fstring)
     end
   end
 end

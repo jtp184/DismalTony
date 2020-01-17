@@ -28,17 +28,14 @@ DismalTony::DirectiveHelpers::DataStructHelpers::InstanceMethods
 </h1>
 <ol class='paths'>
 <li>
-<a href="../../../../files/lib/dismaltony/directive_helpers_rb.html">lib/dismaltony/directive_helpers.rb</a>
+<a href="../../../../files/lib/dismaltony/directive_helpers/data_struct_helpers_rb.html">lib/dismaltony/directive_helpers/data_struct_helpers.rb</a>
 </li>
 </ol>
 </div>
 <div id='content'>
 <div id='text'>
 <div id='description'>
-<p>Provides simpler access to <a
-href="../../DataStore.html#attribute-i-directive_data">DismalTony::DataStore#directive_data</a>,
-and streamlines defining and creating structs to put in it. Contains the
-Instance methods of the helper, which are added on inclusion</p>
+<p>Provides simpler access to <a href="../../DataStore.html#attribute-i-directive_data"><code>DataStore#directive_data</code></a>, and streamlines defining and creating structs to put in it. Contains the Instance methods of the helper, which are added on inclusion</p>
 </div>
 <div id='method-list'>
 <h2>Methods</h2>
@@ -65,17 +62,14 @@ Instance methods of the helper, which are added on inclusion</p>
 </div>
 <div class='description'>
 
-<p>Takes in arguments to create a new struct. If no <a
-href="InstanceMethods.html#method-i-data_struct_template">data_struct_template</a>
-is defined, It creates an OpenStruct instead. Otherwise, correctly maps
-values to the struct.</p>
+<p>Takes in arguments to create a new struct. If no <a href="InstanceMethods.html#method-i-data_struct_template"><code>data_struct_template</code></a> is defined, It creates an OpenStruct instead. Otherwise, correctly maps values to the struct.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_struct-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-data_struct-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 301</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct</span> <span class="ruby-comment"># :yields: arguments</span>&#x000A;  <span class="ruby-identifier">ud_args</span> = {}&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">ud_args</span>&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">nil?</span>&#x000A;    <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">ud_args</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">args_list</span> = <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">members</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ud_args</span>[<span class="ruby-identifier">a</span>] }&#x000A;    <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args_list</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-data_struct-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/data_struct_helpers.rb, line 49</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct</span> <span class="ruby-comment"># :yields: arguments</span>&#x000A;  <span class="ruby-identifier">ud_args</span> = {}&#x000A;  <span class="ruby-keyword">yield</span> <span class="ruby-identifier">ud_args</span>&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">nil?</span>&#x000A;    <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">ud_args</span>)&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">args_list</span> = <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">members</span>.<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">ud_args</span>[<span class="ruby-identifier">a</span>] }&#x000A;    <span class="ruby-identifier">data_struct_template</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">args_list</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-data_struct_template'>
@@ -94,7 +88,7 @@ values to the struct.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_struct_template-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-data_struct_template-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 313</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">data_struct_template</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-data_struct_template-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/data_struct_helpers.rb, line 61</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span> <span class="ruby-operator">||=</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">data_struct_template</span>&#x000A;  <span class="ruby-ivar">@data_struct_template</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-data_struct_template-3D'>
@@ -113,7 +107,7 @@ values to the struct.</p>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-data_struct_template-3D-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-data_struct_template-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 319</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template=</span>(<span class="ruby-identifier">newval</span>)&#x000A;  <span class="ruby-ivar">@data_struct_template</span> = <span class="ruby-identifier">newval</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-data_struct_template-3D-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/data_struct_helpers.rb, line 67</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">data_struct_template=</span>(<span class="ruby-identifier">newval</span>)&#x000A;  <span class="ruby-ivar">@data_struct_template</span> = <span class="ruby-identifier">newval</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-get_stored_data'>
@@ -125,15 +119,14 @@ values to the struct.</p>
 </div>
 <div class='description'>
 
-<p>Uses the Directive&#39;s name, and any passed values to dig into the
-directive data</p>
+<p>Uses the Directive&#39;s name, and any passed values to dig into the directive data</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_stored_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-get_stored_data-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 285</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_stored_data</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">read_data</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-get_stored_data-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/data_struct_helpers.rb, line 33</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_stored_data</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;  <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">read_data</span>(<span class="ruby-identifier">name</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">ky</span>)&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 <div class='method public-instance' id='method-method-i-store_data'>
@@ -145,17 +138,14 @@ directive data</p>
 </div>
 <div class='description'>
 
-<p>In this Directive&#39;s storage, stores <code>ky</code> with a value of
-<code>v</code>. If a block is given, passes it to <a
-href="InstanceMethods.html#method-i-data_struct">data_struct</a> and uses
-that as the value.</p>
+<p>In this Directive&#39;s storage, stores <code>ky</code> with a value of <code>v</code>. If a block is given, passes it to <a href="InstanceMethods.html#method-i-data_struct"><code>data_struct</code></a> and uses that as the value.</p>
 
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-store_data-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-store_data-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers.rb, line 291</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_data</span>(<span class="ruby-identifier">ky</span>, <span class="ruby-identifier">v</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>&#x000A;    <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">store_data</span>(<span class="ruby-value">directive:</span> <span class="ruby-identifier">name</span>, <span class="ruby-value">key:</span> <span class="ruby-identifier">ky</span>, <span class="ruby-value">value:</span> <span class="ruby-identifier">data_struct</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>))&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">store_data</span>(<span class="ruby-value">directive:</span> <span class="ruby-identifier">name</span>, <span class="ruby-value">key:</span> <span class="ruby-identifier">ky</span>, <span class="ruby-value">value:</span> <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-store_data-source'><span class="ruby-comment"># File lib/dismaltony/directive_helpers/data_struct_helpers.rb, line 39</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">store_data</span>(<span class="ruby-identifier">ky</span>, <span class="ruby-identifier">v</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)&#x000A;  <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>&#x000A;    <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">store_data</span>(<span class="ruby-value">directive:</span> <span class="ruby-identifier">name</span>, <span class="ruby-value">key:</span> <span class="ruby-identifier">ky</span>, <span class="ruby-value">value:</span> <span class="ruby-identifier">data_struct</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>))&#x000A;  <span class="ruby-keyword">else</span>&#x000A;    <span class="ruby-identifier">vi</span>.<span class="ruby-identifier">data_store</span>.<span class="ruby-identifier">store_data</span>(<span class="ruby-value">directive:</span> <span class="ruby-identifier">name</span>, <span class="ruby-value">key:</span> <span class="ruby-identifier">ky</span>, <span class="ruby-value">value:</span> <span class="ruby-identifier">v</span>)&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>

@@ -38,19 +38,27 @@ Superclass:
 </div>
 <div id='content'>
 <div id='text'>
-<div id='description'></div>
+<div id='description'>
+<p>Gets the traffic time</p>
+</div>
 <div id='method-list'>
 <h2>Methods</h2>
 <h3>Public Instance</h3>
 <ol>
 <li><a href="#method-i-run">run</a></li>
 </ol>
+<h3>Private Instance</h3>
+<ol>
+<li><a href="#method-i-badness_string">badness_string</a></li>
+<li><a href="#method-i-emoji_choice">emoji_choice</a></li>
+<li><a href="#method-i-get_traffic_time">get_traffic_time</a></li>
+<li><a href="#method-i-response_string">response_string</a></li>
+</ol>
 </div>
 <div id='context'>
 <div id='includes'>
 <h2>Included modules</h2>
 <ol>
-<li><a href="../DirectiveHelpers/CoreHelpers.html">DismalTony::DirectiveHelpers::CoreHelpers</a></li>
 <li><a href="../DirectiveHelpers/DataRepresentationHelpers.html">DismalTony::DirectiveHelpers::DataRepresentationHelpers</a></li>
 <li><a href="../DirectiveHelpers/DataStructHelpers.html">DismalTony::DirectiveHelpers::DataStructHelpers</a></li>
 <li><a href="../DirectiveHelpers/ConversationHelpers.html">DismalTony::DirectiveHelpers::ConversationHelpers</a></li>
@@ -68,14 +76,17 @@ Superclass:
 <td class='context-item-name'>PATIENCE_LIMITS</td>
 <td>=</td>
 <td class='context-item-value'>{
-none: Duration.new(minutes: 10).freeze,
-low: Duration.new(minutes: 20).freeze,
-medium: Duration.new(minutes: 50).freeze,
-high: Duration.new(minutes: 90).freeze,
-very_high: Duration.new(hours: 2).freeze
+none: 0.5,
+low: 1.0,
+medium: 2.0,
+high: 3.0,
+very_high: 4.0,
+harrowing: 4.8
 }.freeze</td>
 <td>&nbsp;</td>
-<td class='context-item-desc'></td>
+<td class='context-item-desc'>
+<p>Comparative array for how much traffic sucks</p>
+</td>
 </tr>
 </table>
 </div>
@@ -91,12 +102,91 @@ very_high: Duration.new(hours: 2).freeze
 </div>
 <div class='description'>
 
+<p>Gets both locations, gets traffic time for them</p>
+
 </div>
 <div class='source'>
 <a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-run-source&#39;); return false'>
 [show source]
 </a>
-<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 103</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">x</span> = <span class="ruby-identifier">determine_intent</span>&#x000A;  <span class="ruby-keyword">return</span> <span class="ruby-identifier">x</span> <span class="ruby-keyword">unless</span> <span class="ruby-identifier">parameters</span>[<span class="ruby-value">:info_type</span>]&#x000A;&#x000A;  <span class="ruby-identifier">check_for_start_and_end</span>&#x000A;&#x000A;  <span class="ruby-identifier">y</span> = <span class="ruby-identifier">confirm_start_and_end</span>&#x000A;  <span class="ruby-identifier">confirmed</span> = <span class="ruby-identifier">y</span>.<span class="ruby-identifier">shift</span>&#x000A;&#x000A;  <span class="ruby-identifier">resp</span> = <span class="ruby-keyword">if</span> <span class="ruby-identifier">confirmed</span>&#x000A;           <span class="ruby-identifier">data_rep</span>, <span class="ruby-identifier">r</span> = <span class="ruby-identifier">choose_response</span>&#x000A;&#x000A;           <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">data_rep</span>)&#x000A;           <span class="ruby-identifier">r</span>&#x000A;         <span class="ruby-keyword">else</span>&#x000A;           <span class="ruby-identifier">y</span>.<span class="ruby-identifier">shift</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;&#x000A;  <span class="ruby-identifier">resp</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+<pre id='method-i-run-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 127</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">run</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:start_address</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">locations</span>.<span class="ruby-identifier">first</span>.<span class="ruby-identifier">text</span>&#x000A;  <span class="ruby-identifier">frags</span>[<span class="ruby-value">:end_address</span>] = <span class="ruby-identifier">query</span>.<span class="ruby-identifier">locations</span>.<span class="ruby-identifier">last</span>.<span class="ruby-identifier">text</span>&#x000A;  <span class="ruby-identifier">get_traffic_time</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<h2>Private Instance methods</h2>
+<div class='method private-instance' id='method-method-i-badness_string'>
+<a name='method-i-badness_string'></a>
+<div class='synopsis'>
+<span class='name'>badness_string</span>
+<span class='arguments'>(badness)</span>
+
+</div>
+<div class='description'>
+
+<p>Converts the patience limit <code>badness</code> into a representation of itself</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-badness_string-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-badness_string-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 170</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">badness_string</span>(<span class="ruby-identifier">badness</span>)&#x000A;  <span class="ruby-keyword">case</span> <span class="ruby-identifier">badness</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:none</span>&#x000A;    <span class="ruby-identifier">synonym_for</span> <span class="ruby-string">&#39;none&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:low</span>&#x000A;    <span class="ruby-identifier">synonym_for</span> <span class="ruby-string">&#39;low&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:medium</span>&#x000A;    <span class="ruby-identifier">synonym_for</span> <span class="ruby-string">&#39;medium&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:high</span>&#x000A;    <span class="ruby-identifier">synonym_for</span> <span class="ruby-string">&#39;high&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:very_high</span>&#x000A;    <span class="ruby-identifier">synonym_for</span> <span class="ruby-string">&#39;very high&#39;</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:harrowing</span>&#x000A;    <span class="ruby-string">&#39;harrowing&#39;</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-emoji_choice'>
+<a name='method-i-emoji_choice'></a>
+<div class='synopsis'>
+<span class='name'>emoji_choice</span>
+<span class='arguments'>(badness)</span>
+
+</div>
+<div class='description'>
+
+<p>Converts the patience limit <code>badness</code> into an emoji</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-emoji_choice-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-emoji_choice-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 152</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">emoji_choice</span>(<span class="ruby-identifier">badness</span>)&#x000A;  <span class="ruby-keyword">case</span> <span class="ruby-identifier">badness</span>&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:none</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;100&#39;</span>, <span class="ruby-string">&#39;star&#39;</span>, <span class="ruby-string">&#39;thumbsup&#39;</span>, <span class="ruby-string">&#39;car&#39;</span>, <span class="ruby-string">&#39;clock&#39;</span>, <span class="ruby-string">&#39;stopwatch&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:low</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;clockface&#39;</span>, <span class="ruby-string">&#39;stopwatch&#39;</span>, <span class="ruby-string">&#39;mappin&#39;</span>, <span class="ruby-string">&#39;worldmap&#39;</span>, <span class="ruby-string">&#39;car&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:medium</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;stopwatch&#39;</span>, <span class="ruby-string">&#39;hourglass&#39;</span>, <span class="ruby-string">&#39;alarmclock&#39;</span>, <span class="ruby-string">&#39;worldmap&#39;</span>, <span class="ruby-string">&#39;car&#39;</span>, <span class="ruby-string">&#39;bus&#39;</span>, <span class="ruby-string">&#39;&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:high</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;frown&#39;</span>, <span class="ruby-string">&#39;gate&#39;</span>, <span class="ruby-string">&#39;car&#39;</span>, <span class="ruby-string">&#39;hourglass&#39;</span>, <span class="ruby-string">&#39;alarmclock&#39;</span>, <span class="ruby-string">&#39;snail&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:very_high</span>&#x000A;    <span class="ruby-identifier">random_emoji</span>(<span class="ruby-string">&#39;bomb&#39;</span>, <span class="ruby-string">&#39;gate&#39;</span>, <span class="ruby-string">&#39;car&#39;</span>, <span class="ruby-string">&#39;hourglass&#39;</span>, <span class="ruby-string">&#39;snail&#39;</span>, <span class="ruby-string">&#39;frown&#39;</span>, <span class="ruby-string">&#39;pickaxe&#39;</span>)&#x000A;  <span class="ruby-keyword">when</span> <span class="ruby-value">:harrowing</span>&#x000A;    <span class="ruby-identifier">time_emoji</span>&#x000A;  <span class="ruby-keyword">end</span>&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-get_traffic_time'>
+<a name='method-i-get_traffic_time'></a>
+<div class='synopsis'>
+<span class='name'>get_traffic_time</span>
+<span class='arguments'>()</span>
+
+</div>
+<div class='description'>
+
+<p>Takes start and end address, converts it to directions, and takes the duration</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-get_traffic_time-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-get_traffic_time-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 136</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_traffic_time</span>&#x000A;  <span class="ruby-identifier">req</span> = <span class="ruby-identifier">gmaps_directions</span>(<span class="ruby-value">start_address:</span> <span class="ruby-identifier">frags</span>[<span class="ruby-value">:start_address</span>], <span class="ruby-value">end_address:</span> <span class="ruby-identifier">frags</span>[<span class="ruby-value">:end_address</span>])&#x000A;  <span class="ruby-identifier">return_data</span>(<span class="ruby-identifier">req</span>)&#x000A;&#x000A;  <span class="ruby-identifier">t</span> = (<span class="ruby-identifier">req</span>.<span class="ruby-identifier">duration</span>.<span class="ruby-identifier">total</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-value">60</span>) <span class="ruby-operator">/</span> <span class="ruby-identifier">req</span>.<span class="ruby-identifier">distance</span>.<span class="ruby-identifier">scalar</span>&#x000A;&#x000A;  <span class="ruby-identifier">lim</span> = <span class="ruby-constant">TrafficReportDirective</span><span class="ruby-operator">::</span><span class="ruby-constant">PATIENCE_LIMITS</span>&#x000A;&#x000A;  <span class="ruby-identifier">badness</span> = <span class="ruby-identifier">lim</span>.<span class="ruby-identifier">find_all</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">_k</span>, <span class="ruby-identifier">v</span><span class="ruby-operator">|</span> <span class="ruby-identifier">v</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">t</span> }&#x000A;               .<span class="ruby-identifier">last</span>&#x000A;               .<span class="ruby-identifier">first</span>&#x000A;&#x000A;  <span class="ruby-constant">DismalTony</span><span class="ruby-operator">::</span><span class="ruby-constant">HandledResponse</span>.<span class="ruby-identifier">finish</span>(<span class="ruby-identifier">response_string</span>(<span class="ruby-identifier">badness</span>))&#x000A;<span class="ruby-keyword">end</span></pre>
+</div>
+</div>
+<div class='method private-instance' id='method-method-i-response_string'>
+<a name='method-i-response_string'></a>
+<div class='synopsis'>
+<span class='name'>response_string</span>
+<span class='arguments'>(badness)</span>
+
+</div>
+<div class='description'>
+
+<p>Takes in <code>badness</code> and returns a composite string</p>
+
+</div>
+<div class='source'>
+<a class='source-toggle' href='#' onclick='toggleCode(&#39;method-i-response_string-source&#39;); return false'>
+[show source]
+</a>
+<pre id='method-i-response_string-source'><span class="ruby-comment"># File lib/dismaltony/directives/traffic.rb, line 188</span>&#x000A;<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">response_string</span>(<span class="ruby-identifier">badness</span>)&#x000A;  <span class="ruby-identifier">s</span> = <span class="ruby-string">&#39;&#39;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-node">&quot;~e:#{emoji_choice(badness)} &quot;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot;The traffic on the way to &quot;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">frags</span>[<span class="ruby-value">:end_address</span>]&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot; is &quot;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">badness_string</span>(<span class="ruby-identifier">badness</span>)}&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span>  <span class="ruby-string">&quot;. It will take &quot;</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">req</span>[<span class="ruby-value">:duration</span>].<span class="ruby-identifier">to_s</span>&#x000A;  <span class="ruby-identifier">s</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-string">&quot; to get there.&quot;</span>&#x000A;<span class="ruby-keyword">end</span></pre>
 </div>
 </div>
 </div>
