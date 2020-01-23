@@ -50,6 +50,21 @@ module DismalTony::DirectiveHelpers # :nodoc:
         parse_web_req(api_request(qpr))
       end
 
+      # Does a SYMBOL_SEARCH to get information
+      def symbol_search(srch)
+        req = api_request(
+          function: 'SYMBOL_SEARCH',
+          keywords: srch
+        )
+        req = req['bestMatches']
+
+        req = req.first
+                 .transform_keys { |k| k.split(/\d\.\s(\w+)/) }
+                 .transform_keys(&:last)
+                 .transform_keys(&:underscore)
+                 .transform_keys(&:to_sym)
+      end
+
       # Takes in the web response +resp+ and parses it as JSON
       def parse_web_req(resp)
         jsr = resp
@@ -86,7 +101,7 @@ module DismalTony::Directives # :nodoc:
     set_name :get_stock_price
     set_group :info
 
-    expect_frags :stock_id, :current_value
+    expect_frags :stock_id, :stock_name, :current_value
 
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
@@ -111,7 +126,10 @@ module DismalTony::Directives # :nodoc:
 
     # Gets the org, retrieves the symbol for it, and returns data
     def run
-      frags[:stock_id] = query.organization.text
+      org = symbol_search(query.organization.text)
+      frags[:stock_id] = org[:symbol]
+      frags[:stock_name] = org[:name]
+
       prices = retrieve_data(symbol: frags[:stock_id])
 
       frags[:current_value] = prices.max_by(&:date)
@@ -121,12 +139,13 @@ module DismalTony::Directives # :nodoc:
       data_representation.value = frags[:current_value]
       data_representation.price = frags[:current_value].price
       data_representation.symbol = frags[:stock_id]
+      data_representation.name = frags[:stock_name]
 
       answ, moj = price_comment(prices)
 
       conv = "~e:#{moj} "
       conv << synonym_for("today's").capitalize
-      conv << " stock price for #{frags[:stock_id]} is "
+      conv << " stock price for #{frags[:stock_name]} (#{frags[:stock_id]}) is "
       conv << answ << '.'
       DismalTony::HandledResponse.finish(conv)
     end
@@ -205,7 +224,7 @@ module DismalTony::Directives # :nodoc:
     set_name :stock_math
     set_group :info
 
-    expect_frags :stock_id, :current_value, :shares_requested, :final_total
+    expect_frags :stock_id, :stock_name, :current_value, :shares_requested, :final_total
 
     use_parsing_strategies do |use|
       use << DismalTony::ParsingStrategies::ComprehendSyntaxStrategy
@@ -232,7 +251,9 @@ module DismalTony::Directives # :nodoc:
 
     # Gets the stock symbol and the quantity, does the calculation, and finalizes
     def run
-      frags[:stock_id] ||= query.organization.text
+      org = symbol_search(query.organization.text)
+      frags[:stock_id] = org[:symbol]
+      frags[:stock_name] = org[:name]
 
       num = query.quantity.text
 
@@ -265,13 +286,18 @@ module DismalTony::Directives # :nodoc:
       
       resp = nil
       resp = calculate_final_total
+
       return_data(OpenStruct.new)
       
-      data_representation[:stock_data] = frags[:current_value]
+      data_representation[:value] = frags[:current_value]
+      data_representation[:name] = frags[:stock_name]
       data_representation[:shares_requested] = frags[:shares_requested]
       data_representation[:answer] = frags[:final_total]
-      data_representation[:to_int] = data_representation[:to_i] = data_representation[:answer]
-      
+
+      %i[to_i to_int].each do |k|
+        data_representation[k] = data_representation[:answer]
+      end
+
       resp
     end
 
@@ -296,7 +322,7 @@ module DismalTony::Directives # :nodoc:
       fstring << "~e:#{moj} "
       fstring << frags[:shares_requested].to_s
       fstring << " shares of "
-      fstring << frags[:stock_id]
+      fstring << "#{frags[:stock_name]} (#{frags[:stock_id]})"
       fstring << " stock "
       fstring << synonym_for('is worth')
       fstring << " $#{frags[:final_total]}"
