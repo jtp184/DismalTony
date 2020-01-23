@@ -27,9 +27,15 @@ module DismalTony # :nodoc:
       def self.watson
         return @watson if @watson
 
-        @watson = IBMWatson::ToneAnalyzerV3.new(version: Date.new(2019, 1, 1).strftime('%Y-%m-%d'))
-        @watson.username = ENV['IBM_USERNAME'] || ENV['ibm_username']
-        @watson.password = ENV['IBM_PASSWORD'] || ENV['ibm_password']
+        auth = IBMWatson::Authenticators::IamAuthenticator.new(
+                apikey: ENV['IBM_API_KEY'] || ENV['ibm_api_key']
+               )
+
+        @watson = IBMWatson::ToneAnalyzerV3.new(
+          version: Date.new(2019, 1, 1).strftime('%Y-%m-%d'),
+          authenticator: auth
+        )
+
         @watson
       end
     end

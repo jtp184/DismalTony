@@ -45,7 +45,7 @@ end
   DismalTony::ParsingStrategies::ComprehendTopicStrategy,
   DismalTony::ParsingStrategies::ComprehendKeyPhraseStrategy,
   DismalTony::ParsingStrategies::ComprehendSyntaxStrategy,
-  # DismalTony::ParsingStrategies::WatsonToneStrategy
+  DismalTony::ParsingStrategies::WatsonToneStrategy
 ]
 
 DismalTony.vi = DismalTony::VIBase.new(
