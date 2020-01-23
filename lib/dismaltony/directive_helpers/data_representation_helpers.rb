@@ -28,7 +28,7 @@ module DismalTony # :nodoc:
       module InstanceMethods
         # Instance hook for data_representation
         def data_representation
-          @data_representation ||= self.class.data_representation
+          @data_representation ||= self.class.send(:data_representation)
           @data_representation ||= OpenStruct.new(fragments) unless fragments.empty?
           @data_representation
         end

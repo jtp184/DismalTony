@@ -59,7 +59,7 @@ module DismalTony # :nodoc:
 
         # Instance hook for the data struct template
         def data_struct_template
-          @data_struct_template ||= self.class.data_struct_template
+          @data_struct_template ||= self.class.send(:data_struct_template)
           @data_struct_template
         end
 

@@ -63,54 +63,37 @@ module DismalTony::Directives # :nodoc:
       
       noob = vi.data_store.new_user(blank_user)
       frags[:uuid] = noob[:uuid]
-
-      vi.say_through(
-        DismalTony::SMSInterface.new(frags[:send_number]),
-        welcome_msg
-      )
       
       moj = positive_emoji
 
       DismalTony::HandledResponse.finish(
         "~e:#{moj} Okay! I sent the message to #{frags[:send_number]}"
-      )
+        )
     end
 
-    ### TOREPLACE
-    def get_last_name
-      frags[:last_name] = query.raw_text
-      DismalTony::HandledResponse.then_do(
+    # The real main method, collects first and last name for onboarding
+    def run_for_other
+      ask_for_first_name(
+        message: welcome_msg,
+        method: :run_for_other
+      )
+
+      ask_for_last_name(
         message: "~e:pencil Okay! And what is your complete last name?",
-        next_directive: self,
-        method: :get_nickname,
-        data: frags
+        method: :run_for_other
       )
-    end
 
-    ### TOREPLACE
-    def get_first_name
-      frags[:first_name] = query.raw_text
-      DismalTony::HandledResponse.then_do(
-        message: "~e:thumbsup Okay! And what is your complete last name?",
-        next_directive: self,
-        method: :get_first_name,
-        data: frags
-      )
-    end
-
-    ### TOREPLACE
-    def get_nickname
-      frags[:nickname] = query.raw_text
+      return ask_frags if ask_frags
 
       vi.data_store.update_user(frags[:uuid]) do |usr|
         usr[:first_name] = frags[:first_name]
         usr[:last_name] = frags[:last_name]
-        usr[:nickname] = frags[:nickname]
+        usr[:nickname] = frags[:first_name]
       end
 
       DismalTony::HandledResponse.finish(finish_msg)
     end
-    
+
     private
 
     # Creates a UserIdentity with the phone number in fragments, and the
@@ -119,7 +102,7 @@ module DismalTony::Directives # :nodoc:
       DismalTony::UserIdentity.new(
         user_data: { phone: frags[:phone] },
         conversation_state: begin_cs
-      )
+        )
     end
 
     # The welcome message
@@ -127,23 +110,22 @@ module DismalTony::Directives # :nodoc:
       moj = random_emoji('exclamationmark', 'present', 'scroll', 'speechbubble', 'wave', 'envelopearrow')
       "~e:#{moj} Hello! I'm #{vi.name}" \
       ", a Virtual Intelligence. I'm going to take you through " \
-      "interactively signing up to use my services. Let's begin with your full first name."
+      "interactively signing up to use my services. Let's begin with your first name."
     end
 
     # The finish message
     def finish_msg
       moj = random_emoji('wave', 'smile', 'envelopeheart', 'checkbox', 'thumbsup', 'star', 'toast')
-      "~e:#{moj} Congratulations, #{frags[:user_id][:nickname]}. You're all ready!"
+      "~e:#{moj} Congratulations, #{frags[:first_name]}. You're all ready!"
     end
 
     # A ConversationState that points back to this Directive to continue the process
     def begin_cs
-      cs =
-        DismalTony::ConversationState.new(
-          next_directive: self,
-          next_method: :get_first_name,
-          data: frags,
-          parse_next: false
+      DismalTony::ConversationState.new(
+        next_directive: self,
+        next_method: :run_for_other,
+        data: frags,
+        parse_next: true
         )
     end
   end

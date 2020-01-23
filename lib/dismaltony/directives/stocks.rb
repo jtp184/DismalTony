@@ -68,7 +68,7 @@ module DismalTony::DirectiveHelpers # :nodoc:
 
       # Class-instance version of .stock_price
       def stock_price(*args)
-        self.class.stock_price(*args)
+        self.class.send(:stock_price, *args)
       end
     end
   end
@@ -141,7 +141,7 @@ module DismalTony::Directives # :nodoc:
 
       fluff = case [0, 1, 2, 3].sample
               when 0
-               with_history(history)
+               with_delta(history)
               when 1
                with_highest(history)
               else
@@ -194,11 +194,12 @@ module DismalTony::Directives # :nodoc:
 
   # Determines the value of a specific number of shares of a stock
   class StockMathDirective < DismalTony::Directive
-    include DismalTony::DirectiveHelpers::JSONAPIHelpers
-    include DismalTony::DirectiveHelpers::ConversationHelpers
-    include DismalTony::DirectiveHelpers::DataStructHelpers
-    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
     include DismalTony::DirectiveHelpers::EmojiHelpers
+    include DismalTony::DirectiveHelpers::ConversationHelpers
+    include DismalTony::DirectiveHelpers::InterrogativeHelpers
+    include DismalTony::DirectiveHelpers::DataRepresentationHelpers
+    include DismalTony::DirectiveHelpers::DataStructHelpers
+    include DismalTony::DirectiveHelpers::JSONAPIHelpers
     include DismalTony::DirectiveHelpers::StocksHelpers
 
     set_name :stock_math
@@ -244,16 +245,16 @@ module DismalTony::Directives # :nodoc:
       if num < 1
         ask_for_shares_requested(
           message: "~e:pound Please enter the number of shares you'd like to sum as a digit.",
-          cast: -> (q) { frags[:shares_requested] ||= q.quantity.text.in_numbers
+          cast: -> (q) { frags[:shares_requested] ||= q.quantity.text.in_numbers }
         )
       else
+        frags[:shares_requested] = num
         finalize
       end
 
       return ask_frags if ask_frags
 
       finalize
-      calculate_final_total
     end
 
     private
@@ -261,16 +262,16 @@ module DismalTony::Directives # :nodoc:
     # Performs final calculation for value, and sets their returns
     def finalize
       frags[:current_value] = retrieve_data(symbol: frags[:stock_id]).first
-
+      
       resp = nil
       resp = calculate_final_total
       return_data(OpenStruct.new)
-
+      
       data_representation[:stock_data] = frags[:current_value]
       data_representation[:shares_requested] = frags[:shares_requested]
       data_representation[:answer] = frags[:final_total]
       data_representation[:to_int] = data_representation[:to_i] = data_representation[:answer]
-
+      
       resp
     end
 
@@ -293,7 +294,7 @@ module DismalTony::Directives # :nodoc:
 
       fstring = ""
       fstring << "~e:#{moj} "
-      fstring << frags[:shares_requested]
+      fstring << frags[:shares_requested].to_s
       fstring << " shares of "
       fstring << frags[:stock_id]
       fstring << " stock "

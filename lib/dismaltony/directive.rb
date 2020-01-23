@@ -129,10 +129,10 @@ module DismalTony # :nodoc:
     # Takes in the Query +qry+ and VIBase +vi+ and sets its values,
     # inheriting from class-instance variables when apropriate.
     def initialize(qry, vi)
-      @name = (self.class.name || '')
-      @group = (self.class.group || 'none')
-      @fragments = (self.class.default_frags&.clone || {})
-      @match_criteria = (self.class.match_criteria || [])
+      @name = (self.class.send(:name) || '')
+      @group = (self.class.send(:group) || 'none')
+      @fragments = (self.class.send(:default_frags)&.clone || {})
+      @match_criteria = (self.class.send(:match_criteria) || [])
       @query = qry
       @vi = vi
     end

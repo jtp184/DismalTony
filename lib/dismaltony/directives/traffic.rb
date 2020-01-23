@@ -48,7 +48,7 @@ module DismalTony::DirectiveHelpers # :nodoc:
     module InstanceMethods
       # The GoogleMapsAPI client, as yielded from the class 
       def gmaps_client
-        @gmaps_client ||= self.class.gmaps_client
+        @gmaps_client ||= self.class.send(:gmaps_client)
         @gmaps_client
       end
 
@@ -191,7 +191,7 @@ module DismalTony::Directives # :nodoc:
       s << "The traffic on the way to "
       s << frags[:end_address]
       s << " is "
-      s << badness_string(badness)}
+      s << badness_string(badness)
       s <<  ". It will take "
       s << req[:duration].to_s
       s << " to get there."
