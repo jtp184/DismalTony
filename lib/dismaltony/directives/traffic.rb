@@ -48,7 +48,7 @@ module DismalTony::DirectiveHelpers # :nodoc:
     module InstanceMethods
       # The GoogleMapsAPI client, as yielded from the class 
       def gmaps_client
-        @gmaps_client ||= self.class.send(:gmaps_client)
+        @gmaps_client ||= self.class.public_send(:gmaps_client)
         @gmaps_client
       end
 

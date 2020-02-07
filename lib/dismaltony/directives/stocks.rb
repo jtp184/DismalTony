@@ -83,7 +83,7 @@ module DismalTony::DirectiveHelpers # :nodoc:
 
       # Class-instance version of .stock_price
       def stock_price(*args)
-        self.class.send(:stock_price, *args)
+        self.class.public_send(:stock_price, *args)
       end
     end
   end

@@ -55,7 +55,7 @@ module DismalTony # :nodoc:
       module InstanceMethods
         # Instance hook for the api_url
         def api_url
-          @api_url ||= self.class.send(:api_url)
+          @api_url ||= self.class.public_send(:api_url)
           @api_url
         end
 
@@ -77,7 +77,7 @@ module DismalTony # :nodoc:
 
         # Instance hook for api_defaults
         def api_defaults
-          @api_defaults ||= self.class.send(:api_defaults)
+          @api_defaults ||= self.class.public_send(:api_defaults)
           @api_defaults
         end
 

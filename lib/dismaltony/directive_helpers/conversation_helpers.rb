@@ -46,7 +46,7 @@ module DismalTony # :nodoc:
 
         # Instance hook for the class method
         def synonyms
-          @synonyms ||= self.class.send(:synonyms)
+          @synonyms ||= self.class.public_send(:synonyms)
           @synonyms
         end
       end

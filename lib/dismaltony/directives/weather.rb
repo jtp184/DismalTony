@@ -349,8 +349,6 @@ module DismalTony::DirectiveHelpers # :nodoc:
         @data_struct_template
       end
 
-      private
-
       # Stores the API URL
       def api_url
         'http://api.openweathermap.org/data/2.5/weather?'

@@ -78,7 +78,7 @@ module DismalTony # :nodoc:
       def initialize(args = {})
         @score = args.fetch(:score)
         
-        @name = self.class.send(:name)
+        @name = self.class.public_send(:name)
         @name = /Watson(\w+)Tone/.match(@name)[1]
       end
 
